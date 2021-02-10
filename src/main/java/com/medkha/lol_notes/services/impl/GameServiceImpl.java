@@ -33,7 +33,7 @@ public class GameServiceImpl implements GameService{
 			return this.gameRepository.save(game); 
 		}
 		else { 
-			throw new Exception("Reason instance not existing ( " + game.toString() + " ).");
+			throw new Exception("Game instance not existing ( " + game.toString() + " ).");
 		}
 	}
 

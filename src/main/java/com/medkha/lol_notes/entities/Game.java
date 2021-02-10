@@ -5,6 +5,7 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -26,6 +27,7 @@ public class Game {
 	
 	@Temporal(TemporalType.TIMESTAMP)
 	@org.hibernate.annotations.CreationTimestamp
+	@Column(updatable = false)
 	private Date createdOn; 
 	
 	@NotNull
