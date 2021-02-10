@@ -1,6 +1,7 @@
 package com.medkha.lol_notes.entities;
 
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -25,7 +26,8 @@ public class Death {
 	@ManyToOne(fetch = FetchType.LAZY)
 	private @Valid Reason reasonOfDeath ;
 	
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.LAZY,
+			   cascade = CascadeType.REMOVE)
 	@JoinColumn(name = "GAME_ID", nullable = false)
 	private @Valid Game game; 
 	
@@ -71,6 +73,36 @@ public class Death {
 		return id;
 	}
 
+	public Death copyDeath() {
+		return new Death(this.minute, this.reasonOfDeath, this.game); 
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Death other = (Death) obj;
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
+			return false;
+		return true;
+	}
+	
+	
 	
 	
 }
