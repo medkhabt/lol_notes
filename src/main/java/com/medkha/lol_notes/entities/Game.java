@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -36,7 +37,8 @@ public class Game {
 	private Champion champion; 
 	
 	@OneToMany(mappedBy = "game",
-			   fetch = FetchType.LAZY)
+			   fetch = FetchType.LAZY,
+			   cascade = CascadeType.REMOVE)
 	private Set<Death> deaths = new LinkedHashSet<>(); 
 	
 	protected Game() { 
@@ -91,6 +93,35 @@ public class Game {
 	}
 	public Date getCreatedOn() {
 		return createdOn;
+	}
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((champion == null) ? 0 : champion.hashCode());
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		result = prime * result + ((role == null) ? 0 : role.hashCode());
+		return result;
+	}
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Game other = (Game) obj;
+		if (champion != other.champion)
+			return false;
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
+			return false;
+		if (role != other.role)
+			return false;
+		return true;
 	}
 	
 	

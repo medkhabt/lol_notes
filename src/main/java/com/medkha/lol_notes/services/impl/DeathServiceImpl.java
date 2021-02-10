@@ -3,10 +3,14 @@ package com.medkha.lol_notes.services.impl;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.transaction.Transactional;
+
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.medkha.lol_notes.entities.Death;
+import com.medkha.lol_notes.entities.Game;
 import com.medkha.lol_notes.repositories.DeathRepository;
 import com.medkha.lol_notes.services.DeathService;
 import com.medkha.lol_notes.services.GameService;
@@ -50,9 +54,12 @@ public class DeathServiceImpl implements DeathService{
 	}
 
 	@Override
+	@Transactional
 	public Death updateDeath(Death death) throws Exception {
 		if(existsInDataBase(death.getId())) {
-			death.getGame().addDeath(death);
+			Game game = this.gameSerivce.findById(death.getGame().getId()); 
+			Hibernate.initialize(game.getDeaths());
+			game.addDeath(death);
 			this.gameSerivce.updateGame(death.getGame());
 			
 			return this.deathRepository.save(death); 
@@ -63,9 +70,14 @@ public class DeathServiceImpl implements DeathService{
 	}
 
 	@Override
+	@Transactional
 	public void deleteDeathById(Long id) {
 		if(existsInDataBase(id)) { 
+			Death deathToDelete = findById(id);
 			this.deathRepository.deleteById(id);
+			Game game = this.gameSerivce.findById(deathToDelete.getId()); 
+			Hibernate.initialize(game.getDeaths());
+			game.addDeath(deathToDelete);
 		}
 	}
 

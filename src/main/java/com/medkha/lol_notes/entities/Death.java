@@ -1,12 +1,10 @@
 package com.medkha.lol_notes.entities;
 
 
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -26,9 +24,7 @@ public class Death {
 	@ManyToOne(fetch = FetchType.LAZY)
 	private @Valid Reason reasonOfDeath ;
 	
-	@ManyToOne(fetch = FetchType.LAZY,
-			   cascade = CascadeType.REMOVE)
-	@JoinColumn(name = "GAME_ID", nullable = false)
+	@ManyToOne(fetch = FetchType.LAZY)
 	private @Valid Game game; 
 	
 	protected Death() {}
