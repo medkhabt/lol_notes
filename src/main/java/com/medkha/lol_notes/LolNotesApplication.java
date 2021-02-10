@@ -6,9 +6,11 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
 import com.medkha.lol_notes.entities.Champion;
+import com.medkha.lol_notes.entities.Death;
 import com.medkha.lol_notes.entities.Game;
 import com.medkha.lol_notes.entities.Reason;
 import com.medkha.lol_notes.entities.Role;
+import com.medkha.lol_notes.services.DeathService;
 import com.medkha.lol_notes.services.GameService;
 import com.medkha.lol_notes.services.ReasonService;
 
@@ -21,7 +23,7 @@ public class LolNotesApplication {
 	}
 
 	@Bean
-	  public CommandLineRunner dataLoader(ReasonService reasonService, GameService gameService) {
+	  public CommandLineRunner dataLoader(ReasonService reasonService, GameService gameService, DeathService deathService) {
 	    return new CommandLineRunner() {
 	      @Override
 	      public void run(String... args) throws Exception {
@@ -33,6 +35,11 @@ public class LolNotesApplication {
 	        
 	        
 	        gameService.createGame(new Game(Role.ADC, Champion.KAISA)); 
+	        
+	        
+	        deathService.createDeath(new Death(10, reasonService.findById((long) 103), gameService.findById((long)105))); 
+	        
+	        
 	      }
 	    };
 	}

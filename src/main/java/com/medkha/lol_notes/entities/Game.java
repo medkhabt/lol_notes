@@ -16,6 +16,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.sun.istack.NotNull;
 
 @Entity
@@ -41,6 +42,7 @@ public class Game {
 	@OneToMany(mappedBy = "game",
 			   fetch = FetchType.LAZY,
 			   cascade = CascadeType.REMOVE)
+	@JsonIgnore
 	private Set<Death> deaths = new LinkedHashSet<>(); 
 	
 	protected Game() { 

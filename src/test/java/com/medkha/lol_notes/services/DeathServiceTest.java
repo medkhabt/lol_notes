@@ -38,10 +38,10 @@ public class DeathServiceTest {
 	@BeforeEach
 	public void init() throws Exception {
 		this.game = new Game(Role.ADC, Champion.KAISA);
-		this.gameService.createGame(game); 
+		this.game = this.gameService.createGame(game); 
 		
 		this.reason = new Reason("Outnumbered"); 
-		this.reasonService.createReason(reason); 	
+		this.reason = this.reasonService.createReason(reason); 	
 		
 	}
 	
