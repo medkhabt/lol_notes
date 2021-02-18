@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
+import { Reason } from '../shared/reason.service';
 
 @Component({
   selector: 'app-reason-item',
@@ -7,6 +8,8 @@ import { Component, OnInit } from '@angular/core';
 })
 export class ReasonItemComponent implements OnInit {
 
+  @Input() reason!: Reason;
+  
   constructor() { }
 
   ngOnInit(): void {

@@ -1,1 +1,18 @@
-<p>home works!</p>
+<div class="container">
+  <div class="row">
+    <div class="col-lg-2"></div>
+    <div class="col-md-auto">
+      <h3>LoL notes: </h3>
+      <p>This is a simple app to help you take notes while playing League of Legends 
+        to know more about how the app works go to the About section
+      </p>
+    </div>
+    <div class="col-lg-2"></div>
+  </div>
+  <div class="row">
+    <div *ngFor="let game of games" 
+          class="col-lg-4">
+      <app-game-item [game]="game"></app-game-item>
+    </div>
+  </div>
+</div>
