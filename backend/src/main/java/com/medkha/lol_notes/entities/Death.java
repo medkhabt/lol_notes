@@ -46,6 +46,11 @@ public class Death {
 		this.game = game; 
 	}
 
+	
+	public void setId(Long id) {
+		this.id = id;
+	}
+
 	public int getMinute() {
 		return minute;
 	}

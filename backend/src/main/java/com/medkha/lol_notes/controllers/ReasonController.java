@@ -38,20 +38,21 @@ public class ReasonController {
 	public Reason getReason(@PathVariable("reasonId") Long reasonId) {
 		return this.reasonService.findById(reasonId); 
 	}
-	@PostMapping(value = "/createReason", consumes = "application/json")
+	@PostMapping(consumes = "application/json")
 	@ResponseStatus(HttpStatus.CREATED)
 	public Reason postReason(@RequestBody Reason reason) throws Exception {
 		return this.reasonService.createReason(reason); 
 	}
 	
-	@PutMapping(path = "/updateReason/{reasonId}", consumes = "application/json")
+	@PutMapping(path = "/{reasonId}", consumes = "application/json")
 	@ResponseStatus(HttpStatus.OK)
 	public Reason putReason(@PathVariable("reasonId") Long reasonId, 
 							@RequestBody Reason reason) throws Exception { 
+		reason.setId(reasonId);
 		return this.reasonService.updateReason(reason); 
 	}
 	
-	@DeleteMapping("/deleteReason/{reasonId}")
+	@DeleteMapping(value = "/{reasonId}")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public void deleteReason(@PathVariable("reasonId") Long reasonId) {
 		this.reasonService.deleteReason(reasonId);

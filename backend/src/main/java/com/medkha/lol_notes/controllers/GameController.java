@@ -36,20 +36,21 @@ public class GameController {
 	public Game getGame(@PathVariable("gameId") Long gameId) {
 		return this.gameService.findById(gameId); 
 	}
-	@PostMapping(value = "/createGame", consumes = "application/json")
+	@PostMapping(consumes = "application/json")
 	@ResponseStatus(HttpStatus.CREATED)
 	public Game postGame(@RequestBody Game game) throws Exception {
 		return this.gameService.createGame(game); 
 	}
 	
-	@PutMapping(path = "/updateGame/{gameId}", consumes = "application/json")
+	@PutMapping(path = "/{gameId}", consumes = "application/json")
 	@ResponseStatus(HttpStatus.OK)
 	public Game putGame(@PathVariable("gameId") Long gameId, 
 							@RequestBody Game game) throws Exception { 
+		game.setId(gameId);
 		return this.gameService.updateGame(game); 
 	}
 	
-	@DeleteMapping("/deleteGame/{gameId}")
+	@DeleteMapping("/{gameId}")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public void deleteGame(@PathVariable("gameId") Long gameId) {
 		this.gameService.deleteGame(gameId);
