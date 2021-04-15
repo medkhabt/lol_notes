@@ -9,7 +9,6 @@ import javax.persistence.ManyToOne;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 
@@ -72,6 +71,12 @@ public class Death {
 
 	public Long getId() {
 		return id;
+	}
+	
+	
+
+	public void setId(Long id) {
+		this.id = id;
 	}
 
 	public Death copyDeath() {

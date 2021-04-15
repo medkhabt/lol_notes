@@ -36,20 +36,21 @@ public class DeathController {
 	public Death getDeath(@PathVariable("deathId") Long deathId) {
 		return this.deathService.findById(deathId); 
 	}
-	@PostMapping(value = "/createDeath", consumes = "application/json")
+	@PostMapping(consumes = "application/json")
 	@ResponseStatus(HttpStatus.CREATED)
 	public Death postDeath(@RequestBody Death death) throws Exception {
 		return this.deathService.createDeath(death); 
 	}
 	
-	@PutMapping(path = "/updateDeath/{deathId}", consumes = "application/json")
+	@PutMapping(path = "/{deathId}", consumes = "application/json")
 	@ResponseStatus(HttpStatus.OK)
 	public Death putDeath(@PathVariable("deathId") Long deathId, 
 							@RequestBody Death death) throws Exception { 
+		death.setId(deathId);
 		return this.deathService.updateDeath(death); 
 	}
 	
-	@DeleteMapping("/deleteDeath/{deathId}")
+	@DeleteMapping("/{deathId}")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public void deleteDeath(@PathVariable("deathId") Long deathId) throws Exception {
 		this.deathService.deleteDeathById(deathId);
