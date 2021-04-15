@@ -22,25 +22,25 @@ public class LolNotesApplication {
 		SpringApplication.run(LolNotesApplication.class, args);
 	}
 
-	@Bean
-	  public CommandLineRunner dataLoader(ReasonService reasonService, GameService gameService, DeathService deathService) {
-	    return new CommandLineRunner() {
-	      @Override
-	      public void run(String... args) throws Exception {
-	        reasonService.createReason(new Reason("OutNumbered")); 
-	        reasonService.createReason(new Reason("Jgl gank")); 
-	        reasonService.createReason(new Reason("Over Staying")); 
-	        reasonService.createReason(new Reason("Match-up")); 
-	        reasonService.createReason(new Reason("Positionning")); 
-	        
-	        
-	        gameService.createGame(new Game(Role.ADC, Champion.KAISA)); 
-	        
-	        
-	        deathService.createDeath(new Death(10, reasonService.findById((long) 103), gameService.findById((long)105))); 
-	        
-	        
-	      }
-	    };
-	}
+//	@Bean
+//	  public CommandLineRunner dataLoader(ReasonService reasonService, GameService gameService, DeathService deathService) {
+//	    return new CommandLineRunner() {
+//	      @Override
+//	      public void run(String... args) throws Exception {
+//	        reasonService.createReason(new Reason("OutNumbered")); 
+//	        reasonService.createReason(new Reason("Jgl gank")); 
+//	        reasonService.createReason(new Reason("Over Staying")); 
+//	        reasonService.createReason(new Reason("Match-up")); 
+//	        reasonService.createReason(new Reason("Positionning")); 
+//	        
+//	        
+//	        gameService.createGame(new Game(Role.ADC, Champion.KAISA)); 
+//	        
+//	        
+//	        deathService.createDeath(new Death(10, reasonService.findById((long) 103), gameService.findById((long)105))); 
+//	        
+//	        
+//	      }
+//	    };
+//	}
 }

@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.stereotype.Service;
 
 import com.medkha.lol_notes.entities.Reason;
@@ -17,13 +18,14 @@ public class ReasonServiceImpl implements ReasonService{
 	private ReasonRepository reasonRepository; 
 
 	@Override
-	public Reason createReason(Reason reason) throws Exception {
-		if(reason.getId() == null) { 
+	public Reason createReason(Reason reason){
+		try {
 			return this.reasonRepository.save(reason); 
-		} 
-		else { 
-			throw new Exception("Id is not null.");
+		
+		} catch (InvalidDataAccessApiUsageException | NullPointerException err) {
+			throw new IllegalArgumentException("Reason Object is null and cannot be processed", err); 
 		}
+	
 	}
 
 	@Override
