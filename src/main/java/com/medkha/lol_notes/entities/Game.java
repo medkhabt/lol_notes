@@ -95,6 +95,10 @@ public class Game {
 	public Long getId() {
 		return id;
 	}
+	
+	public void setId(Long id) {
+		this.id = id;
+	}
 	public Date getCreatedOn() {
 		return createdOn;
 	}
