@@ -13,6 +13,17 @@ jobs:
 
     runs-on: ubuntu-latest
 
+    services:
+      mysql:
+        image: mysql
+        env:
+          MYSQL_DATABASE: lolnotes_db
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_USER: lolnotesadmin
+          MYSQL_PASSWORD: admin
+        ports:
+        - 3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
     steps:
     - uses: actions/checkout@v2
     - name: Set up JDK 11
