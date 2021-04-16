@@ -31,7 +31,7 @@ public class ReasonServiceImpl implements ReasonService{
 	}
 
 	@Override
-	public Reason updateReason(Reason reason) throws Exception {
+	public Reason updateReason(Reason reason){
 		try {
 			findById(reason.getId()); 
 			return this.reasonRepository.save(reason); 
@@ -43,9 +43,8 @@ public class ReasonServiceImpl implements ReasonService{
 
 	@Override
 	public void deleteReason(Long id) {
-		if(existsInDataBase(id)) { 
-			this.reasonRepository.deleteById(id);
-		}
+		findById(id); 
+		this.reasonRepository.deleteById(id);
 	}
 
 	@Override
