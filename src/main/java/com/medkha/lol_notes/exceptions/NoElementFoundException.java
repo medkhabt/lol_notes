@@ -14,4 +14,8 @@ public class NoElementFoundException extends RuntimeException {
 		
 	}
 
+	public NoElementFoundException(String errorMessage) {
+		super(errorMessage); 
+	}
+
 }

@@ -2,6 +2,9 @@ package com.medkha.lol_notes.controllers;
 
 import java.util.Set;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -40,14 +43,14 @@ public class ReasonController {
 	}
 	@PostMapping(consumes = "application/json")
 	@ResponseStatus(HttpStatus.CREATED)
-	public Reason postReason(@RequestBody Reason reason) throws Exception {
+	public Reason postReason(@Valid @RequestBody Reason reason) throws Exception {
 		return this.reasonService.createReason(reason); 
 	}
 	
 	@PutMapping(path = "/{reasonId}", consumes = "application/json")
 	@ResponseStatus(HttpStatus.OK)
 	public Reason putReason(@PathVariable("reasonId") Long reasonId, 
-							@RequestBody Reason reason) throws Exception { 
+							@Valid @RequestBody Reason reason) throws Exception { 
 		reason.setId(reasonId);
 		return this.reasonService.updateReason(reason); 
 	}
