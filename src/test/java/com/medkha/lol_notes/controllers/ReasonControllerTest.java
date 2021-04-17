@@ -97,5 +97,18 @@ public class ReasonControllerTest {
 			.andExpect(status().isBadRequest());
 	}
 	
+	@Test
+	public void whenValidInput_ThenReturns200_UpdateReason() throws Exception{ 
+		Reason reason = new Reason("updated Reason"); 
+		reason.setId((long)1);
+		
+		when(this.reasonService.updateReason(reason)).thenReturn(reason); 
+		
+		mockMvc.perform(put("/reasons/{reasonId}", reason.getId()) 
+					.contentType("application/json")
+					.content(objectMapper.writeValueAsString(reason)))
+				.andExpect(status().isOk());
+	}
+	
 	
 }
