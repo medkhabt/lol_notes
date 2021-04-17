@@ -1,6 +1,10 @@
 package com.medkha.lol_notes.controllers;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -12,6 +16,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.medkha.lol_notes.entities.Reason;
@@ -108,6 +113,54 @@ public class ReasonControllerTest {
 					.contentType("application/json")
 					.content(objectMapper.writeValueAsString(reason)))
 				.andExpect(status().isOk());
+	}
+	
+	@Test
+	public void whenValidInput_ThenReturnsReason_FindById() throws Exception { 
+		Reason reason= new Reason("reason"); 
+		reason.setId((long) 1);
+		
+		when(this.reasonService.findById(reason.getId())).thenReturn(reason); 
+		MvcResult mvcResult = mockMvc.perform(get("/reasons/{reasonId}", (long) 1))
+									.andReturn(); 
+		
+		Reason expectedResponseBody = new Reason("reason"); 
+		expectedResponseBody.setId(reason.getId());
+		
+		String actualResponseBody = mvcResult.getResponse().getContentAsString(); 
+		
+		assertThat(actualResponseBody).isEqualToIgnoringWhitespace(
+						objectMapper.writeValueAsString(expectedResponseBody)
+				);
+	}
+	
+	@Test
+	public void whenReasonIdIsntInDb_thenReturn403_FindById() throws Exception { 
+		Long id = (long) 1; 
+		
+		when(this.reasonService.findById(id)).thenThrow(NoElementFoundException.class);
+		
+		mockMvc.perform(get("/reasons/{reasonId}", id))
+					.andExpect(status().isForbidden()); 
+	}
+	
+	@Test 
+	public void whenValidInput_ThenReturn204_deleteReason() throws Exception { 
+		Long id = (long) 1 ; 
+		
+		mockMvc.perform(delete("/reasons/{reasonsId}", id))
+					.andExpect(status().isNoContent());
+	}
+	
+	@Test 
+	public void whenReasonIdIsntInDb_thenReturn403_deleteReason() throws Exception { 
+		Long id = (long) 1; 
+		
+		doThrow(NoElementFoundException.class).when(this.reasonService).deleteReason(id); 
+		
+		mockMvc.perform(delete("/reasons/{reasonsId}", id))
+					.andExpect(status().isForbidden());
+		
 	}
 	
 	
