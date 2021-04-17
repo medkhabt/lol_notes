@@ -4,6 +4,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 @Entity
@@ -13,7 +14,8 @@ public class Reason {
 	@GeneratedValue(generator = Constants.ID_GENERATOR)
 	private Long id; 
 	
-	@NotNull
+//	@NotNull
+	@NotBlank
 	@Column(nullable = false)
 	private String description; 
 	
