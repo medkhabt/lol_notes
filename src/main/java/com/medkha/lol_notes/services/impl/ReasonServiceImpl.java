@@ -66,7 +66,4 @@ public class ReasonServiceImpl implements ReasonService{
 	}
 
 	
-	public Boolean existsInDataBase(Long id) { 
-		return id != null && findById(id) != null; 
-	}
 }

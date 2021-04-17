@@ -11,5 +11,4 @@ public interface ReasonService {
 	public void deleteReason(Long id); 
 	public Set<Reason> findAllReasons();
 	public Reason findById(Long id); 
-	public Boolean existsInDataBase(Long id);
 }
