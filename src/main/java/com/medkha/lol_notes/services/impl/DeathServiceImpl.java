@@ -1,19 +1,19 @@
 package com.medkha.lol_notes.services.impl;
 
 import java.util.HashSet;
+import java.util.NoSuchElementException;
 import java.util.Set;
 
-import javax.transaction.Transactional;
 
-import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.stereotype.Service;
 
 import com.medkha.lol_notes.entities.Death;
-import com.medkha.lol_notes.entities.Game;
+import com.medkha.lol_notes.entities.DeathId;
+import com.medkha.lol_notes.exceptions.NoElementFoundException;
 import com.medkha.lol_notes.repositories.DeathRepository;
 import com.medkha.lol_notes.services.DeathService;
-import com.medkha.lol_notes.services.GameService;
 
 @Service
 public class DeathServiceImpl implements DeathService{
@@ -21,25 +21,35 @@ public class DeathServiceImpl implements DeathService{
 	@Autowired
 	private DeathRepository deathRepository;
 	
-	@Autowired
-	private GameService gameSerivce;
+	
 	
 	@Override
-	@Transactional
-	public Death createDeath(Death death) throws Exception {
-		return this.deathRepository.save(death); 
-	}
-
-	@Override
-	@Transactional
-	public Death updateDeath(Death death) throws Exception {
-		return null; 
-	}
-
-	@Override
-	@Transactional
-	public void deleteDeathById(Long id) throws Exception {
+	public Death createDeath(Death death){
+		try {
 		
+			return this.deathRepository.save(death);
+			
+		} catch (InvalidDataAccessApiUsageException | NullPointerException err) {
+			throw new IllegalArgumentException("Death Object is null and cannot be processed", err);
+		}
+	}
+
+	@Override
+	public Death updateDeath(Death death){
+		try {
+			
+			findById(death.getId());
+			return this.deathRepository.save(death); 
+			
+		} catch (InvalidDataAccessApiUsageException | NullPointerException err ) {
+			throw new IllegalArgumentException("Death Object is null and cannot be processed", err);
+		}
+	}
+
+	@Override
+	public void deleteDeathById(DeathId id){
+		findById(id); 
+		this.deathRepository.deleteById(id);
 	}
 
 	@Override
@@ -50,13 +60,16 @@ public class DeathServiceImpl implements DeathService{
 	}
 
 	@Override
-	public Death findById(Long id) {
-		return this.deathRepository.findById(id).orElse(null);
+	public Death findById(DeathId id) {
+		try { 
+			return this.deathRepository.findById(id).orElseThrow();
+		} catch (InvalidDataAccessApiUsageException | NullPointerException err ) {
+			throw new IllegalArgumentException("Death Object has null id, and cannot be processed", err);
+		} catch (NoSuchElementException err) { 
+			throw new NoElementFoundException("No Element of type Death with id " + id + " was found in the database.", err); 
+		}
 	}
 
-	@Override
-	public Boolean existsInDataBase(Long id) {
-		return id != null && findById(id) != null; 	
-	}
+
 
 }

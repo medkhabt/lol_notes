@@ -21,25 +21,23 @@ public class Death {
 	private int minute; 
 	
 	@ManyToOne(fetch = FetchType.LAZY)
+	@NotNull
 	@JoinColumn(name = "REASON_ID", nullable = false, updatable = false, insertable = false)
 	private Reason reasonOfDeath ;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
+	@NotNull
 	@JoinColumn(name = "GAME_ID", nullable = false, updatable = false, insertable = false)
 	private Game game; 
 	
 	protected Death() {}
 	
-	public Death(int minute, Game game) { 
-		this.minute = minute; 
-		this.game = game; 
-		this.reasonOfDeath = new Reason(); 
-	}
 	
 	public Death(int minute, Reason reasonOfDeath, Game game) {
 		this.minute = minute; 
 		this.reasonOfDeath = reasonOfDeath; 
-		this.game = game; 
+		this.game = game;
+		this.id = new DeathId(game.getId(), reasonOfDeath.getId()); 
 	}
 
 	public int getMinute() {
