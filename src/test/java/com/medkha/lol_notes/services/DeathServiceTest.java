@@ -1,5 +1,6 @@
 package com.medkha.lol_notes.services;
 
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
@@ -79,7 +80,7 @@ public class DeathServiceTest {
 	}
 	
 	@Test 
-	public void shouldReturnNoElementFoundException_When_idIsNotInDb_findById() { 
+	public void shouldThrowNoElementFoundException_When_idIsNotInDb_findById() { 
 		
 		DeathId id = new DeathId((long)1, (long)1);
 		
@@ -88,6 +89,83 @@ public class DeathServiceTest {
 			this.deathService.findById(id); 
 		});
 	}
+	
+	@Test 
+	public void shouldUpdateDeath() { 
+		Reason reason = new Reason("ganked"); 
+		Game game = new Game(Role.ADC, Champion.JINX); 
+		
+		Death death = new Death(10, reason, game);
+		
+		Death updatedDeath = new Death(13, reason, game); 
+		
+		when(this.deathRepository.findById(updatedDeath.getId())).thenReturn(Optional.of(death)); 
+		when(this.deathRepository.save(updatedDeath)).thenReturn(updatedDeath); 
+		
+		assertEquals(updatedDeath, this.deathService.updateDeath(updatedDeath)); 
+	}
+	
+	@Test 
+	public void shouldThrowIllegalArgumentException_When_DeathIsNullOdIdIsNull_updateDeath() { 
+		Reason reason = new Reason("ganked"); 
+		Game game = new Game(Role.ADC, Champion.JINX); 
+		
+		Death deathWithNullId = new Death(10, reason, game);
+		deathWithNullId.setId(null);
+		
+		when(this.deathRepository.findById(null)).thenThrow(InvalidDataAccessApiUsageException.class); 
+		
+		assertAll(
+				()  -> assertThrows(IllegalArgumentException.class, () -> {
+							this.deathService.updateDeath(null); 
+						}), 
+				() -> assertThrows(IllegalArgumentException.class, () -> {
+							this.deathService.updateDeath(deathWithNullId);
+						})
+				); 
+		
+	}
+	
+	@Test
+	public void shouldThrowNoElementFoundException_When_IdDoesntExistInDb_updateDeath() { 
+		Reason reason = new Reason("ganked"); 
+		Game game = new Game(Role.ADC, Champion.JINX); 
+		
+		Death death = new Death(10, reason, game);
+		
+		when(this.deathRepository.findById(death.getId())).thenReturn(Optional.empty()); 
+		
+		
+		assertThrows(NoElementFoundException.class, () -> {
+			this.deathService.updateDeath(death); 
+		}); 
+	}
+	
+	@Test 
+	public void shouldThrowIllegalArgumentException_When_IdIsNull_deleteDeathById() { 
+		
+		when(this.deathRepository.findById(null)).thenThrow(InvalidDataAccessApiUsageException.class); 
+		assertThrows(IllegalArgumentException.class, () -> {
+			this.deathService.deleteDeathById(null);
+		}); 
+		
+	}
+	
+	@Test
+	public void shouldThrowNoElementFoundException_When_idIsNotInDb_deleteDeathById() {
+		DeathId id = new DeathId((long)1, (long)1);
+		
+		when(this.deathRepository.findById(id)).thenReturn(Optional.empty()); 
+		assertThrows(NoElementFoundException.class, () -> {
+			this.deathService.deleteDeathById(id); 
+		});
+	}
+	
+	
+	
+	
+	
+	
 	
 	
 	

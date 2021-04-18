@@ -26,6 +26,7 @@ public class DeathServiceImpl implements DeathService{
 	@Override
 	public Death createDeath(Death death){
 		try {
+		
 			return this.deathRepository.save(death);
 			
 		} catch (InvalidDataAccessApiUsageException | NullPointerException err) {
@@ -35,12 +36,20 @@ public class DeathServiceImpl implements DeathService{
 
 	@Override
 	public Death updateDeath(Death death){
-		return null; 
+		try {
+			
+			findById(death.getId());
+			return this.deathRepository.save(death); 
+			
+		} catch (InvalidDataAccessApiUsageException | NullPointerException err ) {
+			throw new IllegalArgumentException("Death Object is null and cannot be processed", err);
+		}
 	}
 
 	@Override
 	public void deleteDeathById(DeathId id){
-		
+		findById(id); 
+		this.deathRepository.deleteById(id);
 	}
 
 	@Override
