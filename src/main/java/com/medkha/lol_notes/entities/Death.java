@@ -32,16 +32,12 @@ public class Death {
 	
 	protected Death() {}
 	
-	public Death(int minute, Game game) { 
-		this.minute = minute; 
-		this.game = game; 
-		this.reasonOfDeath = new Reason(); 
-	}
 	
 	public Death(int minute, Reason reasonOfDeath, Game game) {
 		this.minute = minute; 
 		this.reasonOfDeath = reasonOfDeath; 
-		this.game = game; 
+		this.game = game;
+		this.id = new DeathId(game.getId(), reasonOfDeath.getId()); 
 	}
 
 	public int getMinute() {

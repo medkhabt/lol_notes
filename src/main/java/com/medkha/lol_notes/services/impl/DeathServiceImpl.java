@@ -1,6 +1,7 @@
 package com.medkha.lol_notes.services.impl;
 
 import java.util.HashSet;
+import java.util.NoSuchElementException;
 import java.util.Set;
 
 
@@ -9,6 +10,8 @@ import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.stereotype.Service;
 
 import com.medkha.lol_notes.entities.Death;
+import com.medkha.lol_notes.entities.DeathId;
+import com.medkha.lol_notes.exceptions.NoElementFoundException;
 import com.medkha.lol_notes.repositories.DeathRepository;
 import com.medkha.lol_notes.services.DeathService;
 
@@ -26,7 +29,7 @@ public class DeathServiceImpl implements DeathService{
 			return this.deathRepository.save(death);
 			
 		} catch (InvalidDataAccessApiUsageException | NullPointerException err) {
-			throw new IllegalArgumentException("Reason Object is null and cannot be processed", err);
+			throw new IllegalArgumentException("Death Object is null and cannot be processed", err);
 		}
 	}
 
@@ -36,7 +39,7 @@ public class DeathServiceImpl implements DeathService{
 	}
 
 	@Override
-	public void deleteDeathById(Long id){
+	public void deleteDeathById(DeathId id){
 		
 	}
 
@@ -48,8 +51,14 @@ public class DeathServiceImpl implements DeathService{
 	}
 
 	@Override
-	public Death findById(Long id) {
-		return this.deathRepository.findById(id).orElse(null);
+	public Death findById(DeathId id) {
+		try { 
+			return this.deathRepository.findById(id).orElseThrow();
+		} catch (InvalidDataAccessApiUsageException | NullPointerException err ) {
+			throw new IllegalArgumentException("Death Object has null id, and cannot be processed", err);
+		} catch (NoSuchElementException err) { 
+			throw new NoElementFoundException("No Element of type Death with id " + id + " was found in the database.", err); 
+		}
 	}
 
 

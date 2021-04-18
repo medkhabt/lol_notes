@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
+import javax.validation.constraints.NotNull;
 
 @Embeddable
 public class DeathId implements Serializable{
@@ -13,9 +14,11 @@ public class DeathId implements Serializable{
 	 */
 	private static final long serialVersionUID = -5426551576647683564L;
 	
+	@NotNull
 	@Column(name = "GAME_ID")
 	protected Long gameId; 
 	
+	@NotNull
 	@Column(name = "REASON_ID")
 	protected Long reasonId; 
 	

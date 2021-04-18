@@ -50,9 +50,9 @@ public class DeathController {
 //		return this.deathService.updateDeath(death); 
 //	}
 	
-	@DeleteMapping("/{deathId}")
-	@ResponseStatus(HttpStatus.NO_CONTENT)
-	public void deleteDeath(@PathVariable("deathId") Long deathId) throws Exception {
-		this.deathService.deleteDeathById(deathId);
-	}
+//	@DeleteMapping("/{deathId}")
+//	@ResponseStatus(HttpStatus.NO_CONTENT)
+//	public void deleteDeath(@PathVariable("deathId") Long deathId) throws Exception {
+//		this.deathService.deleteDeathById(deathId);
+//	}
 }

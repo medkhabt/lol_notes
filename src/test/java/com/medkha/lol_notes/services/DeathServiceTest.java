@@ -4,6 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
+import java.util.Optional;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -14,9 +16,11 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import com.medkha.lol_notes.entities.Champion;
 import com.medkha.lol_notes.entities.Death;
+import com.medkha.lol_notes.entities.DeathId;
 import com.medkha.lol_notes.entities.Game;
 import com.medkha.lol_notes.entities.Reason;
 import com.medkha.lol_notes.entities.Role;
+import com.medkha.lol_notes.exceptions.NoElementFoundException;
 import com.medkha.lol_notes.repositories.DeathRepository;
 import com.medkha.lol_notes.services.impl.DeathServiceImpl;
 
@@ -51,4 +55,41 @@ public class DeathServiceTest {
 			this.deathService.createDeath(null); 
 		}); 
 	}
+	
+	@Test
+	public void shouldfindDeathById() { 
+	
+		Reason reason = new Reason("ganked"); 
+		Game game = new Game(Role.ADC, Champion.JINX); 
+		
+		Death death = new Death(10, reason, game);
+		
+		when(this.deathRepository.findById(death.getId())).thenReturn(Optional.of(death)); 
+		
+		assertEquals(death, this.deathService.findById(death.getId())); 
+	}
+	
+	@Test 
+	public void shouldThrowIllegalArgumentException_When_idIsNull_findById() { 
+		
+		when(this.deathRepository.findById(null)).thenThrow(InvalidDataAccessApiUsageException.class); 
+		assertThrows(IllegalArgumentException.class, () -> {
+			this.deathService.findById(null); 
+		}); 
+	}
+	
+	@Test 
+	public void shouldReturnNoElementFoundException_When_idIsNotInDb_findById() { 
+		
+		DeathId id = new DeathId((long)1, (long)1);
+		
+		when(this.deathRepository.findById(id)).thenReturn(Optional.empty()); 
+		assertThrows(NoElementFoundException.class, () -> {
+			this.deathService.findById(id); 
+		});
+	}
+	
+	
+	
+	
 }
