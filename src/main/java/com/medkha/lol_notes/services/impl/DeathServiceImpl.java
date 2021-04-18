@@ -3,17 +3,14 @@ package com.medkha.lol_notes.services.impl;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.transaction.Transactional;
 
-import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.stereotype.Service;
 
 import com.medkha.lol_notes.entities.Death;
-import com.medkha.lol_notes.entities.Game;
 import com.medkha.lol_notes.repositories.DeathRepository;
 import com.medkha.lol_notes.services.DeathService;
-import com.medkha.lol_notes.services.GameService;
 
 @Service
 public class DeathServiceImpl implements DeathService{
@@ -21,24 +18,25 @@ public class DeathServiceImpl implements DeathService{
 	@Autowired
 	private DeathRepository deathRepository;
 	
-	@Autowired
-	private GameService gameSerivce;
+	
 	
 	@Override
-	@Transactional
-	public Death createDeath(Death death) throws Exception {
-		return this.deathRepository.save(death); 
+	public Death createDeath(Death death){
+		try {
+			return this.deathRepository.save(death);
+			
+		} catch (InvalidDataAccessApiUsageException | NullPointerException err) {
+			throw new IllegalArgumentException("Reason Object is null and cannot be processed", err);
+		}
 	}
 
 	@Override
-	@Transactional
-	public Death updateDeath(Death death) throws Exception {
+	public Death updateDeath(Death death){
 		return null; 
 	}
 
 	@Override
-	@Transactional
-	public void deleteDeathById(Long id) throws Exception {
+	public void deleteDeathById(Long id){
 		
 	}
 
@@ -54,9 +52,6 @@ public class DeathServiceImpl implements DeathService{
 		return this.deathRepository.findById(id).orElse(null);
 	}
 
-	@Override
-	public Boolean existsInDataBase(Long id) {
-		return id != null && findById(id) != null; 	
-	}
+
 
 }

@@ -21,10 +21,12 @@ public class Death {
 	private int minute; 
 	
 	@ManyToOne(fetch = FetchType.LAZY)
+	@NotNull
 	@JoinColumn(name = "REASON_ID", nullable = false, updatable = false, insertable = false)
 	private Reason reasonOfDeath ;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
+	@NotNull
 	@JoinColumn(name = "GAME_ID", nullable = false, updatable = false, insertable = false)
 	private Game game; 
 	
