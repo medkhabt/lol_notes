@@ -1,35 +1,32 @@
 package com.medkha.lol_notes.entities;
 
 
+import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 
 
 @Entity
 public class Death {
 	
-	@Id
-	@GeneratedValue(generator = Constants.ID_GENERATOR)
-	private Long id; 
+	@EmbeddedId
+	private DeathId id; 
 	
 	@NotNull
 	private int minute; 
 	
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-	private @Valid Reason reasonOfDeath ;
+	@JoinColumn(name = "REASON_ID", nullable = false, updatable = false, insertable = false)
+	private Reason reasonOfDeath ;
 	
-	@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 	@ManyToOne(fetch = FetchType.LAZY)
-	private @Valid Game game; 
+	@JoinColumn(name = "GAME_ID", nullable = false, updatable = false, insertable = false)
+	private Game game; 
 	
 	protected Death() {}
 	
@@ -69,13 +66,12 @@ public class Death {
 		this.game = game;
 	}
 
-	public Long getId() {
+
+	public DeathId getId() {
 		return id;
 	}
-	
-	
 
-	public void setId(Long id) {
+	public void setId(DeathId id) {
 		this.id = id;
 	}
 
@@ -107,6 +103,13 @@ public class Death {
 			return false;
 		return true;
 	}
+
+	@Override
+	public String toString() {
+		return "Death [minute=" + minute + ", reasonOfDeath=" + reasonOfDeath.getId() + ", game=" + game.getId() + "]";
+	}
+
+	
 	
 	
 	

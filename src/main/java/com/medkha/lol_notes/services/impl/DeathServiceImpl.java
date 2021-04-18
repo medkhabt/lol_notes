@@ -27,66 +27,19 @@ public class DeathServiceImpl implements DeathService{
 	@Override
 	@Transactional
 	public Death createDeath(Death death) throws Exception {
-		Death tempDeath = death.copyDeath(); 
-		
-		
-		if(death.getId() == null) { 
-			
-			tempDeath.setGame(null);
-			tempDeath.setReasonOfDeath(null);	
-			tempDeath = this.deathRepository.save(tempDeath); 
-			
-			if(death.getGame().getId() != null) {
-				Game game = this.gameSerivce.findById(death.getGame().getId()); 
-				Hibernate.initialize(game.getDeaths());
-				game.addDeath(death);
-				tempDeath.setGame(game);
-				tempDeath.setReasonOfDeath(death.getReasonOfDeath());
-				this.gameSerivce.updateGame(game); 
-			}
-			
-			return this.deathRepository.save(tempDeath); 
-		}
-		else { 
-			throw new Exception("id is not null"); 
-		}
-		
-	
-		
-		
+		return this.deathRepository.save(death); 
 	}
 
 	@Override
 	@Transactional
 	public Death updateDeath(Death death) throws Exception {
-		if(existsInDataBase(death.getId())) {
-			Game game = this.gameSerivce.findById(death.getGame().getId()); 
-			Hibernate.initialize(game.getDeaths());
-			game.addDeath(death);
-			death.setGame(game);
-			this.gameSerivce.updateGame(death.getGame());
-			
-			return this.deathRepository.save(death); 
-		}
-		else { 
-			throw new Exception("Reason instance not existing ( " + death.toString() + " ).");
-		}
+		return null; 
 	}
 
 	@Override
 	@Transactional
 	public void deleteDeathById(Long id) throws Exception {
-		if(existsInDataBase(id)) { 
-			Death deathToDelete = findById(id);
-			Long idGame = deathToDelete.getGame().getId(); 
-			Game game = this.gameSerivce.findById(idGame); 
-			Hibernate.initialize(game.getDeaths());
-			this.gameSerivce.updateGame(game); 
-			game.removeDeath(deathToDelete);
-			
-			this.deathRepository.deleteById(id);
-			
-		}
+		
 	}
 
 	@Override
