@@ -21,23 +21,21 @@ public class Death {
 	private int minute; 
 	
 	@ManyToOne(fetch = FetchType.LAZY)
-	@NotNull
 	@JoinColumn(name = "REASON_ID", nullable = false, updatable = false, insertable = false)
-	private Reason reasonOfDeath ;
+	private Reason reason ;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
-	@NotNull
 	@JoinColumn(name = "GAME_ID", nullable = false, updatable = false, insertable = false)
 	private Game game; 
 	
 	protected Death() {}
 	
 	
-	public Death(int minute, Reason reasonOfDeath, Game game) {
+	public Death(int minute, Reason reason, Game game) {
 		this.minute = minute; 
-		this.reasonOfDeath = reasonOfDeath; 
+		this.reason = reason; 
 		this.game = game;
-		this.id = new DeathId(game.getId(), reasonOfDeath.getId()); 
+		this.id = new DeathId(game.getId(), reason.getId()); 
 	}
 
 	public int getMinute() {
@@ -48,12 +46,12 @@ public class Death {
 		this.minute = minute;
 	}
 
-	public Reason getReasonOfDeath() {
-		return reasonOfDeath;
+	public Reason getReason() {
+		return reason;
 	}
 
-	public void setReasonOfDeath(Reason reasonOfDeath) {
-		this.reasonOfDeath = reasonOfDeath;
+	public void setReason(Reason reason) {
+		this.reason = reason;
 	}
 
 	public Game getGame() {
@@ -74,7 +72,7 @@ public class Death {
 	}
 
 	public Death copyDeath() {
-		return new Death(this.minute, this.reasonOfDeath, this.game); 
+		return new Death(this.minute, this.reason, this.game); 
 	}
 
 	@Override
@@ -104,7 +102,7 @@ public class Death {
 
 	@Override
 	public String toString() {
-		return "Death [minute=" + minute + ", reasonOfDeath=" + reasonOfDeath.getId() + ", game=" + game.getId() + "]";
+		return "Death [minute=" + minute + ", reasonOfDeath=" + reason.getId() + ", game=" + game.getId() + "]";
 	}
 
 	

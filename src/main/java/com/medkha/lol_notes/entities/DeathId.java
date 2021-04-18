@@ -12,13 +12,15 @@ public class DeathId implements Serializable{
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = -5426551576647683564L;
+	private static final long serialVersionUID = 1L;
+
+	/**
+	 * 
+	 */
 	
-	@NotNull
 	@Column(name = "GAME_ID")
 	protected Long gameId; 
-	
-	@NotNull
+
 	@Column(name = "REASON_ID")
 	protected Long reasonId; 
 	
