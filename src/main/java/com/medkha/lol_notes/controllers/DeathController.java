@@ -32,23 +32,23 @@ public class DeathController {
 		return this.deathService.findAllDeaths(); 
 	}
 	
-	@GetMapping(value = "/{deathId}", produces = "application/json")
-	public Death getDeath(@PathVariable("deathId") Long deathId) {
-		return this.deathService.findById(deathId); 
-	}
+//	@GetMapping(value = "/{deathId}", produces = "application/json")
+//	public Death getDeath(@PathVariable("deathId") Long deathId) {
+//		return this.deathService.findById(deathId); 
+//	}
 	@PostMapping(consumes = "application/json")
 	@ResponseStatus(HttpStatus.CREATED)
 	public Death postDeath(@RequestBody Death death) throws Exception {
 		return this.deathService.createDeath(death); 
 	}
 	
-	@PutMapping(path = "/{deathId}", consumes = "application/json")
-	@ResponseStatus(HttpStatus.OK)
-	public Death putDeath(@PathVariable("deathId") Long deathId, 
-							@RequestBody Death death) throws Exception { 
-		death.setId(deathId);
-		return this.deathService.updateDeath(death); 
-	}
+//	@PutMapping(path = "/{deathId}", consumes = "application/json")
+//	@ResponseStatus(HttpStatus.OK)
+//	public Death putDeath(@PathVariable("deathId") Long deathId, 
+//							@RequestBody Death death) throws Exception { 
+//		death.setId(deathId);
+//		return this.deathService.updateDeath(death); 
+//	}
 	
 	@DeleteMapping("/{deathId}")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
