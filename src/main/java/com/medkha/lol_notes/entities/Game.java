@@ -42,6 +42,16 @@ public class Game {
 		this.champion = champion; 
 	}
 	
+	public static Game copy(Game game) { 
+		
+		Game copy = new Game(); 
+		copy.setId(game.getId());
+		copy.setChampion(game.getChampion());
+		copy.setRole(game.getRole());
+		
+		return copy; 
+	}
+	
 	
 	
 	

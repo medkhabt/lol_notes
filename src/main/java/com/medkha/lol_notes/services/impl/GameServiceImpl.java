@@ -1,12 +1,15 @@
 package com.medkha.lol_notes.services.impl;
 
 import java.util.HashSet;
+import java.util.NoSuchElementException;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.stereotype.Service;
 
 import com.medkha.lol_notes.entities.Game;
+import com.medkha.lol_notes.exceptions.NoElementFoundException;
 import com.medkha.lol_notes.repositories.GameRepository;
 import com.medkha.lol_notes.services.GameService;
 
@@ -18,30 +21,29 @@ public class GameServiceImpl implements GameService{
 
 	
 	@Override
-	public Game createGame(Game game) throws Exception {
-		if(game.getId() == null) { 
-			return this.gameRepository.save(game); 
-		} 
-		else { 
-			throw new Exception("Id is not null.");
+	public Game createGame(Game game){
+		try {
+			return this.gameRepository.save(game); 					
+		} catch (InvalidDataAccessApiUsageException | NullPointerException err) {
+			throw new IllegalArgumentException("Game Object is null and cannot be processed", err);
 		}
 	}
 
 	@Override
-	public Game updateGame(Game game) throws Exception {
-		if(existsInDataBase(game.getId())) {
+	public Game updateGame(Game game){
+		try {
+			findById(game.getId()); 
 			return this.gameRepository.save(game); 
-		}
-		else { 
-			throw new Exception("Game instance not existing ( " + game.toString() + " ).");
+	
+		} catch (InvalidDataAccessApiUsageException | NullPointerException err) {
+			throw new IllegalArgumentException("Game Object is null and cannot be processed", err);
 		}
 	}
 
 	@Override
 	public void deleteGame(Long id) {
-		if(existsInDataBase(id)) { 
-			this.gameRepository.deleteById(id);
-		}
+		findById(id); 
+		this.gameRepository.deleteById(id);
 	}
 
 	@Override
@@ -53,7 +55,13 @@ public class GameServiceImpl implements GameService{
 
 	@Override
 	public Game findById(Long id) {
-		return this.gameRepository.findById(id).orElse(null);
+		try {
+			return this.gameRepository.findById(id).orElseThrow();
+		} catch (InvalidDataAccessApiUsageException | NullPointerException err ) {
+			throw new IllegalArgumentException("Game Object has null id, and cannot be processed", err); 
+		} catch (NoSuchElementException err) { 
+			throw new NoElementFoundException("No Element of type Game with id " + id + " was found in the database.", err); 
+		}
 	}
 
 	@Override
