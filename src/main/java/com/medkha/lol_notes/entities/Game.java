@@ -34,7 +34,7 @@ public class Game {
 	private Champion champion; 
 	
 	
-	protected Game() { 
+	public Game() { 
 		
 	}
 	public Game(Role role, Champion champion) {

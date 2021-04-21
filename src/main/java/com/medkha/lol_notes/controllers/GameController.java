@@ -2,6 +2,8 @@ package com.medkha.lol_notes.controllers;
 
 import java.util.Set;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -38,14 +40,14 @@ public class GameController {
 	}
 	@PostMapping(consumes = "application/json")
 	@ResponseStatus(HttpStatus.CREATED)
-	public Game postGame(@RequestBody Game game) throws Exception {
+	public Game postGame(@Valid @RequestBody Game game) throws Exception {
 		return this.gameService.createGame(game); 
 	}
 	
 	@PutMapping(path = "/{gameId}", consumes = "application/json")
 	@ResponseStatus(HttpStatus.OK)
 	public Game putGame(@PathVariable("gameId") Long gameId, 
-							@RequestBody Game game) throws Exception { 
+						@Valid @RequestBody Game game) throws Exception { 
 		game.setId(gameId);
 		return this.gameService.updateGame(game); 
 	}
