@@ -6,8 +6,8 @@ import com.medkha.lol_notes.entities.Game;
 
 public interface GameService {
 	
-	public Game createGame(Game game) throws Exception;
-	public Game updateGame(Game game) throws Exception; 
+	public Game createGame(Game game);
+	public Game updateGame(Game game); 
 	public void deleteGame(Long id);
 	public Set<Game> findAllGames(); 
 	public Game findById(Long id); 

@@ -34,12 +34,22 @@ public class Game {
 	private Champion champion; 
 	
 	
-	protected Game() { 
+	public Game() { 
 		
 	}
 	public Game(Role role, Champion champion) {
 		this.role = role; 
 		this.champion = champion; 
+	}
+	
+	public static Game copy(Game game) { 
+		
+		Game copy = new Game(); 
+		copy.setId(game.getId());
+		copy.setChampion(game.getChampion());
+		copy.setRole(game.getRole());
+		
+		return copy; 
 	}
 	
 	
