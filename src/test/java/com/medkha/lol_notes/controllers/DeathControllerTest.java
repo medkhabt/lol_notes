@@ -1,6 +1,8 @@
 package com.medkha.lol_notes.controllers;
 
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import org.junit.jupiter.api.Test;
@@ -17,6 +19,7 @@ import com.medkha.lol_notes.entities.Death;
 import com.medkha.lol_notes.entities.Game;
 import com.medkha.lol_notes.entities.Reason;
 import com.medkha.lol_notes.entities.Role;
+import com.medkha.lol_notes.exceptions.NoElementFoundException;
 import com.medkha.lol_notes.services.DeathService;
 
 @ExtendWith(SpringExtension.class)
@@ -32,12 +35,17 @@ public class DeathControllerTest {
 	@Autowired 
 	private MockMvc mockMvc;
 	
+	public Death initDeath() {
+		Reason reason = new Reason("reason"); 
+		reason.setId((long)1);
+		Game game = new Game(Role.ADC, Champion.JINX);
+		game.setId((long)1);
+		return new Death(11, reason, game); 
+	}
 	@Test 
 	public void whenValidInput_ThenReturns201_CreateDeath() throws Exception {
-		Reason reason = new Reason("reason"); 
-		Game game = new Game(Role.ADC, Champion.JINX); 
-		
-		Death death = new Death(11, reason, game); 
+		 
+		Death death = initDeath(); 
 		
 		mockMvc.perform(post("/deaths")
 						.contentType("application/json")
@@ -46,9 +54,39 @@ public class DeathControllerTest {
 	}
 	
 	@Test
-	public void whenNullDeathDescription_thenReturns400_CreateReason() throws Exception { 
+	public void whenNullDeath_thenReturns400_CreateDeath() throws Exception { 
+		Death death = null;
+		
+		mockMvc.perform(post("/deaths")
+						.contentType("application/json")
+						.content(objectMapper.writeValueAsString(death)))
+				.andExpect(status().isBadRequest());
 		
 	}
 	
+	@Test
+	public void whenDeathIdIsntInDb_theReturn403_UpdateDeath() throws Exception{
+		Death death = initDeath(); 
+		
+		
+		when(this.deathService.updateDeath(death)).thenThrow(NoElementFoundException.class);
+		
+		mockMvc.perform(put("/deaths/{gameId}/{reasonId}", death.getId().getGameId(), death.getId().getReasonId())
+					.contentType("application/json")
+					.content(objectMapper.writeValueAsString(death)))
+				.andExpect(status().isForbidden());
+	}
+	
+	@Test
+	public void whenValidInput_ThenReturns200_UpdateDeath() throws Exception{ 
+		Death death = initDeath(); 
+		
+		when(this.deathService.updateDeath(death)).thenReturn(death); 
+		
+		mockMvc.perform(put("/deaths/{gameId}/{reasonId}", death.getId().getGameId(), death.getId().getReasonId()) 
+					.contentType("application/json")
+					.content(objectMapper.writeValueAsString(death)))
+				.andExpect(status().isOk());
+	}
 
 }

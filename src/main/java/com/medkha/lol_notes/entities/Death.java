@@ -6,7 +6,8 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.validation.constraints.NotNull;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 
 
@@ -17,15 +18,17 @@ public class Death {
 	@EmbeddedId
 	private DeathId id; 
 	
-	@NotNull
+	
 	private int minute; 
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "REASON_ID", nullable = false, updatable = false, insertable = false)
+	@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 	private Reason reason ;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "GAME_ID", nullable = false, updatable = false, insertable = false)
+	@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 	private Game game; 
 	
 	protected Death() {}
