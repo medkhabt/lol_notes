@@ -4,6 +4,7 @@ import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -50,5 +51,12 @@ public class DeathController {
 							@RequestBody Death death) {
 		death.setId(new DeathId(game_id, reason_id));
 		return this.deathService.updateDeath(death); 
+	}
+	
+	@DeleteMapping(value="/{gameId}/{reasonId}")
+	@ResponseStatus(HttpStatus.NO_CONTENT)
+	public void deleteDeath(@PathVariable("gameId") Long game_id, 
+							@PathVariable("reasonId") Long reason_id) { 
+		this.deathService.deleteDeathById(new DeathId(game_id, reason_id));
 	}
 }

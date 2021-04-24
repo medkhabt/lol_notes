@@ -1,7 +1,9 @@
 package com.medkha.lol_notes.controllers;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -94,7 +96,7 @@ public class DeathControllerTest {
 	}
 	
 	@Test 
-	public void whenDeathIdIsntDb_thenReturn403_getDeathById() throws Exception {
+	public void whenDeathIdIsntInDb_thenReturn403_getDeathById() throws Exception {
 		DeathId deathId = new DeathId((long)1, (long)1); 
 		
 		when(this.deathService.findById(deathId)).thenThrow(NoElementFoundException.class);
@@ -119,6 +121,25 @@ public class DeathControllerTest {
 		assertThat(actualResponseBody).isEqualToIgnoringWhitespace(
 						objectMapper.writeValueAsString(death)
 				); 
+	}
+	
+	@Test
+	public void whenDeathIdIsntInDb_thenReturn403_deleteById() throws Exception { 
+		Long gameId = (long) 1; 
+		Long reasonId = (long) 1; 
+		
+		doThrow(NoElementFoundException.class).when(this.deathService).deleteDeathById(new DeathId(gameId, reasonId));
+		
+		mockMvc.perform(delete("/deaths/{gameId}/{reasonId}", gameId, reasonId))
+		.andExpect(status().isForbidden());
+	}
+	
+	@Test 
+	public void whenValidInput_ThenReturn204_deleteById() throws Exception { 
+		Death death = initDeath(); 
+		
+		mockMvc.perform(delete("/deaths/{gameId}/{reasonId}", death.getId().getGameId(), death.getId().getReasonId()))
+				.andExpect(status().isNoContent()); 
 	}
 
 }
