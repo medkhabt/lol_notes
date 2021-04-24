@@ -1,6 +1,8 @@
 package com.medkha.lol_notes.controllers;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -12,10 +14,12 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.medkha.lol_notes.entities.Champion;
 import com.medkha.lol_notes.entities.Death;
+import com.medkha.lol_notes.entities.DeathId;
 import com.medkha.lol_notes.entities.Game;
 import com.medkha.lol_notes.entities.Reason;
 import com.medkha.lol_notes.entities.Role;
@@ -87,6 +91,34 @@ public class DeathControllerTest {
 					.contentType("application/json")
 					.content(objectMapper.writeValueAsString(death)))
 				.andExpect(status().isOk());
+	}
+	
+	@Test 
+	public void whenDeathIdIsntDb_thenReturn403_getDeathById() throws Exception {
+		DeathId deathId = new DeathId((long)1, (long)1); 
+		
+		when(this.deathService.findById(deathId)).thenThrow(NoElementFoundException.class);
+		
+		mockMvc.perform(get("/deaths/{gameId}/{reasonId}",deathId.getGameId(), deathId.getReasonId())
+					.contentType("application/json"))
+		   		.andExpect(status().isForbidden());
+	}
+	
+	@Test 
+	public void whenValidInput_ThenReturns200_getDeathById() throws Exception { 
+		Death death = initDeath(); 
+		
+		when(this.deathService.findById(death.getId())).thenReturn(death);
+		
+		MvcResult mvcResult = mockMvc.perform(get("/deaths/{gameId}/{reasonId}", death.getId().getGameId(), death.getId().getReasonId())
+					.contentType("application/json"))
+				.andExpect(status().isOk())
+				.andReturn(); 
+		String actualResponseBody = mvcResult.getResponse().getContentAsString();
+		
+		assertThat(actualResponseBody).isEqualToIgnoringWhitespace(
+						objectMapper.writeValueAsString(death)
+				); 
 	}
 
 }
