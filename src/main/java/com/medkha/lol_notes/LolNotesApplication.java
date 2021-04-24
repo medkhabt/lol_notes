@@ -14,8 +14,11 @@ import com.medkha.lol_notes.services.DeathService;
 import com.medkha.lol_notes.services.GameService;
 import com.medkha.lol_notes.services.ReasonService;
 
+import springfox.documentation.swagger2.annotations.EnableSwagger2;
+
 
 @SpringBootApplication
+@EnableSwagger2
 public class LolNotesApplication {
 
 	public static void main(String[] args) {
