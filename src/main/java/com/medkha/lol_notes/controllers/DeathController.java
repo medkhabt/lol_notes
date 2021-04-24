@@ -15,44 +15,48 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.medkha.lol_notes.entities.Death;
+import com.medkha.lol_notes.entities.DeathId;
 import com.medkha.lol_notes.services.DeathService;
 
 @RestController
-@RequestMapping(path="deaths",
-				produces="application/json")
+@RequestMapping("deaths")
 public class DeathController {
-	@Autowired
-	private DeathService deathService;
+	@Autowired 
+	private DeathService deathService ;
 	
-	public DeathController(DeathService deathService) {
-		this.deathService = deathService; 
-	}
-	@GetMapping(produces = "application/json")
-	public Set<Death> allDeaths(){
+	@GetMapping(produces="application/json")
+	@ResponseStatus(HttpStatus.OK)
+	public Set<Death> getAllDeaths(){
 		return this.deathService.findAllDeaths(); 
 	}
 	
-//	@GetMapping(value = "/{deathId}", produces = "application/json")
-//	public Death getDeath(@PathVariable("deathId") Long deathId) {
-//		return this.deathService.findById(deathId); 
-//	}
+	@GetMapping(value="/{gameId}/{reasonId}", produces="application/json")
+	@ResponseStatus(HttpStatus.OK)
+	public Death getDeathById(
+			@PathVariable("gameId") Long game_id,
+			@PathVariable("reasonId") Long reason_id) { 
+		return this.deathService.findById(new DeathId(game_id, reason_id)); 
+	}
+	
 	@PostMapping(consumes = "application/json")
 	@ResponseStatus(HttpStatus.CREATED)
-	public Death postDeath(@RequestBody Death death) throws Exception {
+	public Death postDeath(@RequestBody Death death) { 
 		return this.deathService.createDeath(death); 
 	}
 	
-//	@PutMapping(path = "/{deathId}", consumes = "application/json")
-//	@ResponseStatus(HttpStatus.OK)
-//	public Death putDeath(@PathVariable("deathId") Long deathId, 
-//							@RequestBody Death death) throws Exception { 
-//		death.setId(deathId);
-//		return this.deathService.updateDeath(death); 
-//	}
+	@PutMapping(value = "/{gameId}/{reasonId}", consumes = "application/json")
+	@ResponseStatus(HttpStatus.OK)
+	public Death putDeath(@PathVariable("gameId") Long game_id,
+							@PathVariable("reasonId") Long reason_id,
+							@RequestBody Death death) {
+		death.setId(new DeathId(game_id, reason_id));
+		return this.deathService.updateDeath(death); 
+	}
 	
-//	@DeleteMapping("/{deathId}")
-//	@ResponseStatus(HttpStatus.NO_CONTENT)
-//	public void deleteDeath(@PathVariable("deathId") Long deathId) throws Exception {
-//		this.deathService.deleteDeathById(deathId);
-//	}
+	@DeleteMapping(value="/{gameId}/{reasonId}")
+	@ResponseStatus(HttpStatus.NO_CONTENT)
+	public void deleteDeath(@PathVariable("gameId") Long game_id, 
+							@PathVariable("reasonId") Long reason_id) { 
+		this.deathService.deleteDeathById(new DeathId(game_id, reason_id));
+	}
 }
