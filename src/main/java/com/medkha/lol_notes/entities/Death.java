@@ -1,9 +1,10 @@
 package com.medkha.lol_notes.entities;
 
 
-import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
@@ -15,8 +16,9 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @Entity
 public class Death {
 	
-	@EmbeddedId
-	private DeathId id; 
+	@Id
+	@GeneratedValue(generator = Constants.ID_GENERATOR)
+	private Long id; 
 	
 	
 	private int minute; 
@@ -38,8 +40,19 @@ public class Death {
 		this.minute = minute; 
 		this.reason = reason; 
 		this.game = game;
-		this.id = new DeathId(game.getId(), reason.getId()); 
 	}
+
+	
+	
+	public Long getId() {
+		return id;
+	}
+
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
 
 	public int getMinute() {
 		return minute;
@@ -66,17 +79,18 @@ public class Death {
 	}
 
 
-	public DeathId getId() {
-		return id;
-	}
-
-	public void setId(DeathId id) {
-		this.id = id;
-	}
 
 	public Death copyDeath() {
 		return new Death(this.minute, this.reason, this.game); 
 	}
+
+
+
+	@Override
+	public String toString() {
+		return "Death [minute=" + minute + ", reasonOfDeath=" + reason.getId() + ", game=" + game.getId() + "]";
+	}
+
 
 	@Override
 	public int hashCode() {
@@ -85,6 +99,7 @@ public class Death {
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		return result;
 	}
+
 
 	@Override
 	public boolean equals(Object obj) {
@@ -101,11 +116,6 @@ public class Death {
 		} else if (!id.equals(other.id))
 			return false;
 		return true;
-	}
-
-	@Override
-	public String toString() {
-		return "Death [minute=" + minute + ", reasonOfDeath=" + reason.getId() + ", game=" + game.getId() + "]";
 	}
 
 	

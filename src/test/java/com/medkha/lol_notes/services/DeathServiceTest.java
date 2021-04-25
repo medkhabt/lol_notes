@@ -17,7 +17,6 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import com.medkha.lol_notes.entities.Champion;
 import com.medkha.lol_notes.entities.Death;
-import com.medkha.lol_notes.entities.DeathId;
 import com.medkha.lol_notes.entities.Game;
 import com.medkha.lol_notes.entities.Reason;
 import com.medkha.lol_notes.entities.Role;
@@ -82,7 +81,7 @@ public class DeathServiceTest {
 	@Test 
 	public void shouldThrowNoElementFoundException_When_idIsNotInDb_findById() { 
 		
-		DeathId id = new DeathId((long)1, (long)1);
+		Long id = (long)1; 
 		
 		when(this.deathRepository.findById(id)).thenReturn(Optional.empty()); 
 		assertThrows(NoElementFoundException.class, () -> {
@@ -153,7 +152,7 @@ public class DeathServiceTest {
 	
 	@Test
 	public void shouldThrowNoElementFoundException_When_idIsNotInDb_deleteDeathById() {
-		DeathId id = new DeathId((long)1, (long)1);
+		Long id = (long)1 ; 
 		
 		when(this.deathRepository.findById(id)).thenReturn(Optional.empty()); 
 		assertThrows(NoElementFoundException.class, () -> {
