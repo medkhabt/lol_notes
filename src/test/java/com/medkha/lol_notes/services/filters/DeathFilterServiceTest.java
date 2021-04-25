@@ -46,22 +46,40 @@ public class DeathFilterServiceTest {
 		
 		Reason reason = new Reason("out numbered"); 
 		reason.setId((long) 1);
-	
+		
+		Death death1 = new Death(10, reason, game1); 
+		death1.setId((long) 1);
+		
+		Death death2 = new Death(20, reason, game1); 
+		death2.setId((long) 2);
+		
+		Death death3 = new Death(30, reason, game1); 
+		death3.setId((long) 3);
+		
+		Death death4 = new Death(11, reason, game2); 
+		death4.setId((long) 4);
+		
+		Death death5 = new Death(25, reason, game2); 
+		death5.setId((long) 5);
+		
+		Death death6 = new Death(29, reason, game2); 
+		
 		Set<Death> deaths = Stream.of(
 				
-				new Death(10, reason, game1), 
-				new Death(20, reason, game1), 
-				new Death(30, reason, game1),
-				new Death(11, reason, game2),
-				new Death(25, reason, game2),
-				new Death(29, reason, game2)
+				death1, 
+				death2, 
+				death3,
+				death4,
+				death5,
+				death6
+				
 				
 		).collect(Collectors.toSet());
 		
 		when(this.gameService.findById(game1.getId())).thenReturn(game1); 
 		
 		when(this.deathRepository.findByGame(game1)).thenReturn(
-				deaths.stream().filter(death -> death.getGame().getId().equals(game1.getId())).collect(Collectors.toSet())
+				deaths.stream().filter(death -> death.getGame().equals(game1)).collect(Collectors.toSet())
 				); 
 		
 		assertEquals(3, this.deathFilterService.getDeathsByGame(game1.getId()).size()); 
