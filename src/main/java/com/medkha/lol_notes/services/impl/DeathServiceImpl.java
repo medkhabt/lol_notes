@@ -10,7 +10,6 @@ import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.stereotype.Service;
 
 import com.medkha.lol_notes.entities.Death;
-import com.medkha.lol_notes.entities.DeathId;
 import com.medkha.lol_notes.exceptions.NoElementFoundException;
 import com.medkha.lol_notes.repositories.DeathRepository;
 import com.medkha.lol_notes.services.DeathService;
@@ -47,7 +46,7 @@ public class DeathServiceImpl implements DeathService{
 	}
 
 	@Override
-	public void deleteDeathById(DeathId id){
+	public void deleteDeathById(Long id){
 		findById(id); 
 		this.deathRepository.deleteById(id);
 	}
@@ -60,7 +59,7 @@ public class DeathServiceImpl implements DeathService{
 	}
 
 	@Override
-	public Death findById(DeathId id) {
+	public Death findById(Long id) {
 		try { 
 			return this.deathRepository.findById(id).orElseThrow();
 		} catch (InvalidDataAccessApiUsageException | NullPointerException err ) {

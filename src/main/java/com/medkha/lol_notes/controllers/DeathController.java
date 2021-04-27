@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.medkha.lol_notes.entities.Death;
-import com.medkha.lol_notes.entities.DeathId;
 import com.medkha.lol_notes.services.DeathService;
 
 @RestController
@@ -30,12 +29,11 @@ public class DeathController {
 		return this.deathService.findAllDeaths(); 
 	}
 	
-	@GetMapping(value="/{gameId}/{reasonId}", produces="application/json")
+	@GetMapping(value="/{deathId}", produces="application/json")
 	@ResponseStatus(HttpStatus.OK)
 	public Death getDeathById(
-			@PathVariable("gameId") Long game_id,
-			@PathVariable("reasonId") Long reason_id) { 
-		return this.deathService.findById(new DeathId(game_id, reason_id)); 
+			@PathVariable("deathId") Long death_id) { 
+		return this.deathService.findById(death_id); 
 	}
 	
 	@PostMapping(consumes = "application/json")
@@ -44,19 +42,17 @@ public class DeathController {
 		return this.deathService.createDeath(death); 
 	}
 	
-	@PutMapping(value = "/{gameId}/{reasonId}", consumes = "application/json")
+	@PutMapping(value = "/{deathId}", consumes = "application/json")
 	@ResponseStatus(HttpStatus.OK)
-	public Death putDeath(@PathVariable("gameId") Long game_id,
-							@PathVariable("reasonId") Long reason_id,
+	public Death putDeath(@PathVariable("deathId") Long death_id,
 							@RequestBody Death death) {
-		death.setId(new DeathId(game_id, reason_id));
+		death.setId(death_id);
 		return this.deathService.updateDeath(death); 
 	}
 	
-	@DeleteMapping(value="/{gameId}/{reasonId}")
+	@DeleteMapping(value="/{deathId}")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
-	public void deleteDeath(@PathVariable("gameId") Long game_id, 
-							@PathVariable("reasonId") Long reason_id) { 
-		this.deathService.deleteDeathById(new DeathId(game_id, reason_id));
+	public void deleteDeath(@PathVariable("deathId") Long death_id) { 
+		this.deathService.deleteDeathById(death_id);
 	}
 }

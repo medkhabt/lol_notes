@@ -21,7 +21,6 @@ import org.springframework.test.web.servlet.MvcResult;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.medkha.lol_notes.entities.Champion;
 import com.medkha.lol_notes.entities.Death;
-import com.medkha.lol_notes.entities.DeathId;
 import com.medkha.lol_notes.entities.Game;
 import com.medkha.lol_notes.entities.Reason;
 import com.medkha.lol_notes.entities.Role;
@@ -46,7 +45,10 @@ public class DeathControllerTest {
 		reason.setId((long)1);
 		Game game = new Game(Role.ADC, Champion.JINX);
 		game.setId((long)1);
-		return new Death(11, reason, game); 
+		
+		Death death = new Death(11, reason, game); 
+		death.setId((long)1);
+		return death; 
 	}
 	@Test 
 	public void whenValidInput_ThenReturns201_CreateDeath() throws Exception {
@@ -77,7 +79,7 @@ public class DeathControllerTest {
 		
 		when(this.deathService.updateDeath(death)).thenThrow(NoElementFoundException.class);
 		
-		mockMvc.perform(put("/deaths/{gameId}/{reasonId}", death.getId().getGameId(), death.getId().getReasonId())
+		mockMvc.perform(put("/deaths/{deathId}", death.getId())
 					.contentType("application/json")
 					.content(objectMapper.writeValueAsString(death)))
 				.andExpect(status().isForbidden());
@@ -89,7 +91,7 @@ public class DeathControllerTest {
 		
 		when(this.deathService.updateDeath(death)).thenReturn(death); 
 		
-		mockMvc.perform(put("/deaths/{gameId}/{reasonId}", death.getId().getGameId(), death.getId().getReasonId()) 
+		mockMvc.perform(put("/deaths/{deathId}", death.getId()) 
 					.contentType("application/json")
 					.content(objectMapper.writeValueAsString(death)))
 				.andExpect(status().isOk());
@@ -97,11 +99,11 @@ public class DeathControllerTest {
 	
 	@Test 
 	public void whenDeathIdIsntInDb_thenReturn403_getDeathById() throws Exception {
-		DeathId deathId = new DeathId((long)1, (long)1); 
+		Long id = (long)1;  
 		
-		when(this.deathService.findById(deathId)).thenThrow(NoElementFoundException.class);
+		when(this.deathService.findById(id)).thenThrow(NoElementFoundException.class);
 		
-		mockMvc.perform(get("/deaths/{gameId}/{reasonId}",deathId.getGameId(), deathId.getReasonId())
+		mockMvc.perform(get("/deaths/{deathId}",id)
 					.contentType("application/json"))
 		   		.andExpect(status().isForbidden());
 	}
@@ -112,7 +114,7 @@ public class DeathControllerTest {
 		
 		when(this.deathService.findById(death.getId())).thenReturn(death);
 		
-		MvcResult mvcResult = mockMvc.perform(get("/deaths/{gameId}/{reasonId}", death.getId().getGameId(), death.getId().getReasonId())
+		MvcResult mvcResult = mockMvc.perform(get("/deaths/{deathId}", death.getId())
 					.contentType("application/json"))
 				.andExpect(status().isOk())
 				.andReturn(); 
@@ -125,12 +127,11 @@ public class DeathControllerTest {
 	
 	@Test
 	public void whenDeathIdIsntInDb_thenReturn403_deleteById() throws Exception { 
-		Long gameId = (long) 1; 
-		Long reasonId = (long) 1; 
+		Long id = (long) 1; 
 		
-		doThrow(NoElementFoundException.class).when(this.deathService).deleteDeathById(new DeathId(gameId, reasonId));
+		doThrow(NoElementFoundException.class).when(this.deathService).deleteDeathById(id);
 		
-		mockMvc.perform(delete("/deaths/{gameId}/{reasonId}", gameId, reasonId))
+		mockMvc.perform(delete("/deaths/{deathId}", id))
 		.andExpect(status().isForbidden());
 	}
 	
@@ -138,7 +139,7 @@ public class DeathControllerTest {
 	public void whenValidInput_ThenReturn204_deleteById() throws Exception { 
 		Death death = initDeath(); 
 		
-		mockMvc.perform(delete("/deaths/{gameId}/{reasonId}", death.getId().getGameId(), death.getId().getReasonId()))
+		mockMvc.perform(delete("/deaths/{deathId}", death.getId()))
 				.andExpect(status().isNoContent()); 
 	}
 
