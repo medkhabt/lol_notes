@@ -29,7 +29,7 @@ public class GameServiceImpl implements GameService{
 	public Game createGame(Game game){
 		try {
 			Game createdGame = this.gameRepository.save(game); 
-			log.info("createGame: Game with id: " + game.getId() + " created successfully.");
+			log.info("createGame: Game with id: " + createdGame.getId() + " created successfully.");
 			return createdGame;  				
 		} catch (InvalidDataAccessApiUsageException | NullPointerException err) {
 			log.error("createGame: Game Object is null and cannot be proceed");
@@ -45,7 +45,7 @@ public class GameServiceImpl implements GameService{
 			
 			Game updatedGame = this.gameRepository.save(game); 
 			
-			log.info("updateGame: Game with id: " + game.getId() + " was updated successfully.");
+			log.info("updateGame: Game with id: " + updatedGame.getId() + " was updated successfully.");
 			return updatedGame; 
 	
 		} catch (InvalidDataAccessApiUsageException | NullPointerException err) {
