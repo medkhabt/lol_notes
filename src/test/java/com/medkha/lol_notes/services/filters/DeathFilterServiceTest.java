@@ -1,8 +1,10 @@
 package com.medkha.lol_notes.services.filters;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
+import java.util.Collections;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -19,6 +21,7 @@ import com.medkha.lol_notes.entities.Death;
 import com.medkha.lol_notes.entities.Game;
 import com.medkha.lol_notes.entities.Reason;
 import com.medkha.lol_notes.entities.Role;
+import com.medkha.lol_notes.exceptions.NoElementFoundException;
 import com.medkha.lol_notes.repositories.DeathRepository;
 import com.medkha.lol_notes.services.GameService;
 import com.medkha.lol_notes.services.impl.filters.DeathFilterServiceImpl;
@@ -76,14 +79,38 @@ public class DeathFilterServiceTest {
 				
 		).collect(Collectors.toSet());
 		
-		when(this.gameService.findById(game1.getId())).thenReturn(game1); 
 		
 		when(this.deathRepository.findByGame(game1)).thenReturn(
 				deaths.stream().filter(death -> death.getGame().equals(game1)).collect(Collectors.toSet())
 				); 
 		
-		assertEquals(3, this.deathFilterService.getDeathsByGame(game1.getId()).size()); 
+		assertEquals(3, this.deathFilterService.getDeathsByGame(game1).size()); 
 		
+		
+	}
+	
+	@Test 
+	public void shouldThrowIllegalArgumentException_when_Game_isNull() { 
+		
+		Game nullGame = null ;
+		
+		
+		assertThrows(IllegalArgumentException.class, () -> {
+			deathFilterService.getDeathsByGame(nullGame); 
+		}); 
+		
+	}
+	
+	@Test
+	public void shouldThrowNoElementFoundException_when_NoDeathIsFoundForGame() { 
+		
+		Game game = new Game(Role.ADC, Champion.JINX); 
+		
+		when(deathRepository.findByGame(game)).thenReturn(Collections.emptySet()); 
+		
+		assertThrows(NoElementFoundException.class, () -> { 
+			deathFilterService.getDeathsByGame(game); 
+		}); 
 		
 	}
 }
