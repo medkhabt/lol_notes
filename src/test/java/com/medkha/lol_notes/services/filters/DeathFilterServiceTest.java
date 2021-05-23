@@ -76,13 +76,12 @@ public class DeathFilterServiceTest {
 				
 		).collect(Collectors.toSet());
 		
-		when(this.gameService.findById(game1.getId())).thenReturn(game1); 
 		
 		when(this.deathRepository.findByGame(game1)).thenReturn(
 				deaths.stream().filter(death -> death.getGame().equals(game1)).collect(Collectors.toSet())
 				); 
 		
-		assertEquals(3, this.deathFilterService.getDeathsByGame(game1.getId()).size()); 
+		assertEquals(3, this.deathFilterService.getDeathsByGame(game1).size()); 
 		
 		
 	}
