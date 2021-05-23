@@ -39,4 +39,11 @@ public class ExceptionHandlerController {
 	ErrorMessage noElementFoundExceptionExceptionHandler(NoElementFoundException err) { 
 		return new ErrorMessage("403", err.getMessage());
 	}
+	
+	@ResponseBody
+	@ResponseStatus(HttpStatus.BAD_REQUEST)
+	@ExceptionHandler(IllegalArgumentException.class)
+	ErrorMessage illegaleArgumenetExceptionExceptionHandler(IllegalArgumentException err) { 
+		return new ErrorMessage("400", err.getMessage());
+	}
 }
