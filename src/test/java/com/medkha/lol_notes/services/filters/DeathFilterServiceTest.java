@@ -163,4 +163,30 @@ public class DeathFilterServiceTest {
 		
 		assertEquals(4, this.deathFilterService.getDeathsByReason(reason1).size()); 
 	}
+	
+	@Test 
+	public void shouldThrowIllegalArgumentException_when_Reason_isNull() { 
+		
+		Reason nullReason = null ;
+		
+		
+		assertThrows(IllegalArgumentException.class, () -> {
+			deathFilterService.getDeathsByReason(nullReason); 
+		}); 
+		
+	}
+	
+	@Test
+	public void shouldThrowNoElementFoundException_when_NoDeathIsFoundByReason() { 
+		
+		Reason reason = new Reason("out numbered"); 
+		
+		when(deathRepository.findByReason(reason)).thenReturn(Collections.emptySet()); 
+		
+		assertThrows(NoElementFoundException.class, () -> { 
+			deathFilterService.getDeathsByReason(reason); 
+		}); 
+		
+	}
+	
 }
