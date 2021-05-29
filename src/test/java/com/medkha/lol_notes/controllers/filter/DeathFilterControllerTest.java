@@ -10,6 +10,7 @@ import java.util.stream.Stream;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -23,7 +24,9 @@ import com.medkha.lol_notes.entities.Game;
 import com.medkha.lol_notes.entities.Reason;
 import com.medkha.lol_notes.entities.Role;
 import com.medkha.lol_notes.exceptions.NoElementFoundException;
+import com.medkha.lol_notes.services.DeathService;
 import com.medkha.lol_notes.services.GameService;
+import com.medkha.lol_notes.services.ReasonService;
 import com.medkha.lol_notes.services.filters.DeathFilterService;
 
 @ExtendWith(SpringExtension.class)
@@ -36,11 +39,17 @@ public class DeathFilterControllerTest {
 	@MockBean 
 	private GameService gameService; 
 
+	@MockBean
+	private ReasonService reasonService;
+
+	@MockBean
+	private DeathService deathService;
 	
 	@Autowired 
 	private MockMvc mockMvc;
-	
-	
+
+
+
 	public Game initGame() { 
 		Game game = new Game(Role.ADC, Champion.JINX);
 		game.setId((long)1);
@@ -108,17 +117,40 @@ public class DeathFilterControllerTest {
 			.andExpect(status().isForbidden()); 
 		
 	}
-	
-	@Test 
-	public void whenDeathIdIsNull_ThenThrow400_GetDeathsByGame() throws Exception { 
-		
-		when(gameService.findById(null)).thenThrow(IllegalArgumentException.class); 
-		
+
+	@Test
+	public void whenValidInputAndDeathsExist_ThenReturn200_GetDeathsByReason() throws Exception {
+		Set<Death> deaths = initDeaths();
+
+		when(reasonService.findById((long) 1)).thenReturn(initReason());
+		when(deathFilterService.getDeathsByReason(initReason())).thenReturn(deaths);
+
 		mockMvc.perform(get("/deaths/filter")
-				.param("gameId", "")
+				.param("reasonId", "1")
 				.contentType("application/json")
-				)
-			.andExpect(status().isBadRequest()); 
+		)
+				.andExpect(status().isOk());
 	}
 
+	@Test
+	public void whenNoDeathWasFoundForReasonId_ThenReturn403_GetDeathsByReasons() throws Exception {
+		when(reasonService.findById((long) 1)).thenReturn(initReason());
+		when(deathFilterService.getDeathsByReason(initReason())).thenThrow(NoElementFoundException.class);
+
+		mockMvc.perform(get("/deaths/filter")
+				.param("reasonId", "1")
+				.contentType("application/json")
+		)
+				.andExpect(status().isForbidden());
+	}
+
+	@Test
+	public void  whenNoQueryParam_ThenReturn200_FindAllDeaths() throws Exception {
+		when(deathService.findAllDeaths()).thenReturn(initDeaths());
+		mockMvc.perform(get("/deaths/filter")
+				.contentType("application/json")
+		)
+				.andExpect(status().isOk());
+
+	}
 }
