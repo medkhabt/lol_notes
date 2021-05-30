@@ -22,7 +22,7 @@ public class DeathFilterServiceImpl implements DeathFilterService{
 	private static Logger log = LoggerFactory.getLogger(DeathFilterService.class); 
 	
 	@Autowired private DeathRepository deathRepository;
-	
+
 	
 	@Override
 	public Set<Death> getDeathsByGame(Game game) {
@@ -62,8 +62,12 @@ public class DeathFilterServiceImpl implements DeathFilterService{
 
 	@Override
 	public Predicate<Death> getDeathFilterByReasonPredicate(Reason reason) {
-		log.info("Enter getDeathFilterByReasonPredicate: Filter by Reason with id: {}", reason.getId());
+		if (reason == null) {
+			log.warn("getDeathFilterByReasonPredicate: Reason to filter with is null, this filter is neglected.");
+			return (Death death) -> true;
+		}
 		return (Death death) -> {
+			log.info("getDeathFilterByReasonPredicate: Filter by Reason with id: {}", reason.getId());
 			Boolean result = death.getReason().getId().equals(reason.getId());
 			log.info("Death with id: {} has Reason with id: {} equals Filter Reason with id:{} ? {} ",
 						death.getId(), death.getReason().getId(), reason.getId(), result);

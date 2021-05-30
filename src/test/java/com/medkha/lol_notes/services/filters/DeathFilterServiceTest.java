@@ -28,6 +28,7 @@ import com.medkha.lol_notes.entities.Role;
 import com.medkha.lol_notes.exceptions.NoElementFoundException;
 import com.medkha.lol_notes.repositories.DeathRepository;
 import com.medkha.lol_notes.services.GameService;
+import com.medkha.lol_notes.services.ReasonService;
 import com.medkha.lol_notes.services.impl.filters.DeathFilterServiceImpl;
 
 @ExtendWith(SpringExtension.class)
@@ -41,7 +42,10 @@ public class DeathFilterServiceTest {
 	private DeathRepository deathRepository ;
 	
 	@MockBean 
-	private GameService gameService; 
+	private GameService gameService;
+
+	@MockBean
+	private ReasonService reasonService;
 
 	@Test
 	public void shouldFilterDeathsByGame() { 
@@ -216,8 +220,11 @@ public class DeathFilterServiceTest {
 
 	}
 
-
-
+	@Test
+	public void shouldThrowIllegalArgument_When_ArgumentIsNull() {
+		Reason filterReason = null;
+		deathFilterService.getDeathFilterByReasonPredicate(filterReason);
+	}
 
 	@Test
 	public void shouldFilterDeathsByReason_getDeathsByFilter() {
