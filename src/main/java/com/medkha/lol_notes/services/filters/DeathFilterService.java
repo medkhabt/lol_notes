@@ -17,7 +17,8 @@ public interface DeathFilterService {
 	
 	public Set<Death> getDeathsByReason(Reason reason);
 
-	Predicate<Death> getDeathFilterByReasonPredicate(Reason reason1);
+	Predicate<Death> getDeathFilterByReasonPredicate(Reason reason);
+	Predicate<Death> getDeathFilterByGamePredicate(Game game);
 
 	Stream<Death> getDeathsByFilter(Stream<Death> deaths, Predicate<Death> deathFilterByReasonPredicate);
 }

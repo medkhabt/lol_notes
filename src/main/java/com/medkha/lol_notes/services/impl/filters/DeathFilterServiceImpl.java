@@ -76,6 +76,21 @@ public class DeathFilterServiceImpl implements DeathFilterService{
 	}
 
 	@Override
+	public Predicate<Death> getDeathFilterByGamePredicate(Game game) {
+		if (game == null) {
+			log.warn("getDeathFilterByGamePredicate: Game to filter with is null, this filter is neglected.");
+			return (Death death) -> true;
+		}
+		return (Death death) -> {
+			log.info("getDeathFilterByGamePredicate: Filter by Game with id: {}", game.getId());
+			Boolean result = death.getGame().getId().equals(game.getId());
+			log.info("Death with id: {} has Game with id: {} equals Filter Game with id:{} ? {} ",
+					death.getId(), death.getGame().getId(), game.getId(), result);
+			return result;
+		};
+	}
+
+	@Override
 	public Stream<Death> getDeathsByFilter(Stream<Death> deathsPredicate, Predicate<Death> deathFilterByReasonPredicate) {
 		return null;
 	}
