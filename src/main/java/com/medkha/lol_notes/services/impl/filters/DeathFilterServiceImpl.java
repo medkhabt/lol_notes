@@ -1,6 +1,8 @@
 package com.medkha.lol_notes.services.impl.filters;
 
 import java.util.Set;
+import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,6 +58,22 @@ public class DeathFilterServiceImpl implements DeathFilterService{
 		}
 		
 		return deathsByReason;
+	}
+
+	@Override
+	public Predicate<Death> getDeathFilterByReasonPredicate(Reason reason) {
+		log.info("Enter getDeathFilterByReasonPredicate: Filter by Reason with id: {}", reason.getId());
+		return (Death death) -> {
+			Boolean result = death.getReason().getId().equals(reason.getId());
+			log.info("Death with id: {} has Reason with id: {} equals Filter Reason with id:{} ? {} ",
+						death.getId(), death.getReason().getId(), reason.getId(), result);
+			return result;
+		};
+	}
+
+	@Override
+	public Stream<Death> getDeathsByFilter(Stream<Death> deathsPredicate, Predicate<Death> deathFilterByReasonPredicate) {
+		return null;
 	}
 
 }
