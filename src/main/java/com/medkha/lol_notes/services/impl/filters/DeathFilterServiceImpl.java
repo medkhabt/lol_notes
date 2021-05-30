@@ -91,8 +91,11 @@ public class DeathFilterServiceImpl implements DeathFilterService{
 	}
 
 	@Override
-	public Stream<Death> getDeathsByFilter(Stream<Death> deathsPredicate, Predicate<Death> deathFilterByReasonPredicate) {
-		return null;
+	public Stream<Death> getDeathsByFilter(Stream<Death> deaths, Predicate<Death> deathFilterByReasonPredicate) {
+		log.info("enter getDeathsByFilter: ");
+		deaths = deaths.filter(deathFilterByReasonPredicate);
+		log.info("getDeathsByFilter: filtered successfully.");
+		return deaths;
 	}
 
 }
