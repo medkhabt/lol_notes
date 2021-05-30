@@ -1,6 +1,8 @@
 package com.medkha.lol_notes.services.impl.filters;
 
 import java.util.Set;
+import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,7 +22,7 @@ public class DeathFilterServiceImpl implements DeathFilterService{
 	private static Logger log = LoggerFactory.getLogger(DeathFilterService.class); 
 	
 	@Autowired private DeathRepository deathRepository;
-	
+
 	
 	@Override
 	public Set<Death> getDeathsByGame(Game game) {
@@ -56,6 +58,44 @@ public class DeathFilterServiceImpl implements DeathFilterService{
 		}
 		
 		return deathsByReason;
+	}
+
+	@Override
+	public Predicate<Death> getDeathFilterByReasonPredicate(Reason reason) {
+		if (reason == null) {
+			log.warn("getDeathFilterByReasonPredicate: Reason to filter with is null, this filter is neglected.");
+			return (Death death) -> true;
+		}
+		return (Death death) -> {
+			log.info("getDeathFilterByReasonPredicate: Filter by Reason with id: {}", reason.getId());
+			Boolean result = death.getReason().getId().equals(reason.getId());
+			log.info("Death with id: {} has Reason with id: {} equals Filter Reason with id:{} ? {} ",
+						death.getId(), death.getReason().getId(), reason.getId(), result);
+			return result;
+		};
+	}
+
+	@Override
+	public Predicate<Death> getDeathFilterByGamePredicate(Game game) {
+		if (game == null) {
+			log.warn("getDeathFilterByGamePredicate: Game to filter with is null, this filter is neglected.");
+			return (Death death) -> true;
+		}
+		return (Death death) -> {
+			log.info("getDeathFilterByGamePredicate: Filter by Game with id: {}", game.getId());
+			Boolean result = death.getGame().getId().equals(game.getId());
+			log.info("Death with id: {} has Game with id: {} equals Filter Game with id:{} ? {} ",
+					death.getId(), death.getGame().getId(), game.getId(), result);
+			return result;
+		};
+	}
+
+	@Override
+	public Stream<Death> getDeathsByFilter(Stream<Death> deaths, Predicate<Death> deathFilterByReasonPredicate) {
+		log.info("enter getDeathsByFilter: ");
+		deaths = deaths.filter(deathFilterByReasonPredicate);
+		log.info("getDeathsByFilter: filtered successfully.");
+		return deaths;
 	}
 
 }
