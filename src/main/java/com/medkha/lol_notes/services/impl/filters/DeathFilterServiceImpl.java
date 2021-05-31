@@ -26,16 +26,20 @@ public class DeathFilterServiceImpl implements DeathFilterService{
 	
 	@Override
 	public Set<Death> getDeathsByGame(Game game) {
-		if(game == null) { 
+		if(game == null) {
+			log.error("getDeathsByGame: Game is null so can't proceed getting deaths in a game.");
 			throw new IllegalArgumentException("Game is null so can't proceed getting deaths in a game."); 
 		}
-		
+
 		Set<Death> deathsInGame  = this.deathRepository.findByGame(game);
-		
-		if(deathsInGame.isEmpty()) { 
-			throw new NoElementFoundException("No deaths found for game with id: " + game.getId()); 
+		if(deathsInGame.isEmpty()) {
+			log.error("getDeathsByGame: No deaths found by game with id: " + game.getId());
+			throw new NoElementFoundException("getDeathsByGame: No deaths found by game with id: " + game.getId());
 		}
-			return deathsInGame;
+		else {
+			log.info("getDeathsByGame: Found {} deaths by game with id {} successfully.", deathsInGame, game.getId());
+		}
+		return deathsInGame;
 
 	}
 
