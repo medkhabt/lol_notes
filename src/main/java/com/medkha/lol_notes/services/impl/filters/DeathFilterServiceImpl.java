@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import com.medkha.lol_notes.entities.Death;
 import com.medkha.lol_notes.entities.Game;
 import com.medkha.lol_notes.entities.Reason;
+import com.medkha.lol_notes.entities.interfaces.DeathFilterEntity;
 import com.medkha.lol_notes.exceptions.NoElementFoundException;
 import com.medkha.lol_notes.repositories.DeathRepository;
 import com.medkha.lol_notes.services.filters.DeathFilterService;
@@ -63,42 +64,20 @@ public class DeathFilterServiceImpl implements DeathFilterService{
 		
 		return deathsByReason;
 	}
-
-	@Override
-	public Predicate<Death> getDeathFilterByReasonPredicate(Reason reason) {
-		if (reason == null) {
-			log.warn("getDeathFilterByReasonPredicate: Reason to filter with is null, this filter is neglected.");
-			return (Death death) -> true;
-		}
-		return (Death death) -> {
-			log.info("getDeathFilterByReasonPredicate: Filter by Reason with id: {}", reason.getId());
-			Boolean result = death.getReason().getId().equals(reason.getId());
-			log.info("Death with id: {} has Reason with id: {} equals Filter Reason with id:{} ? {} ",
-						death.getId(), death.getReason().getId(), reason.getId(), result);
-			return result;
-		};
-	}
-
-	@Override
-	public Predicate<Death> getDeathFilterByGamePredicate(Game game) {
-		if (game == null) {
-			log.warn("getDeathFilterByGamePredicate: Game to filter with is null, this filter is neglected.");
-			return (Death death) -> true;
-		}
-		return (Death death) -> {
-			log.info("getDeathFilterByGamePredicate: Filter by Game with id: {}", game.getId());
-			Boolean result = death.getGame().getId().equals(game.getId());
-			log.info("Death with id: {} has Game with id: {} equals Filter Game with id:{} ? {} ",
-					death.getId(), death.getGame().getId(), game.getId(), result);
-			return result;
-		};
-	}
-
+	
 	@Override
 	public Stream<Death> getDeathsByFilter(Stream<Death> deaths, Predicate<Death> deathFilterByReasonPredicate) {
 		log.info("enter getDeathsByFilter: ");
 		deaths = deaths.filter(deathFilterByReasonPredicate);
 		log.info("getDeathsByFilter: filtered successfully.");
+		return deaths;
+	}
+
+	@Override
+	public Stream<Death> getDeathsByFilter(Stream<Death> deaths, DeathFilterEntity deathFilterEntity) {
+		log.info("enter getDeathsByFilter:");
+		Predicate<Death> predicate = deathFilterEntity.getPredicate();
+		deaths = deaths.filter(predicate);
 		return deaths;
 	}
 
