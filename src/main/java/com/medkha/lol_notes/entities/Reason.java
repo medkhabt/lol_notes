@@ -7,9 +7,11 @@ import javax.persistence.Id;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
+import com.medkha.lol_notes.entities.interfaces.DeathFilterEntity;
+
 
 @Entity
-public class Reason {
+public class Reason implements DeathFilterEntity {
 	
 	@Id
 	@GeneratedValue(generator = Constants.ID_GENERATOR)

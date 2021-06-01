@@ -12,9 +12,11 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 
+import com.medkha.lol_notes.entities.interfaces.DeathFilterEntity;
+
 
 @Entity
-public class Game {
+public class Game implements DeathFilterEntity {
 	
 	@Id
 	@GeneratedValue(generator = Constants.ID_GENERATOR)
