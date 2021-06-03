@@ -76,22 +76,7 @@ public class DeathFilterControllerTest {
 		return Stream.of(death, death1).collect(Collectors.toSet()); 
 	}
 	
-	@Test
-	public void whenValidInputAndDeathsExist_ThenReturn200_GetDeathsByGame() throws Exception { 
-		
-		Set<Death> deaths = initDeaths(); 
-		
-	
-		when(gameService.findById((long) 1)).thenReturn(initGame());
-		when(deathFilterService.getDeathsByGame(initGame())).thenReturn(deaths); 
-		
-		mockMvc.perform(get("/deaths/filter")
-					.param("gameId", "1")
-					.contentType("application/json")
-					)
-				.andExpect(status().isOk()); 
-	}
-	
+
 	@Test 
 	public void whenGameIdDoesntExistIndDb_ThenReturn403_GetDeathsByGame() throws Exception { 
 		
@@ -101,47 +86,6 @@ public class DeathFilterControllerTest {
 					.contentType("application/json")
 					)
 				.andExpect(status().isForbidden()); 
-	}
-	
-	
-	@Test 
-	public void whenNoDeathWasFoundForGameId_ThenReturn403_GetDeathsByGame() throws Exception { 
-		
-		when(gameService.findById((long) 1)).thenReturn(initGame()); 
-		when(deathFilterService.getDeathsByGame(initGame())).thenThrow(NoElementFoundException.class); 
-		
-		mockMvc.perform(get("/deaths/filter")
-				.param("gameId", "1")
-				.contentType("application/json")
-				)
-			.andExpect(status().isForbidden()); 
-		
-	}
-
-	@Test
-	public void whenValidInputAndDeathsExist_ThenReturn200_GetDeathsByReason() throws Exception {
-		Set<Death> deaths = initDeaths();
-
-		when(reasonService.findById((long) 1)).thenReturn(initReason());
-		when(deathFilterService.getDeathsByReason(initReason())).thenReturn(deaths);
-
-		mockMvc.perform(get("/deaths/filter")
-				.param("reasonId", "1")
-				.contentType("application/json")
-		)
-				.andExpect(status().isOk());
-	}
-
-	@Test
-	public void whenNoDeathWasFoundForReasonId_ThenReturn403_GetDeathsByReasons() throws Exception {
-		when(reasonService.findById((long) 1)).thenReturn(initReason());
-		when(deathFilterService.getDeathsByReason(initReason())).thenThrow(NoElementFoundException.class);
-
-		mockMvc.perform(get("/deaths/filter")
-				.param("reasonId", "1")
-				.contentType("application/json")
-		)
-				.andExpect(status().isForbidden());
 	}
 
 	@Test
