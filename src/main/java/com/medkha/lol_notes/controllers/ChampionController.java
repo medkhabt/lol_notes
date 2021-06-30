@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.medkha.lol_notes.dto.ChampionEssentielsDto;
 import com.medkha.lol_notes.entities.ChampionV2;
 import com.medkha.lol_notes.services.ChampionService;
 
@@ -22,13 +23,13 @@ public class ChampionController {
 
     @GetMapping(produces="application/json")
     @ResponseStatus(HttpStatus.OK)
-    public Set<ChampionV2> getAllChampions(){
+    public Set<ChampionEssentielsDto> getAllChampions(){
         return this.championService.getAllChampions();
     }
 
     @GetMapping(value="/name/{name}", produces="application/json")
     @ResponseStatus(HttpStatus.OK)
-    public ChampionV2 getChampionsByNameController(@PathVariable("name") String name){
+    public ChampionEssentielsDto getChampionsByNameController(@PathVariable("name") String name){
         return this.championService.getChampionByName(name);
     }
 }
