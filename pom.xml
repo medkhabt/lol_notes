@@ -75,6 +75,12 @@
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
         </dependency>
+		<dependency>
+			<groupId>com.merakianalytics.orianna</groupId>
+			<artifactId>orianna</artifactId>
+			<version>4.0.0-rc8</version>
+		</dependency>
+
     </dependencies>
 
 	<build>
