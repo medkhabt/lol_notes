@@ -21,9 +21,10 @@ public class GameServiceImpl implements GameService{
 	private static final Logger log = 
 			LoggerFactory.getLogger(GameServiceImpl.class); 
 
-	@Autowired 
-	private GameRepository gameRepository; 
-
+	private final GameRepository gameRepository;
+	public GameServiceImpl(GameRepository gameRepository) {
+		this.gameRepository = gameRepository;
+	}
 	
 	@Override
 	public Game createGame(Game game){
