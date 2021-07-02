@@ -34,7 +34,7 @@ public class GameServiceTest {
 	
 	@Test
 	public void shouldCreateGame() { 
-		Game game = new Game(Role.ADC, Champion.JINX); 
+		Game game = new Game(Role.ADC, 1);
 		Game resultat = Game.copy(game); 
 		resultat.setId((long)1);
 		
@@ -54,7 +54,7 @@ public class GameServiceTest {
 	
 	@Test 
 	public void shouldGetGameById() { 
-		Game existingGame = new Game(Role.MID, Champion.TRISTANA); 
+		Game existingGame = new Game(Role.MID, 1);
 		existingGame.setId((long)1);
 		when(this.gameRepositoryMock.findById(existingGame.getId())).thenReturn(Optional.of(existingGame)); 
 		assertEquals(existingGame, this.gameService.findById(existingGame.getId()));
@@ -83,11 +83,11 @@ public class GameServiceTest {
 	
 	@Test 
 	void shouldUpdateGame() { 
-		Game existingGame = new Game(Role.MID, Champion.TRISTANA);
+		Game existingGame = new Game(Role.MID, 1);
 		existingGame.setId((long)1);
 		
 		Game updatedGame = Game.copy(existingGame);
-		updatedGame.setChampion(Champion.MISSFORTUNE);
+		updatedGame.setChampionId(1);
 		
 		when(this.gameRepositoryMock.findById(updatedGame.getId())).thenReturn(Optional.of(existingGame)); 
 		when(this.gameRepositoryMock.save(updatedGame)).thenReturn(updatedGame); 
@@ -97,7 +97,7 @@ public class GameServiceTest {
 	@Test 
 	void shouldThrowIllegalArgumentException_When_GameIsNullOrGameIdIsNull_updateGame() { 
 		
-		Game game = new Game(Role.ADC, Champion.JINX); 
+		Game game = new Game(Role.ADC, 1);
 		
 		when(this.gameRepositoryMock.findById(null)).thenThrow(InvalidDataAccessApiUsageException.class); 
 		
@@ -115,7 +115,7 @@ public class GameServiceTest {
 	
 	@Test
 	void shouldThrowNoElementFoundException_When_IdDoesntExistInDb_updateGame() { 
-		Game updatedGame = new Game(Role.MID, Champion.TRISTANA);
+		Game updatedGame = new Game(Role.MID, 1);
 		updatedGame.setId((long)1);
 		
 		

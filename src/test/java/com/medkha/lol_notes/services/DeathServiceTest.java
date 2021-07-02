@@ -38,7 +38,7 @@ public class DeathServiceTest {
 	@Test
 	public void shouldcreateDeath() { 
 		Reason reason = new Reason("ganked"); 
-		Game game = new Game(Role.ADC, Champion.JINX); 
+		Game game = new Game(Role.ADC, 1);
 		
 		Death expectedResultdeath = new Death(10, reason, game); 
 		
@@ -61,7 +61,7 @@ public class DeathServiceTest {
 	public void shouldfindDeathById() { 
 	
 		Reason reason = new Reason("ganked"); 
-		Game game = new Game(Role.ADC, Champion.JINX); 
+		Game game = new Game(Role.ADC, 1);
 		
 		Death death = new Death(10, reason, game);
 		
@@ -93,7 +93,7 @@ public class DeathServiceTest {
 	@Test 
 	public void shouldUpdateDeath() { 
 		Reason reason = new Reason("ganked"); 
-		Game game = new Game(Role.ADC, Champion.JINX); 
+		Game game = new Game(Role.ADC, 1);
 		
 		Death death = new Death(10, reason, game);
 		
@@ -108,7 +108,7 @@ public class DeathServiceTest {
 	@Test 
 	public void shouldThrowIllegalArgumentException_When_DeathIsNullOdIdIsNull_updateDeath() { 
 		Reason reason = new Reason("ganked"); 
-		Game game = new Game(Role.ADC, Champion.JINX); 
+		Game game = new Game(Role.ADC, 1);
 		
 		Death deathWithNullId = new Death(10, reason, game);
 		deathWithNullId.setId(null);
@@ -129,7 +129,7 @@ public class DeathServiceTest {
 	@Test
 	public void shouldThrowNoElementFoundException_When_IdDoesntExistInDb_updateDeath() { 
 		Reason reason = new Reason("ganked"); 
-		Game game = new Game(Role.ADC, Champion.JINX); 
+		Game game = new Game(Role.ADC, 1);
 		
 		Death death = new Death(10, reason, game);
 		

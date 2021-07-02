@@ -4,6 +4,8 @@ import java.util.HashSet;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
+import javax.transaction.Transactional;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,12 +24,17 @@ public class GameServiceImpl implements GameService{
 			LoggerFactory.getLogger(GameServiceImpl.class); 
 
 	@Autowired 
-	private GameRepository gameRepository; 
+	private GameRepository gameRepository;
+
+	@Autowired
+	private ChampionServiceImpl championService;
 
 	
 	@Override
+	@Transactional
 	public Game createGame(Game game){
 		try {
+			championService.getChampionById(game.getChampionId());
 			Game createdGame = this.gameRepository.save(game); 
 			log.info("createGame: Game with id: " + createdGame.getId() + " created successfully.");
 			return createdGame;  				
@@ -41,8 +48,8 @@ public class GameServiceImpl implements GameService{
 	public Game updateGame(Game game){
 		try {
 			
-			findById(game.getId()); 
-			
+			findById(game.getId());
+			championService.getChampionById(game.getChampionId());
 			Game updatedGame = this.gameRepository.save(game); 
 			
 			log.info("updateGame: Game with id: " + updatedGame.getId() + " was updated successfully.");

@@ -40,10 +40,10 @@ public class DeathFilterServiceTest {
 
 	@Test
 	public void shouldFilterDeathsByReason_getDeathsByFilter() {
-		Game game1 = new Game(Role.ADC, Champion.JINX);
+		Game game1 = new Game(Role.ADC, 1);
 		game1.setId((long)1);
 
-		Game game2 = new Game(Role.ADC, Champion.KAISA);
+		Game game2 = new Game(Role.ADC, 1);
 		game2.setId((long)2);
 
 		Reason reason1 = new Reason("out numbered");

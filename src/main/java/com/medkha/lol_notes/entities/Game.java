@@ -38,23 +38,22 @@ public class Game implements DeathFilterEntity {
 	private Role role; 
 	
 	@NotNull
-	@Enumerated(EnumType.STRING)
-	private Champion champion; 
+	private Integer championId;
 	
 	
 	public Game() { 
 		
 	}
-	public Game(Role role, Champion champion) {
+	public Game(Role role, Integer championId) {
 		this.role = role; 
-		this.champion = champion; 
+		this.championId = championId;
 	}
 	
 	public static Game copy(Game game) { 
 		
 		Game copy = new Game(); 
 		copy.setId(game.getId());
-		copy.setChampion(game.getChampion());
+		copy.setChampionId(game.getChampionId());
 		copy.setRole(game.getRole());
 		
 		return copy; 
@@ -66,11 +65,11 @@ public class Game implements DeathFilterEntity {
 	public void setRole(Role role) {
 		this.role = role;
 	}
-	public Champion getChampion() {
-		return champion;
+	public Integer getChampionId() {
+		return championId;
 	}
-	public void setChampion(Champion champion) {
-		this.champion = champion;
+	public void setChampionId(Integer championId) {
+		this.championId = championId;
 	}
 	
 	public Long getId() {
@@ -87,7 +86,7 @@ public class Game implements DeathFilterEntity {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((champion == null) ? 0 : champion.hashCode());
+		result = prime * result + ((championId == null) ? 0 : championId.hashCode());
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		result = prime * result + ((role == null) ? 0 : role.hashCode());
 		return result;
@@ -101,7 +100,7 @@ public class Game implements DeathFilterEntity {
 		if (getClass() != obj.getClass())
 			return false;
 		Game other = (Game) obj;
-		if (champion != other.champion)
+		if (championId != other.championId)
 			return false;
 		if (id == null) {
 			if (other.id != null)

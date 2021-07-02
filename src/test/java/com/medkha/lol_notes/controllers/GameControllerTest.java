@@ -41,7 +41,7 @@ public class GameControllerTest {
 	
 	@Test 
 	public void whenValidInput_ThenReturns201_CreateGame() throws Exception { 
-		Game game = new Game(Role.ADC, Champion.JINX);  
+		Game game = new Game(Role.ADC, 1);
 		
 		mockMvc.perform(post("/games")
 				.contentType("application/json")
@@ -51,7 +51,7 @@ public class GameControllerTest {
 	
 	@Test
 	public void whenNullRoleOrChampion_thenReturns400_CreateGame() throws Exception { 
-		Game gameWithoutRole = new Game(null, Champion.KAISA);  
+		Game gameWithoutRole = new Game(null, 1);
 		Game gameWithoutChampion = new Game(Role.ADC, null); 
 		
 		mockMvc.perform(post("/games")
@@ -77,7 +77,7 @@ public class GameControllerTest {
 	
 	@Test
 	public void whenGameIdIsntInDb_theReturn403_UpdateReason() throws Exception{
-		Game game = new Game(Role.ADC, Champion.KAISA); 
+		Game game = new Game(Role.ADC, 1);
 		game.setId((long)1);
 		
 		when(this.gameService.updateGame(game)).thenThrow(NoElementFoundException.class);
@@ -90,7 +90,7 @@ public class GameControllerTest {
 	
 	@Test
 	public void whenRoleOrChampionIsNull_thenReturn400_UpdateReason() throws Exception { 
-		Game gameWithoutRole = new Game(null, Champion.KAISA);  
+		Game gameWithoutRole = new Game(null, 1);
 		gameWithoutRole.setId((long) 1);
 		Game gameWithoutChampion = new Game(Role.ADC, null); 
 		gameWithoutChampion.setId((long) 2);
@@ -108,7 +108,7 @@ public class GameControllerTest {
 	
 	@Test
 	public void whenValidInput_ThenReturns200_UpdateGame() throws Exception{ 
-		Game game = new Game(Role.ADC, Champion.KAISA); 
+		Game game = new Game(Role.ADC, 1);
 		game.setId((long)1);
 		
 		when(this.gameService.updateGame(game)).thenReturn(game); 
@@ -121,7 +121,7 @@ public class GameControllerTest {
 	
 	@Test
 	public void whenValidInput_ThenReturnsGame_FindById() throws Exception { 
-		Game game = new Game(Role.ADC, Champion.KAISA); 
+		Game game = new Game(Role.ADC, 1);
 		game.setId((long)1);
 		
 		when(this.gameService.findById(game.getId())).thenReturn(game); 

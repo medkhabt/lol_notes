@@ -1,11 +1,13 @@
 package com.medkha.lol_notes.services.impl;
 
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import com.medkha.lol_notes.dto.ChampionEssentielsDto;
@@ -25,6 +27,7 @@ public class ChampionServiceImpl implements ChampionService {
 
 
     @Override
+    @Cacheable("allChampions")
     public Set<ChampionEssentielsDto> getAllChampions() {
         return Champions.withRegion(Region.EUROPE_WEST).get().stream()
                 .map(
@@ -34,11 +37,29 @@ public class ChampionServiceImpl implements ChampionService {
 
     @Override
     public ChampionEssentielsDto getChampionByName(String name) {
-        Champion champion = Champion.named(name).withRegion(Region.EUROPE_WEST).get();
-        ChampionEssentielsDto result =  mapper.convert(champion, ChampionEssentielsDto.class);
-        if(result.getId() == 0) {
-            throw new NoElementFoundException("No Champion Found with name: " + name);
-        }
-        return result;
+        ChampionEssentielsDto championFoundByName = getAllChampions().stream()
+                .filter(champion -> champion.getName().equals(name))
+                .findAny()
+                .orElseThrow(() -> {
+                    log.error("getChampionByName: No Champion with name {} is found.", name);
+                    throw new NoElementFoundException("No Champion with name " + name + " is found.");
+                });
+
+        log.info("getChampionByName: Found {} successfully", championFoundByName.toString());
+        return championFoundByName;
+    }
+
+    @Override
+    public ChampionEssentielsDto getChampionById(Integer id) {
+        ChampionEssentielsDto championFoundById = getAllChampions().stream()
+                .filter(champion -> champion.getId() == id)
+                .findAny()
+                .orElseThrow(() -> {
+                    log.error("getChampionById: No Champion with id {} is found.", id);
+                    throw new NoElementFoundException("No Champion with id " + id + " is found.");
+                });
+
+        log.info("getChampionById: Found {} successfully", championFoundById.toString());
+        return championFoundById;
     }
 }

@@ -51,7 +51,7 @@ public class DeathFilterControllerTest {
 
 
 	public Game initGame() { 
-		Game game = new Game(Role.ADC, Champion.JINX);
+		Game game = new Game(Role.ADC, 1);
 		game.setId((long)1);
 		return game;  
 	}

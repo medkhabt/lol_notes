@@ -32,4 +32,11 @@ public class ChampionController {
     public ChampionEssentielsDto getChampionsByNameController(@PathVariable("name") String name){
         return this.championService.getChampionByName(name);
     }
+
+    @GetMapping(value="/id/{id}", produces="application/json")
+    @ResponseStatus(HttpStatus.OK)
+    public ChampionEssentielsDto getChampionsByIdController(@PathVariable("id") Integer id){
+        return this.championService.getChampionById(id);
+    }
+
 }
