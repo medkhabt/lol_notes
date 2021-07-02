@@ -21,8 +21,11 @@ public class ReasonServiceImpl implements ReasonService{
 	private static final Logger log = 
 			LoggerFactory.getLogger(ReasonServiceImpl.class); 
 	
-	@Autowired
-	private ReasonRepository reasonRepository; 
+	private final ReasonRepository reasonRepository;
+
+	public ReasonServiceImpl(ReasonRepository reasonRepository) {
+		this.reasonRepository = reasonRepository;
+	}
 
 	@Override
 	public Reason createReason(Reason reason){
