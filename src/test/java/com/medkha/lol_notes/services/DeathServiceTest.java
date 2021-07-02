@@ -3,10 +3,13 @@ package com.medkha.lol_notes.services;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.Optional;
 
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -29,19 +32,23 @@ import com.medkha.lol_notes.services.impl.DeathServiceImpl;
 @ExtendWith(MockitoExtension.class)
 public class DeathServiceTest {
 
-	@MockBean 
 	private DeathRepository deathRepository;
-	
-	@InjectMocks
-	private DeathServiceImpl deathService; 
+	private DeathService deathService;
+
+	@BeforeEach
+	public  void setupMock() {
+		deathRepository = mock(DeathRepository.class);
+		deathService = new DeathServiceImpl(deathRepository);
+	}
 	
 	@Test
 	public void shouldcreateDeath() { 
-		Reason reason = new Reason("ganked"); 
-		Game game = new Game(Role.ADC, 1);
+		Reason reason = new Reason("ganked");
+		Game game = new Game(10, "solo", "midlane");
+		game.setId((long)1);
 		
 		Death expectedResultdeath = new Death(10, reason, game); 
-		
+		expectedResultdeath.setId((long)1);
 		when(this.deathRepository.save(expectedResultdeath)).thenReturn(expectedResultdeath); 
 		
 		assertEquals(expectedResultdeath, this.deathService.createDeath(expectedResultdeath)); 
@@ -60,8 +67,9 @@ public class DeathServiceTest {
 	@Test
 	public void shouldfindDeathById() { 
 	
-		Reason reason = new Reason("ganked"); 
-		Game game = new Game(Role.ADC, 1);
+		Reason reason = new Reason("ganked");
+		Game game = new Game(10, "solo", "midlane");
+		game.setId((long)1);
 		
 		Death death = new Death(10, reason, game);
 		
@@ -92,8 +100,9 @@ public class DeathServiceTest {
 	
 	@Test 
 	public void shouldUpdateDeath() { 
-		Reason reason = new Reason("ganked"); 
-		Game game = new Game(Role.ADC, 1);
+		Reason reason = new Reason("ganked");
+		Game game = new Game(10, "solo", "midlane");
+		game.setId((long)1);
 		
 		Death death = new Death(10, reason, game);
 		
@@ -107,8 +116,9 @@ public class DeathServiceTest {
 	
 	@Test 
 	public void shouldThrowIllegalArgumentException_When_DeathIsNullOdIdIsNull_updateDeath() { 
-		Reason reason = new Reason("ganked"); 
-		Game game = new Game(Role.ADC, 1);
+		Reason reason = new Reason("ganked");
+		Game game = new Game(10, "solo", "midlane");
+		game.setId((long)1);
 		
 		Death deathWithNullId = new Death(10, reason, game);
 		deathWithNullId.setId(null);
@@ -128,8 +138,9 @@ public class DeathServiceTest {
 	
 	@Test
 	public void shouldThrowNoElementFoundException_When_IdDoesntExistInDb_updateDeath() { 
-		Reason reason = new Reason("ganked"); 
-		Game game = new Game(Role.ADC, 1);
+		Reason reason = new Reason("ganked");
+		Game game = new Game(10, "solo", "midlane");
+		game.setId((long)1);
 		
 		Death death = new Death(10, reason, game);
 		

@@ -22,8 +22,11 @@ import com.merakianalytics.orianna.types.core.staticdata.Champion;
 public class ChampionServiceImpl implements ChampionService {
     private static Logger log = LoggerFactory.getLogger(ChampionServiceImpl.class);
 
-    @Autowired
-    private MapperService mapper;
+    private final MapperService mapper;
+
+    public ChampionServiceImpl(MapperService mapper){
+        this.mapper = mapper;
+    }
 
 
     @Override

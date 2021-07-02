@@ -40,8 +40,9 @@ public class GameControllerTest {
 	MockMvc mockMvc;
 	
 	@Test 
-	public void whenValidInput_ThenReturns201_CreateGame() throws Exception { 
-		Game game = new Game(Role.ADC, 1);
+	public void whenValidInput_ThenReturns201_CreateGame() throws Exception {
+		Game game = new Game(10, "solo", "midlane");
+		game.setId((long)1);
 		
 		mockMvc.perform(post("/games")
 				.contentType("application/json")
@@ -50,13 +51,15 @@ public class GameControllerTest {
 	}
 	
 	@Test
-	public void whenNullRoleOrChampion_thenReturns400_CreateGame() throws Exception { 
-		Game gameWithoutRole = new Game(null, 1);
-		Game gameWithoutChampion = new Game(Role.ADC, null); 
+	public void whenNullRoleOrChampion_thenReturns400_CreateGame() throws Exception {
+		Game gameWithoutRoleOrLane = new Game(10, null, null);
+		gameWithoutRoleOrLane.setId((long)1);
+		Game gameWithoutChampion = new Game(null, "solo", "midlane");
+		gameWithoutChampion.setId((long)2);
 		
 		mockMvc.perform(post("/games")
 				.contentType("application/json")
-				.content(objectMapper.writeValueAsString(gameWithoutRole)))
+				.content(objectMapper.writeValueAsString(gameWithoutRoleOrLane)))
 			.andExpect(status().isBadRequest());
 		
 		mockMvc.perform(post("/games")
@@ -77,7 +80,7 @@ public class GameControllerTest {
 	
 	@Test
 	public void whenGameIdIsntInDb_theReturn403_UpdateReason() throws Exception{
-		Game game = new Game(Role.ADC, 1);
+		Game game = new Game(10, "solo", "midlane");
 		game.setId((long)1);
 		
 		when(this.gameService.updateGame(game)).thenThrow(NoElementFoundException.class);
@@ -89,15 +92,15 @@ public class GameControllerTest {
 	}
 	
 	@Test
-	public void whenRoleOrChampionIsNull_thenReturn400_UpdateReason() throws Exception { 
-		Game gameWithoutRole = new Game(null, 1);
-		gameWithoutRole.setId((long) 1);
-		Game gameWithoutChampion = new Game(Role.ADC, null); 
-		gameWithoutChampion.setId((long) 2);
+	public void whenRoleOrChampionIsNull_thenReturn400_UpdateReason() throws Exception {
+		Game gameWithoutRoleOrLane = new Game(10, null, null);
+		gameWithoutRoleOrLane.setId((long)1);
+		Game gameWithoutChampion = new Game(null, "solo", "midlane");
+		gameWithoutChampion.setId((long)2);
 		
-		mockMvc.perform(put("/games/{gameId}", gameWithoutRole.getId())
+		mockMvc.perform(put("/games/{gameId}", gameWithoutRoleOrLane.getId())
 				.contentType("application/json")
-				.content(objectMapper.writeValueAsString(gameWithoutRole)))
+				.content(objectMapper.writeValueAsString(gameWithoutRoleOrLane)))
 			.andExpect(status().isBadRequest());
 		
 		mockMvc.perform(put("/games/{gameId}", gameWithoutChampion.getId())
@@ -107,8 +110,8 @@ public class GameControllerTest {
 	}
 	
 	@Test
-	public void whenValidInput_ThenReturns200_UpdateGame() throws Exception{ 
-		Game game = new Game(Role.ADC, 1);
+	public void whenValidInput_ThenReturns200_UpdateGame() throws Exception{
+		Game game = new Game(10, "solo", "midlane");
 		game.setId((long)1);
 		
 		when(this.gameService.updateGame(game)).thenReturn(game); 
@@ -120,8 +123,8 @@ public class GameControllerTest {
 	}
 	
 	@Test
-	public void whenValidInput_ThenReturnsGame_FindById() throws Exception { 
-		Game game = new Game(Role.ADC, 1);
+	public void whenValidInput_ThenReturnsGame_FindById() throws Exception {
+		Game game = new Game(10, "solo", "midlane");
 		game.setId((long)1);
 		
 		when(this.gameService.findById(game.getId())).thenReturn(game); 

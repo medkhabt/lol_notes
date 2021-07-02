@@ -43,7 +43,7 @@ public class DeathControllerTest {
 	public Death initDeath() {
 		Reason reason = new Reason("reason"); 
 		reason.setId((long)1);
-		Game game = new Game(Role.ADC, 1);
+		Game game = new Game(10, "solo", "midlane");
 		game.setId((long)1);
 		
 		Death death = new Death(11, reason, game); 

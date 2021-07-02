@@ -50,8 +50,9 @@ public class DeathFilterControllerTest {
 
 
 
-	public Game initGame() { 
-		Game game = new Game(Role.ADC, 1);
+	public Game initGame() {
+		Game game = new Game(10, "solo", "midlane");
+		game.setId((long)1);
 		game.setId((long)1);
 		return game;  
 	}

@@ -3,13 +3,16 @@ package com.medkha.lol_notes.services;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.Optional;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
@@ -24,13 +27,15 @@ import com.medkha.lol_notes.services.impl.ReasonServiceImpl;
 @ExtendWith(MockitoExtension.class)
 public class ReasonServiceTest {
 
-	
-	
-	@MockBean
-	private ReasonRepository reasonRepositoryMock; 
-	
-	@InjectMocks 
-	private ReasonServiceImpl reasonService;
+	private ReasonRepository reasonRepositoryMock;
+	private ReasonService reasonService;
+
+	@BeforeEach
+	public void setupMock() {
+		reasonRepositoryMock = mock(ReasonRepository.class);
+		reasonService = new ReasonServiceImpl(reasonRepositoryMock);
+
+	}
 
 	@Test
 	public void shouldReturnIllegalArgumentException_When_ReasonIsNull_createReason() { 
@@ -53,9 +58,7 @@ public class ReasonServiceTest {
 	
 	@Test
 	public void shouldReturnIllegalArgumentException_When_ReasonIsNull_updateReason() { 
-		Reason nullIdReason = new Reason("null id"); 
-		
-		when(reasonRepositoryMock.save(null)).thenThrow(InvalidDataAccessApiUsageException.class); 
+		Reason nullIdReason = new Reason("null id");
 		when(reasonRepositoryMock.findById(null)).thenThrow(InvalidDataAccessApiUsageException.class);
 		
 		assertAll(
@@ -74,8 +77,7 @@ public class ReasonServiceTest {
 		Reason reasonNoInDb = new Reason("Reason not in db"); 
 		reasonNoInDb.setId((long)1);
 		
-		when(reasonRepositoryMock.save(reasonNoInDb)).thenReturn(reasonNoInDb); 
-		when(reasonRepositoryMock.findById(reasonNoInDb.getId())).thenReturn(Optional.empty()); 
+		when(reasonRepositoryMock.findById(reasonNoInDb.getId())).thenReturn(Optional.empty());
 		
 		assertThrows(NoElementFoundException.class, ()-> {
 			this.reasonService.updateReason(reasonNoInDb);
