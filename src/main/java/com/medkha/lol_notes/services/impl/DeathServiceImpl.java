@@ -19,9 +19,12 @@ import com.medkha.lol_notes.services.DeathService;
 @Service
 public class DeathServiceImpl implements DeathService{
 	private static Logger log = LoggerFactory.getLogger(DeathServiceImpl.class);
-	@Autowired
-	private DeathRepository deathRepository;
 
+	private final DeathRepository deathRepository;
+
+	public DeathServiceImpl(DeathRepository deathRepository) {
+		this.deathRepository = deathRepository;
+	}
 	@Override
 	public Death createDeath(Death death){
 		try {

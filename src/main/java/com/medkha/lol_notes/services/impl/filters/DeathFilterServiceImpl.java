@@ -17,7 +17,7 @@ import com.medkha.lol_notes.services.filters.DeathFilterService;
 public class DeathFilterServiceImpl implements DeathFilterService{
 	private static Logger log = LoggerFactory.getLogger(DeathFilterService.class); 
 
-	private DeathService deathService;
+	private final DeathService deathService;
 
 	public DeathFilterServiceImpl(DeathService deathService) {
 		this.deathService = deathService;
