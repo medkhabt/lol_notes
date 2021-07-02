@@ -4,6 +4,8 @@ import java.util.HashSet;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
+import javax.transaction.Transactional;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +15,9 @@ import org.springframework.stereotype.Service;
 import com.medkha.lol_notes.entities.Game;
 import com.medkha.lol_notes.exceptions.NoElementFoundException;
 import com.medkha.lol_notes.repositories.GameRepository;
+import com.medkha.lol_notes.services.ChampionService;
 import com.medkha.lol_notes.services.GameService;
+import com.medkha.lol_notes.services.RoleAndLaneService;
 
 @Service
 public class GameServiceImpl implements GameService{
@@ -21,14 +25,23 @@ public class GameServiceImpl implements GameService{
 	private static final Logger log = 
 			LoggerFactory.getLogger(GameServiceImpl.class); 
 
+	private final ChampionService championService;
 	private final GameRepository gameRepository;
-	public GameServiceImpl(GameRepository gameRepository) {
+	private final RoleAndLaneService roleAndLaneService;
+	public GameServiceImpl(GameRepository gameRepository, ChampionService championService, RoleAndLaneService roleAndLaneService) {
 		this.gameRepository = gameRepository;
+		this.championService = championService;
+		this.roleAndLaneService = roleAndLaneService;
 	}
+
 	
 	@Override
+	@Transactional
 	public Game createGame(Game game){
 		try {
+			championService.getChampionById(game.getChampionId());
+			isLaneExceptionHandler(game);
+			isRoleExceptionHandler(game);
 			Game createdGame = this.gameRepository.save(game); 
 			log.info("createGame: Game with id: " + createdGame.getId() + " created successfully.");
 			return createdGame;  				
@@ -38,12 +51,28 @@ public class GameServiceImpl implements GameService{
 		}
 	}
 
+	private void isRoleExceptionHandler(Game game) {
+		if(!roleAndLaneService.isLane(game.getLaneName())) {
+			log.error("isRoleExceptionHandler: No Lane with name {} was found.", game.getLaneName());
+			throw new NoElementFoundException("No Lane with name " + game.getLaneName() + " was found.");
+		}
+	}
+
+	private void isLaneExceptionHandler(Game game) {
+		if(!roleAndLaneService.isRole(game.getRoleName())) {
+			log.error("isLaneExceptionHandler: No Role with name {} was found.", game.getRoleName());
+			throw new NoElementFoundException("No Role with name " + game.getLaneName() + " was found.");
+		}
+	}
+
 	@Override
+	@Transactional
 	public Game updateGame(Game game){
 		try {
-			
-			findById(game.getId()); 
-			
+			findById(game.getId());
+			championService.getChampionById(game.getChampionId());
+			isRoleExceptionHandler(game);
+			isLaneExceptionHandler(game);
 			Game updatedGame = this.gameRepository.save(game); 
 			
 			log.info("updateGame: Game with id: " + updatedGame.getId() + " was updated successfully.");

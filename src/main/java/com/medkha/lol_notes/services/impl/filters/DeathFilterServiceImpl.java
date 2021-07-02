@@ -2,6 +2,7 @@ package com.medkha.lol_notes.services.impl.filters;
 
 import java.util.List;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import org.slf4j.Logger;
@@ -27,6 +28,7 @@ public class DeathFilterServiceImpl implements DeathFilterService{
 		// hmm doesn't feel quite right getting all Deaths from the db, this will cause performance issues in the future.
 		// At least i should get it a stream, so i can cap the result when i find what i wanted ( for example a page of 100
 		// result after the filters.
+		Supplier<Death> s;
 		log.info("enter getDeathsByFilter:");
 		Stream<Death> deaths = deathService.findAllDeaths().stream()
 										.filter(listDeathPredicate.stream().reduce(x->true, Predicate::and));
