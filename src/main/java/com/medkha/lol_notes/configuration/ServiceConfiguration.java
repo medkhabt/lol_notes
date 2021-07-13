@@ -22,8 +22,8 @@ import com.medkha.lol_notes.services.impl.ReasonServiceImpl;
 public class ServiceConfiguration {
 
     @Bean
-    public GameService gameService(GameRepository gameRepository, ChampionService championService, RoleAndLaneService roleAndLaneService) {
-        return new GameServiceImpl(gameRepository, championService, roleAndLaneService);
+    public GameService gameService(GameRepository gameRepository, ChampionService championService, RoleAndLaneService roleAndLaneService, MapperService mapperService) {
+        return new GameServiceImpl(gameRepository, championService, roleAndLaneService, mapperService);
     }
 
     @Bean

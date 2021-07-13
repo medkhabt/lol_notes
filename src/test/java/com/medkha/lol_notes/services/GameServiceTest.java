@@ -18,10 +18,12 @@ import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import com.medkha.lol_notes.dto.ChampionEssentielsDto;
+import com.medkha.lol_notes.dto.GameDTO;
 import com.medkha.lol_notes.entities.Champion;
 import com.medkha.lol_notes.entities.Game;
 import com.medkha.lol_notes.entities.Role;
 import com.medkha.lol_notes.exceptions.NoElementFoundException;
+import com.medkha.lol_notes.mapper.MapperService;
 import com.medkha.lol_notes.repositories.GameRepository;
 import com.medkha.lol_notes.services.impl.GameServiceImpl;
 
@@ -32,24 +34,29 @@ public class GameServiceTest {
 	private ChampionService championServiceMock;
 	private RoleAndLaneService roleAndLaneServiceMock;
 	private GameRepository gameRepositoryMock;
+	private MapperService mapperServiceMock;
 
 	@BeforeEach
 	public void setupMock(){
 		gameRepositoryMock = mock(GameRepository.class);
 		championServiceMock = mock(ChampionService.class);
 		roleAndLaneServiceMock = mock(RoleAndLaneService.class);
-		gameService = new GameServiceImpl(gameRepositoryMock, championServiceMock, roleAndLaneServiceMock);
+		mapperServiceMock = mock(MapperService.class);
+		gameService = new GameServiceImpl(gameRepositoryMock, championServiceMock, roleAndLaneServiceMock, mapperServiceMock);
 	}
 	@Test
 	public void shouldCreateGame() {
-		Game game = new Game(10, "solo", "midlane");
-		game.setId((long)1);
-		Game result = Game.copy(game);
-		result.setId((long)1);
+//		Game game = new Game(10, "solo", "midlane");
+		GameDTO gameDTO = mock(GameDTO.class);
+		when(gameDTO.getChampionId()).thenReturn(10);
+		GameDTO resultDTO = new GameDTO();
+		resultDTO.setId((long)1);
+		resultDTO.setChampionId(10);
 
-		ChampionEssentielsDto championGotById = new ChampionEssentielsDto(game.getChampionId(), "testChamp");
+
+		ChampionEssentielsDto championGotById = new ChampionEssentielsDto(gameDTO.getChampionId(), "testChamp");
 		
-		when(this.gameRepositoryMock.save(game)).thenReturn(result);
+		when(this.gameRepositoryMock.save(mapperServiceMock.convert(gameDTO, Game.class))).thenReturn(result);
 		when(this.championServiceMock.getChampionById(10)).thenReturn(championGotById);
 		when(this.roleAndLaneServiceMock.isLane(game.getLaneName())).thenReturn(true);
 		when(this.roleAndLaneServiceMock.isRole(game.getRoleName())).thenReturn(true);
@@ -94,20 +101,33 @@ public class GameServiceTest {
 	
 	@Test 
 	void shouldUpdateGame() {
-		Game existingGame = new Game(10, "solo", "midlane");
-		existingGame.setId((long)1);
-		
-		Game updatedGame = Game.copy(existingGame);
-		updatedGame.setChampionId(1);
+		GameDTO existingGameDTO = mock(GameDTO.class);
+		when(existingGameDTO.getId()).thenReturn((long)1);
+		when(existingGameDTO.getChampionId()).thenReturn(1);
 
-		ChampionEssentielsDto championGotById = new ChampionEssentielsDto(updatedGame.getChampionId(), "testChamp");
-		
-		when(this.gameRepositoryMock.findById(updatedGame.getId())).thenReturn(Optional.of(existingGame)); 
-		when(this.gameRepositoryMock.save(updatedGame)).thenReturn(updatedGame);
-		when(this.championServiceMock.getChampionById(1)).thenReturn(championGotById);
-		when(this.roleAndLaneServiceMock.isLane(updatedGame.getLaneName())).thenReturn(true);
-		when(this.roleAndLaneServiceMock.isRole(updatedGame.getRoleName())).thenReturn(true);
-		assertEquals(updatedGame, this.gameService.updateGame(updatedGame)); 
+		Game existingGameGotFromFound = mock(Game.class);
+		when(existingGameGotFromFound.getId()).thenReturn(existingGameDTO.getId());
+		when(existingGameGotFromFound.getChampionId()).thenReturn(existingGameDTO.getChampionId());
+
+		GameDTO updatedGameDTO = mock(GameDTO.class);
+		when(updatedGameDTO.getId()).thenReturn((long)1);
+		when(updatedGameDTO.getChampionId()).thenReturn(2);
+
+		ChampionEssentielsDto championGotByIdDTO = mock(ChampionEssentielsDto.class);
+		when(championGotByIdDTO.getId()).thenReturn(1);
+
+		Game gameMappedFromUpdatedGame = mock(Game.class);
+		when(gameMappedFromUpdatedGame.getId()).thenReturn(updatedGameDTO.getId());
+		when(gameMappedFromUpdatedGame.getChampionId()).thenReturn(updatedGameDTO.getChampionId());
+
+
+		when(mapperServiceMock.convert(updatedGameDTO, Game.class)).thenReturn(gameMappedFromUpdatedGame);
+		when(this.gameRepositoryMock.findById(updatedGameDTO.getId())).thenReturn(Optional.of(existingGameGotFromFound));
+		when(this.gameRepositoryMock.save(mapperServiceMock.convert(updatedGameDTO, Game.class))).thenReturn(gameMappedFromUpdatedGame);
+		when(this.championServiceMock.getChampionById(1)).thenReturn(championGotByIdDTO);
+		when(this.roleAndLaneServiceMock.isLane(updatedGameDTO.getLaneName())).thenReturn(true);
+		when(this.roleAndLaneServiceMock.isRole(updatedGameDTO.getRoleName())).thenReturn(true);
+		assertEquals(updatedGameDTO, this.gameService.updateGame(updatedGameDTO));
 	}
 	
 	@Test 

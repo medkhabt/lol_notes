@@ -21,9 +21,7 @@ import com.medkha.lol_notes.entities.interfaces.DeathFilterEntity;
 
 
 @Entity
-public class Game implements DeathFilterEntity {
-	private static Logger log = LoggerFactory.getLogger(Game.class);
-
+public class Game {
 	@Id
 	@GeneratedValue(generator = Constants.ID_GENERATOR)
 	private Long id; 
@@ -108,14 +106,4 @@ public class Game implements DeathFilterEntity {
 		return Objects.hash(id);
 	}
 
-	@Override
-	public Predicate<Death> getPredicate() {
-		return (Death death) -> {
-			log.info("getDeathFilterByGamePredicate: Filter by Game with id: {}", this.getId());
-			Boolean result = death.getGame().getId().equals(this.getId());
-			log.info("Death with id: {} has Game with id: {} equals Filter Game with id:{} ? {} ",
-					death.getId(), death.getGame().getId(), this.getId(), result);
-			return result;
-		};
-	}
 }

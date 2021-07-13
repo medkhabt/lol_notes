@@ -2,6 +2,7 @@ package com.medkha.lol_notes.controllers;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -19,6 +20,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.medkha.lol_notes.dto.GameDTO;
 import com.medkha.lol_notes.entities.Champion;
 import com.medkha.lol_notes.entities.Game;
 import com.medkha.lol_notes.entities.Role;
@@ -80,14 +82,15 @@ public class GameControllerTest {
 	
 	@Test
 	public void whenGameIdIsntInDb_theReturn403_UpdateReason() throws Exception{
-		Game game = new Game(10, "solo", "midlane");
-		game.setId((long)1);
+		GameDTO gameDTO = mock(GameDTO.class);
+		when(gameDTO.getId()).thenReturn((long)1);
+		when(gameDTO.getChampionId()).thenReturn(1);
+
+		when(this.gameService.updateGame(gameDTO)).thenThrow(NoElementFoundException.class);
 		
-		when(this.gameService.updateGame(game)).thenThrow(NoElementFoundException.class);
-		
-		mockMvc.perform(put("/games/{gameId}", game.getId())
+		mockMvc.perform(put("/games/{gameId}", gameDTO.getId())
 					.contentType("application/json")
-					.content(objectMapper.writeValueAsString(game)))
+					.content(objectMapper.writeValueAsString(gameDTO)))
 				.andExpect(status().isForbidden());
 	}
 	
@@ -111,23 +114,29 @@ public class GameControllerTest {
 	
 	@Test
 	public void whenValidInput_ThenReturns200_UpdateGame() throws Exception{
-		Game game = new Game(10, "solo", "midlane");
-		game.setId((long)1);
+		GameDTO gameDTO = mock(GameDTO.class);
+		gameDTO.setId((long)1);
+		gameDTO.setChampionId(10);
+		gameDTO.setLaneName("midlane");
+		gameDTO.setRoleName("solo");
+
+		when(this.gameService.updateGame(gameDTO)).thenReturn(gameDTO);
 		
-		when(this.gameService.updateGame(game)).thenReturn(game); 
-		
-		mockMvc.perform(put("/games/{gameId}", game.getId()) 
+		mockMvc.perform(put("/games/{gameId}", gameDTO.getId())
 					.contentType("application/json")
-					.content(objectMapper.writeValueAsString(game)))
+					.content(objectMapper.writeValueAsString(gameDTO)))
 				.andExpect(status().isOk());
 	}
 	
 	@Test
 	public void whenValidInput_ThenReturnsGame_FindById() throws Exception {
-		Game game = new Game(10, "solo", "midlane");
-		game.setId((long)1);
+		GameDTO gameDTO = mock(GameDTO.class);
+		gameDTO.setId((long)1);
+		gameDTO.setChampionId(10);
+		gameDTO.setLaneName("midlane");
+		gameDTO.setRoleName("solo");
 		
-		when(this.gameService.findById(game.getId())).thenReturn(game); 
+		when(this.gameService.findById(gameDTO.getId())).thenReturn(gameDTO);
 		MvcResult mvcResult = mockMvc.perform(get("/games/{gameId}", (long) 1))
 									.andReturn(); 
 		
@@ -136,7 +145,7 @@ public class GameControllerTest {
 		String actualResponseBody = mvcResult.getResponse().getContentAsString(); 
 		
 		assertThat(actualResponseBody).isEqualToIgnoringWhitespace(
-						objectMapper.writeValueAsString(game)
+						objectMapper.writeValueAsString(gameDTO)
 				);
 	}
 	

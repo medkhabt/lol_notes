@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.medkha.lol_notes.dto.GameDTO;
 import com.medkha.lol_notes.entities.Death;
 import com.medkha.lol_notes.entities.Game;
 import com.medkha.lol_notes.entities.Reason;
@@ -46,7 +47,7 @@ public class DeathFilterController {
 		List<Predicate<Death>> deathFilterPredicates = new ArrayList<>();
 
 		if(gameId.isPresent()) {
-			Game game = gameService.findById(gameId.get());
+			GameDTO game = gameService.findById(gameId.get());
 			deathFilterPredicates.add(game.getPredicate());
 		}
 		if(reasonId.isPresent()) {

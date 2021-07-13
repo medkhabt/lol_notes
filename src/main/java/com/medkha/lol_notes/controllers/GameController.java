@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.medkha.lol_notes.dto.GameDTO;
 import com.medkha.lol_notes.entities.Game;
 import com.medkha.lol_notes.services.GameService;
 
@@ -30,23 +31,23 @@ public class GameController {
 		this.gameService = gameService; 
 	}
 	@GetMapping(produces = "application/json")
-	public Set<Game> allGames(){
+	public Set<GameDTO> allGames(){
 		return this.gameService.findAllGames(); 
 	}
 	
 	@GetMapping(value = "/{gameId}", produces = "application/json")
-	public Game getGame(@PathVariable("gameId") Long gameId) {
+	public GameDTO getGame(@PathVariable("gameId") Long gameId) {
 		return this.gameService.findById(gameId); 
 	}
 	@PostMapping(consumes = "application/json")
 	@ResponseStatus(HttpStatus.CREATED)
-	public Game postGame(@Valid @RequestBody Game game) throws Exception {
+	public GameDTO postGame(@Valid @RequestBody Game game) throws Exception {
 		return this.gameService.createGame(game); 
 	}
 	
 	@PutMapping(path = "/{gameId}", consumes = "application/json")
 	@ResponseStatus(HttpStatus.OK)
-	public Game putGame(@PathVariable("gameId") Long gameId, 
+	public GameDTO putGame(@PathVariable("gameId") Long gameId,
 						@Valid @RequestBody Game game) throws Exception { 
 		game.setId(gameId);
 		return this.gameService.updateGame(game); 
