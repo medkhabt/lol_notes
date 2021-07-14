@@ -1,23 +1,14 @@
 package com.medkha.lol_notes.entities;
 
-import java.util.function.Predicate;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.medkha.lol_notes.entities.interfaces.DeathFilterEntity;
-
 
 @Entity
-public class Reason implements DeathFilterEntity {
-	private static Logger log = LoggerFactory.getLogger(Reason.class);
+public class Reason {
+
 
 	@Id
 	@GeneratedValue(generator = Constants.ID_GENERATOR)
@@ -83,15 +74,4 @@ public class Reason implements DeathFilterEntity {
 		return true;
 	}
 
-
-	@Override
-	public Predicate<Death> getPredicate() {
-		return (Death death) -> {
-			log.info("getDeathFilterByReasonPredicate: Filter by Reason with id: {}", this.getId());
-			Boolean result = death.getReason().getId().equals(this.getId());
-			log.info("Death with id: {} has Reason with id: {} equals Filter Reason with id:{} ? {} ",
-					death.getId(), death.getReason().getId(), this.getId(), result);
-			return result;
-		};
-	}
 }
