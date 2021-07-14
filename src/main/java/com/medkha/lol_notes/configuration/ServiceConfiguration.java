@@ -27,8 +27,8 @@ public class ServiceConfiguration {
     }
 
     @Bean
-    public ReasonService reasonService(ReasonRepository reasonRepository) {
-        return new ReasonServiceImpl(reasonRepository);
+    public ReasonService reasonService(ReasonRepository reasonRepository, MapperService mapperService) {
+        return new ReasonServiceImpl(reasonRepository, mapperService);
     }
 
     @Bean
