@@ -40,18 +40,18 @@ public class GameController {
 		return this.gameService.findById(gameId); 
 	}
 	@PostMapping(consumes = "application/json")
-	@ResponseStatus(HttpStatus.CREATED)
-	public GameDTO postGame(@Valid @RequestBody Game game) throws Exception {
-		return this.gameService.createGame(game); 
-	}
-	
-	@PutMapping(path = "/{gameId}", consumes = "application/json")
-	@ResponseStatus(HttpStatus.OK)
-	public GameDTO putGame(@PathVariable("gameId") Long gameId,
-						@Valid @RequestBody Game game) throws Exception { 
-		game.setId(gameId);
-		return this.gameService.updateGame(game); 
-	}
+//	@ResponseStatus(HttpStatus.CREATED)
+//	public GameDTO postGame(@Valid @RequestBody Game game) throws Exception {
+//		return this.gameService.createGame(game);
+//	}
+//
+//	@PutMapping(path = "/{gameId}", consumes = "application/json")
+//	@ResponseStatus(HttpStatus.OK)
+//	public GameDTO putGame(@PathVariable("gameId") Long gameId,
+//						@Valid @RequestBody Game game) throws Exception {
+//		game.setId(gameId);
+//		return this.gameService.updateGame(game);
+//	}
 	
 	@DeleteMapping("/{gameId}")
 	@ResponseStatus(HttpStatus.NO_CONTENT)

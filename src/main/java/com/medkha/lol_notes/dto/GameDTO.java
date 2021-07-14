@@ -1,6 +1,7 @@
 package com.medkha.lol_notes.dto;
 
 import java.util.Date;
+import java.util.Objects;
 import java.util.function.Predicate;
 
 import org.slf4j.Logger;
@@ -20,6 +21,16 @@ public class GameDTO implements DeathFilterEntity {
     private Integer championId;
 
     public GameDTO() {}
+
+    public static GameDTO copy(GameDTO gameToCopy) {
+        GameDTO game = new GameDTO();
+        game.setId(gameToCopy.getId());
+        game.setLaneName(gameToCopy.getLaneName());
+        game.setRoleName(gameToCopy.getRoleName());
+        game.setChampionId(gameToCopy.getChampionId());
+        game.setCreatedOn(gameToCopy.getCreatedOn());
+        return game;
+    }
 
     public Long getId() {
         return id;
@@ -70,5 +81,18 @@ public class GameDTO implements DeathFilterEntity {
                     death.getId(), death.getGame().getId(), this.getId(), result);
             return result;
         };
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        GameDTO gameDTO = (GameDTO) o;
+        return Objects.equals(id, gameDTO.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }
