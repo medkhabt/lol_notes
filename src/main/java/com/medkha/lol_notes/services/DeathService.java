@@ -2,13 +2,13 @@ package com.medkha.lol_notes.services;
 
 import java.util.Set;
 
-import com.medkha.lol_notes.entities.Death;
+import com.medkha.lol_notes.dto.DeathDTO;
 
 public interface DeathService {
-	public Death createDeath(Death death);
-	public Death updateDeath(Death death); 
+	public DeathDTO createDeath(DeathDTO death);
+	public DeathDTO updateDeath(DeathDTO death);
 	public void deleteDeathById(Long id); 
-	public Set<Death> findAllDeaths(); 
-	public Death findById(Long id);
+	public Set<DeathDTO> findAllDeaths();
+	public DeathDTO findById(Long id);
 
 }

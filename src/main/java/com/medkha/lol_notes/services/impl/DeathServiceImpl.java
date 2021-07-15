@@ -11,8 +11,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.stereotype.Service;
 
+import com.medkha.lol_notes.dto.DeathDTO;
 import com.medkha.lol_notes.entities.Death;
 import com.medkha.lol_notes.exceptions.NoElementFoundException;
+import com.medkha.lol_notes.mapper.MapperService;
 import com.medkha.lol_notes.repositories.DeathRepository;
 import com.medkha.lol_notes.services.DeathService;
 
@@ -21,16 +23,19 @@ public class DeathServiceImpl implements DeathService{
 	private static Logger log = LoggerFactory.getLogger(DeathServiceImpl.class);
 
 	private final DeathRepository deathRepository;
+	private final MapperService mapperService;
 
-	public DeathServiceImpl(DeathRepository deathRepository) {
+	public DeathServiceImpl(DeathRepository deathRepository, MapperService mapperService) {
 		this.deathRepository = deathRepository;
+		this.mapperService = mapperService;
 	}
 	@Override
-	public Death createDeath(Death death){
+	public DeathDTO createDeath(DeathDTO death){
 		try {
-			Death createdDeath = deathRepository.save(death);
+			Death createdDeath = deathRepository.save(mapperService.convert(death, Death.class));
+			DeathDTO convertedCreatedDeath = mapperService.convert(createdDeath, DeathDTO.class);
 			log.info("createDeath: Death with id: {} created successfully.", createdDeath.getId());
-			return this.deathRepository.save(death);
+			return convertedCreatedDeath;
 		} catch (InvalidDataAccessApiUsageException | NullPointerException err) {
 			log.error("createDeath: Death Object is null and cannot be proceed");
 			throw new IllegalArgumentException("Death Object is null and cannot be processed", err);
@@ -38,14 +43,13 @@ public class DeathServiceImpl implements DeathService{
 	}
 
 	@Override
-	public Death updateDeath(Death death){
+	public DeathDTO updateDeath(DeathDTO death){
 		try {
-			
 			findById(death.getId());
-			Death updatedDeath = deathRepository.save(death);
+			Death updatedDeath = deathRepository.save(mapperService.convert(death, Death.class));
+			DeathDTO convertedUpdatedDeath = mapperService.convert(updatedDeath, DeathDTO.class);
 			log.info("updateDeath: Death with id: {} updated successfully.", updatedDeath.getId());
-			return updatedDeath;
-			
+			return convertedUpdatedDeath;
 		} catch (InvalidDataAccessApiUsageException | NullPointerException err ) {
 			log.error("updateDeath: Death Object is null and cannot be proceed");
 			throw new IllegalArgumentException("Death Object is null and cannot be processed", err);
@@ -65,19 +69,20 @@ public class DeathServiceImpl implements DeathService{
 	}
 
 	@Override
-	public Set<Death> findAllDeaths() {
-		Set<Death> findallDeathsSet = new HashSet<>(); 
+	public Set<DeathDTO> findAllDeaths() {
+		Set<Death> findallDeathsSet = new HashSet<>();
 		this.deathRepository.findAll().forEach(findallDeathsSet::add);
 		log.info("findAllDeaths: {} deaths were found successfully.", findallDeathsSet.size());
-		return findallDeathsSet;
+		return mapperService.convertSet(findallDeathsSet, DeathDTO.class);
 	}
 
 	@Override
-	public Death findById(Long id) {
+	public DeathDTO findById(Long id) {
 		try {
 			Death foundDeath = deathRepository.findById(id).orElseThrow();
+			DeathDTO convertedFoundDeath = mapperService.convert(foundDeath, DeathDTO.class);
 			log.info("findById: Death with id: " + id + " was found successfully.");
-			return foundDeath;
+			return convertedFoundDeath;
 		} catch (InvalidDataAccessApiUsageException | NullPointerException err ) {
 			log.error("findById: Death Object has null id, and cannot be processed");
 			throw new IllegalArgumentException("Death Object has null id, and cannot be processed", err);

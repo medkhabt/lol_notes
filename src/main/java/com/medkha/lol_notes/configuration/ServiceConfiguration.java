@@ -32,8 +32,8 @@ public class ServiceConfiguration {
     }
 
     @Bean
-    public DeathService deathService(DeathRepository deathRepository) {
-        return new DeathServiceImpl(deathRepository);
+    public DeathService deathService(DeathRepository deathRepository, MapperService mapperService) {
+        return new DeathServiceImpl(deathRepository, mapperService);
     }
 
 
