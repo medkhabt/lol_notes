@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import com.medkha.lol_notes.dto.DeathDTO;
 import com.medkha.lol_notes.entities.Death;
 import com.medkha.lol_notes.services.DeathService;
 import com.medkha.lol_notes.services.filters.DeathFilterService;
@@ -24,16 +25,15 @@ public class DeathFilterServiceImpl implements DeathFilterService{
 	}
 // TODO : Refactor this.
 	@Override
-	public Stream<Death> getDeathsByFilter(List<Predicate<Death>> listDeathPredicate) {
+	public Stream<DeathDTO> getDeathsByFilter(List<Predicate<DeathDTO>> listDeathPredicate) {
 //		// hmm doesn't feel quite right getting all Deaths from the db, this will cause performance issues in the future.
 //		// At least i should get it a stream, so i can cap the result when i find what i wanted ( for example a page of 100
 //		// result after the filters.
-//		Supplier<Death> s;
-//		log.info("enter getDeathsByFilter:");
-//		Stream<Death> deaths = deathService.findAllDeaths().stream()
-//										.filter(listDeathPredicate.stream().reduce(x->true, Predicate::and));
-//		return deaths;
-		return null;
+		Supplier<Death> s;
+		log.info("enter getDeathsByFilter:");
+		Stream<DeathDTO> deaths = deathService.findAllDeaths().stream()
+										.filter(listDeathPredicate.stream().reduce(x->true, Predicate::and));
+		return deaths;
 	}
 
 }

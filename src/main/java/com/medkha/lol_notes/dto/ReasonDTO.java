@@ -7,11 +7,10 @@ import java.util.function.Predicate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.medkha.lol_notes.entities.Death;
+import com.medkha.lol_notes.dto.interfaces.DeathFilterOption;
 import com.medkha.lol_notes.entities.Reason;
-import com.medkha.lol_notes.entities.interfaces.DeathFilterEntity;
 
-public class ReasonDTO implements DeathFilterEntity {
+public class ReasonDTO implements DeathFilterOption {
     private static Logger log = LoggerFactory.getLogger(Reason.class);
     private Long id;
     private String description;
@@ -63,8 +62,8 @@ public class ReasonDTO implements DeathFilterEntity {
     }
 
     @Override
-    public Predicate<Death> getPredicate() {
-        return (Death death) -> {
+    public Predicate<DeathDTO> getPredicate() {
+        return (DeathDTO death) -> {
             log.info("getDeathFilterByReasonPredicate: Filter by Reason with id: {}", this.getId());
             Boolean result = death.getReason().getId().equals(this.getId());
             log.info("Death with id: {} has Reason with id: {} equals Filter Reason with id:{} ? {} ",

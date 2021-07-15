@@ -2,22 +2,14 @@ package com.medkha.lol_notes.entities;
 
 import java.util.Date;
 import java.util.Objects;
-import java.util.function.Predicate;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.medkha.lol_notes.entities.interfaces.DeathFilterEntity;
 
 
 @Entity
