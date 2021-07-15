@@ -5,22 +5,22 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import com.medkha.lol_notes.entities.Champion;
-import com.medkha.lol_notes.entities.Death;
-import com.medkha.lol_notes.entities.Game;
-import com.medkha.lol_notes.entities.Reason;
-import com.medkha.lol_notes.entities.Role;
+import com.medkha.lol_notes.dto.DeathDTO;
+import com.medkha.lol_notes.dto.GameDTO;
+import com.medkha.lol_notes.dto.ReasonDTO;
 import com.medkha.lol_notes.services.DeathService;
 import com.medkha.lol_notes.services.impl.filters.DeathFilterServiceImpl;
 
@@ -28,72 +28,90 @@ import com.medkha.lol_notes.services.impl.filters.DeathFilterServiceImpl;
 @ExtendWith(MockitoExtension.class)
 public class DeathFilterServiceTest {
 
-	private static DeathFilterServiceImpl deathFilterService;
-	private static DeathService deathService;
-// TODO : Refactor this
-//	@BeforeAll
-//	public static void init(){
-//		deathService = mock(DeathService.class);
-//		deathFilterService = new DeathFilterServiceImpl(deathService);
-//
-//	}
-//
-//	@Disabled("I'am refactoring the tests and this test turn didn't come yet.")
-//	@Test
-//	public void shouldFilterDeathsByReason_getDeathsByFilter() {
-//		Game game1 = new Game(10, "solo", "midlane");
-//		game1.setId((long)1);
-//
-//		Game game2 = new Game(15, "duo", "botlane");
-//		game2.setId((long)2);
-//
-//		Reason reason1 = new Reason("out numbered");
-//		reason1.setId((long) 1);
-//
-//		Reason reason2 = new Reason("out staying");
-//		reason2.setId((long) 2 );
-//
-//		Death death1 = new Death(10, reason1, game1);
-//		death1.setId((long) 1);
-//
-//		Death death2 = new Death(20, reason1, game1);
-//		death2.setId((long) 2);
-//
-//		Death death3 = new Death(30, reason1, game1);
-//		death3.setId((long) 3);
-//
-//		Death death4 = new Death(11, reason1, game2);
-//		death4.setId((long) 4);
-//
-//		Death death5 = new Death(25, reason2, game1);
-//		death5.setId((long) 5);
-//
-//		Death death6 = new Death(29, reason2, game1);
-//
-//		Set<Death> deaths = Stream.of(
-//				death1,
-//				death2,
-//				death3,
-//				death4,
-//				death5,
-//				death6
-//		).collect(Collectors.toSet());
-//
-//		when(deathService.findAllDeaths()).thenReturn(deaths);
-//		assertAll(
-//				() -> assertEquals(5,
-//						deathFilterService.getDeathsByFilter(
-//								Stream.of(game1.getPredicate()).collect(Collectors.toList())
-//						).count()),
-//				() -> assertEquals(4,
-//						deathFilterService.getDeathsByFilter(
-//								Stream.of(reason1.getPredicate()).collect(Collectors.toList())
-//						).count()),
-//				() -> assertEquals(3,
-//						deathFilterService.getDeathsByFilter(
-//								Stream.of(reason1.getPredicate(), game1.getPredicate()).collect(Collectors.toList())
-//						).count())
-//		);
-//	}
+	private DeathFilterServiceImpl deathFilterService;
+	private DeathService deathService;
 
+	@BeforeEach
+	public void init(){
+		this.deathService = mock(DeathService.class);
+		this.deathFilterService = new DeathFilterServiceImpl(deathService);
+	}
+
+	@Test
+	public void shouldFilterDeathsByReason_getDeathsByFilter() {
+		when(deathService.findAllDeaths()).thenReturn(listOfDeaths());
+		assertAll(
+				() -> assertEquals(2,
+						deathFilterService.getDeathsByFilter(
+								Stream.of(listGamesWithId().get(0).getPredicate()).collect(Collectors.toList())
+						).count()),
+				() -> assertEquals(2,
+						deathFilterService.getDeathsByFilter(
+								Stream.of(listReasonsWithId().get(0).getPredicate()).collect(Collectors.toList())
+						).count()),
+				() -> assertEquals(1,
+						deathFilterService.getDeathsByFilter(
+								Stream.of(listReasonsWithId().get(0).getPredicate(), listGamesWithId().get(0).getPredicate()).collect(Collectors.toList())
+						).count())
+		);
+	}
+
+	private Set<DeathDTO> listOfDeaths(){
+		DeathDTO death1 = new DeathDTO();
+		death1.setId((long)1);
+		death1.setMinute(1);
+		death1.setGame(GameDTO.copy(listGamesWithId().get(0)));
+		death1.setReason(ReasonDTO.copy(listReasonsWithId().get(0)));
+
+		DeathDTO death2 = new DeathDTO();
+		death2.setId((long)2);
+		death2.setMinute(2);
+		death2.setGame(GameDTO.copy(listGamesWithId().get(0)));
+		death2.setReason(ReasonDTO.copy(listReasonsWithId().get(1)));
+
+		DeathDTO death3 = new DeathDTO();
+		death3.setId((long)3);
+		death3.setMinute(3);
+		death3.setGame(GameDTO.copy(listGamesWithId().get(1)));
+		death3.setReason(ReasonDTO.copy(listReasonsWithId().get(1)));
+
+		DeathDTO death4 = new DeathDTO();
+		death4.setId((long)4);
+		death4.setMinute(4);
+		death4.setGame(GameDTO.copy(listGamesWithId().get(1)));
+		death4.setReason(ReasonDTO.copy(listReasonsWithId().get(0)));
+
+		Set<DeathDTO> listOfDeaths = Stream.of(death1, death2, death3, death4).collect(Collectors.toSet());
+		return new HashSet<>(listOfDeaths);
+	}
+
+	private List<GameDTO> listGamesWithId(){
+		GameDTO game1 = new GameDTO();
+		game1.setChampionId(10);
+		game1.setRoleName("SOLO");
+		game1.setLaneName("MIDLANE");
+		game1.setId((long) 1);
+
+		GameDTO game2 = new GameDTO();
+		game2.setChampionId(11);
+		game2.setRoleName("SOLO");
+		game2.setLaneName("TOPLANE");
+		game2.setId((long) 2);
+
+		List<GameDTO> listGamesWithId = Stream.of(game1, game2).collect(Collectors.toList());
+		return new ArrayList<>(listGamesWithId);
+	}
+
+	private List<ReasonDTO> listReasonsWithId(){
+		ReasonDTO reason1 = new ReasonDTO();
+		reason1.setId((long) 1);
+		reason1.setDescription("sample reason 1");
+
+		ReasonDTO reason2 = new ReasonDTO();
+		reason2.setId((long) 2);
+		reason2.setDescription("sample reason 2");
+
+		List<ReasonDTO> listReasonsWithId = Stream.of(reason1, reason2).collect(Collectors.toList());
+		return new ArrayList<>(listReasonsWithId);
+	}
 }
