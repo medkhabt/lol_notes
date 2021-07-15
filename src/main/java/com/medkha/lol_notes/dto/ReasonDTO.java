@@ -8,10 +8,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.medkha.lol_notes.dto.interfaces.DeathFilterOption;
-import com.medkha.lol_notes.entities.Reason;
 
 public class ReasonDTO implements DeathFilterOption {
-    private static Logger log = LoggerFactory.getLogger(Reason.class);
+    private static Logger log = LoggerFactory.getLogger(ReasonDTO.class);
     private Long id;
     private String description;
 
