@@ -54,6 +54,10 @@ public class ChampionServiceImpl implements ChampionService {
 
     @Override
     public ChampionEssentielsDto getChampionById(Integer id) {
+        if(id == null) {
+            log.error("getChampionById: id is null can't proceed.");
+            throw new IllegalArgumentException("id is null can't proceed.");
+        }
         ChampionEssentielsDto championFoundById = getAllChampions().stream()
                 .filter(champion -> champion.getId() == id)
                 .findAny()

@@ -105,7 +105,29 @@ public class GameServiceTest {
 			this.gameService.createGame(null); 
 		}); 
 	}
-	
+
+	@Test
+	void shouldThrowIllegalArgumentException_When_ChampionIdIsNull_createGame(){
+		GameDTO gameWithChampionId = sampleGameDTOWithoutId();
+		gameWithChampionId.setChampionId(null);
+		when(this.championServiceMock.getChampionById(null)).thenThrow(IllegalArgumentException.class);
+		assertThrows(IllegalArgumentException.class, () -> this.gameService.createGame(gameWithChampionId));
+	}
+
+	@Test
+	void shouldThrowIllegalArgumentException_When_RoleOrLaneIsNull_createGame(){
+		GameDTO gameWithoutRoleId = sampleGameDTOWithoutId();
+		gameWithoutRoleId.setRoleName(null);
+		GameDTO gameWithoutLaneId = sampleGameDTOWithoutId();
+		gameWithoutLaneId.setLaneName(null);
+
+		when(roleAndLaneServiceMock.isLane(gameWithoutRoleId.getLaneName())).thenReturn(true);
+		assertAll(
+				() -> assertThrows(IllegalArgumentException.class, () -> this.gameService.createGame(gameWithoutRoleId)),
+				() -> assertThrows(IllegalArgumentException.class, () -> this.gameService.createGame(gameWithoutLaneId))
+		);
+	}
+
 	@Test 
 	public void shouldGetGameById() {
 		when(this.gameRepositoryMock.findById(sampleGameDTOWithId().getId())).thenReturn(Optional.of(sampleGameWithId()));
@@ -174,6 +196,26 @@ public class GameServiceTest {
 			this.gameService.updateGame(sampleGameDTOWithId());
 		});
 	}
+	@Test
+	void shouldThrowIllegalArgumentException_When_ChampionIdIsNull_updateGame(){
+		GameDTO gameWithChampionId = sampleGameDTOWithId();
+		gameWithChampionId.setChampionId(null);
+		when(this.championServiceMock.getChampionById(null)).thenThrow(IllegalArgumentException.class);
+		assertThrows(IllegalArgumentException.class, () -> this.gameService.createGame(gameWithChampionId));
+	}
+	@Test
+	void shouldThrowIllegalArgumentException_When_RoleOrLaneIsNull_updateGame(){
+		GameDTO gameWithoutRoleId = sampleGameDTOWithId();
+		gameWithoutRoleId.setRoleName(null);
+		GameDTO gameWithoutLaneId = sampleGameDTOWithId();
+		gameWithoutLaneId.setLaneName(null);
+
+		when(roleAndLaneServiceMock.isLane(gameWithoutRoleId.getLaneName())).thenReturn(true);
+		assertAll(
+				() -> assertThrows(IllegalArgumentException.class, () -> this.gameService.createGame(gameWithoutRoleId)),
+				() -> assertThrows(IllegalArgumentException.class, () -> this.gameService.createGame(gameWithoutLaneId))
+		);
+	}
 
 	@Test
 	void shouldThrowNoElementFoundException_When_IdDoesntExistInDb_deleteGame() { 
@@ -190,7 +232,5 @@ public class GameServiceTest {
 			this.gameService.deleteGame(null);
 		}); 
 	}
-	
-	 
-	
+
 }

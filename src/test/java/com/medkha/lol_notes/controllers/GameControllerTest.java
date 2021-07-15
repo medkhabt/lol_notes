@@ -43,141 +43,123 @@ public class GameControllerTest {
 	
 	@Test 
 	public void whenValidInput_ThenReturns201_CreateGame() throws Exception {
-		Game game = new Game(10, "solo", "midlane");
-		game.setId((long)1);
-		
 		mockMvc.perform(post("/games")
 				.contentType("application/json")
-				.content(objectMapper.writeValueAsString(game)))
+				.content(objectMapper.writeValueAsString(sampleGameDTOWithId())))
 			.andExpect(status().isCreated()); 
 	}
 	
 	@Test
 	public void whenNullRoleOrChampion_thenReturns400_CreateGame() throws Exception {
-		Game gameWithoutRoleOrLane = new Game(10, null, null);
-		gameWithoutRoleOrLane.setId((long)1);
-		Game gameWithoutChampion = new Game(null, "solo", "midlane");
-		gameWithoutChampion.setId((long)2);
-		
+		when(this.gameService.createGame(sampleGameDTOWithoutRoleAndLane())).thenThrow(IllegalArgumentException.class);
 		mockMvc.perform(post("/games")
 				.contentType("application/json")
-				.content(objectMapper.writeValueAsString(gameWithoutRoleOrLane)))
+				.content(objectMapper.writeValueAsString(sampleGameDTOWithoutRoleAndLane())))
 			.andExpect(status().isBadRequest());
-		
+
+		when(this.gameService.createGame(sampleGameDTOWithoutChampion())).thenThrow(IllegalArgumentException.class);
 		mockMvc.perform(post("/games")
 				.contentType("application/json")
-				.content(objectMapper.writeValueAsString(gameWithoutChampion)))
+				.content(objectMapper.writeValueAsString(sampleGameDTOWithoutChampion())))
 			.andExpect(status().isBadRequest());
 	}
 	
 	@Test
 	public void whenNullGame_thenReturn400_CreateGame() throws Exception { 
-		Game game = null ;
-		
 		mockMvc.perform(post("/games")
 				.contentType("application/json")
-				.content(objectMapper.writeValueAsString(game)))
+				.content(objectMapper.writeValueAsString(null)))
 			.andExpect(status().isBadRequest());
 	}
 	
 	@Test
 	public void whenGameIdIsntInDb_theReturn403_UpdateReason() throws Exception{
-		GameDTO gameDTO = mock(GameDTO.class);
-		when(gameDTO.getId()).thenReturn((long)1);
-		when(gameDTO.getChampionId()).thenReturn(1);
-
-		when(this.gameService.updateGame(gameDTO)).thenThrow(NoElementFoundException.class);
-		
-		mockMvc.perform(put("/games/{gameId}", gameDTO.getId())
+		when(this.gameService.updateGame(sampleGameDTOWithId())).thenThrow(NoElementFoundException.class);
+		mockMvc.perform(put("/games/{gameId}", sampleGameDTOWithId().getId())
 					.contentType("application/json")
-					.content(objectMapper.writeValueAsString(gameDTO)))
+					.content(objectMapper.writeValueAsString(sampleGameDTOWithId())))
 				.andExpect(status().isForbidden());
 	}
 	
 	@Test
 	public void whenRoleOrChampionIsNull_thenReturn400_UpdateReason() throws Exception {
-		Game gameWithoutRoleOrLane = new Game(10, null, null);
-		gameWithoutRoleOrLane.setId((long)1);
-		Game gameWithoutChampion = new Game(null, "solo", "midlane");
-		gameWithoutChampion.setId((long)2);
-		
-		mockMvc.perform(put("/games/{gameId}", gameWithoutRoleOrLane.getId())
+		when(this.gameService.updateGame(sampleGameDTOWithoutRoleAndLane())).thenThrow(IllegalArgumentException.class);
+		mockMvc.perform(put("/games/{gameId}", sampleGameDTOWithoutRoleAndLane().getId())
 				.contentType("application/json")
-				.content(objectMapper.writeValueAsString(gameWithoutRoleOrLane)))
+				.content(objectMapper.writeValueAsString(sampleGameDTOWithoutRoleAndLane())))
 			.andExpect(status().isBadRequest());
-		
-		mockMvc.perform(put("/games/{gameId}", gameWithoutChampion.getId())
+
+		when(this.gameService.updateGame(sampleGameDTOWithoutChampion())).thenThrow(IllegalArgumentException.class);
+		mockMvc.perform(put("/games/{gameId}", sampleGameDTOWithoutChampion().getId())
 				.contentType("application/json")
-				.content(objectMapper.writeValueAsString(gameWithoutChampion)))
+				.content(objectMapper.writeValueAsString(sampleGameDTOWithoutChampion())))
 			.andExpect(status().isBadRequest());
 	}
 	
 	@Test
 	public void whenValidInput_ThenReturns200_UpdateGame() throws Exception{
-		GameDTO gameDTO = mock(GameDTO.class);
-		gameDTO.setId((long)1);
-		gameDTO.setChampionId(10);
-		gameDTO.setLaneName("midlane");
-		gameDTO.setRoleName("solo");
-
-		when(this.gameService.updateGame(gameDTO)).thenReturn(gameDTO);
+		when(this.gameService.updateGame(sampleGameDTOWithId())).thenReturn(sampleGameDTOWithId());
 		
-		mockMvc.perform(put("/games/{gameId}", gameDTO.getId())
+		mockMvc.perform(put("/games/{gameId}", sampleGameDTOWithId().getId())
 					.contentType("application/json")
-					.content(objectMapper.writeValueAsString(gameDTO)))
+					.content(objectMapper.writeValueAsString(sampleGameDTOWithId())))
 				.andExpect(status().isOk());
 	}
 	
 	@Test
 	public void whenValidInput_ThenReturnsGame_FindById() throws Exception {
-		GameDTO gameDTO = mock(GameDTO.class);
-		gameDTO.setId((long)1);
-		gameDTO.setChampionId(10);
-		gameDTO.setLaneName("midlane");
-		gameDTO.setRoleName("solo");
-		
-		when(this.gameService.findById(gameDTO.getId())).thenReturn(gameDTO);
+		when(this.gameService.findById(sampleGameDTOWithId().getId())).thenReturn(sampleGameDTOWithId());
 		MvcResult mvcResult = mockMvc.perform(get("/games/{gameId}", (long) 1))
-									.andReturn(); 
-		
-		
-		
-		String actualResponseBody = mvcResult.getResponse().getContentAsString(); 
-		
+									.andReturn();
+		String actualResponseBody = mvcResult.getResponse().getContentAsString();
 		assertThat(actualResponseBody).isEqualToIgnoringWhitespace(
-						objectMapper.writeValueAsString(gameDTO)
+						objectMapper.writeValueAsString(sampleGameDTOWithId())
 				);
 	}
 	
 	@Test
 	public void whenGameIdIsntInDb_thenReturn403_FindById() throws Exception { 
-		Long id = (long) 1; 
-		
+		Long id = (long) 1;
 		when(this.gameService.findById(id)).thenThrow(NoElementFoundException.class);
-		
 		mockMvc.perform(get("/games/{gameId}", id))
 					.andExpect(status().isForbidden()); 
 	}
 	
-	
 	@Test 
 	public void whenValidInput_ThenReturn204_deleteGame() throws Exception { 
-		Long id = (long) 1 ; 
-		
+		Long id = (long) 1 ;
 		mockMvc.perform(delete("/games/{gameId}", id))
 					.andExpect(status().isNoContent());
 	}
-	
 	
 	@Test 
 	public void whenGameIdIsntInDb_thenReturn403_deleteGame() throws Exception { 
 		Long id = (long) 1; 
 		
-		doThrow(NoElementFoundException.class).when(this.gameService).deleteGame(id); 
-		
+		doThrow(NoElementFoundException.class).when(this.gameService).deleteGame(id);
 		mockMvc.perform(delete("/games/{gameId}", id))
 					.andExpect(status().isForbidden());
 		
 	}
-	
+	private GameDTO sampleGameDTOWithoutChampion(){
+		GameDTO gameWithoutChampion = GameDTO.copy(sampleGameDTOWithId());
+		gameWithoutChampion.setId((long) 2);
+		gameWithoutChampion.setChampionId(null);
+		return gameWithoutChampion;
+	}
+	private GameDTO sampleGameDTOWithoutRoleAndLane(){
+		GameDTO gameWithoutRoleOrLane = GameDTO.copy(sampleGameDTOWithId());
+		gameWithoutRoleOrLane.setId((long) 3);
+		gameWithoutRoleOrLane.setRoleName(null);
+		gameWithoutRoleOrLane.setLaneName(null);
+		return gameWithoutRoleOrLane;
+	}
+	private GameDTO sampleGameDTOWithId() {
+		GameDTO game = new GameDTO();
+		game.setChampionId(10);
+		game.setRoleName("SOLO");
+		game.setLaneName("MIDLANE");
+		game.setId((long) 1);
+		return game;
+	}
 }

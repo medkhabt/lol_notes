@@ -58,16 +58,24 @@ public class GameServiceImpl implements GameService{
 	}
 
 	private void isRoleExceptionHandler(GameDTO game) {
-		if(!roleAndLaneService.isLane(game.getLaneName())) {
-			log.error("isRoleExceptionHandler: No Lane with name {} was found.", game.getLaneName());
-			throw new NoElementFoundException("No Lane with name " + game.getLaneName() + " was found.");
+		if(game.getRoleName().isEmpty() || game.getRoleName() == null) {
+			log.error("isRoleExceptionHandler: role of the game to create is empty or null, so can't proceed.");
+			throw new IllegalArgumentException("role of the game to create is empty or null, so can't proceed.");
+		}
+		if(!roleAndLaneService.isRole(game.getRoleName())) {
+			log.error("isRoleExceptionHandler: No Role with name {} was found.", game.getRoleName());
+			throw new NoElementFoundException("No Role with name " + game.getRoleName() + " was found.");
 		}
 	}
 
 	private void isLaneExceptionHandler(GameDTO game) {
-		if(!roleAndLaneService.isRole(game.getRoleName())) {
-			log.error("isLaneExceptionHandler: No Role with name {} was found.", game.getRoleName());
-			throw new NoElementFoundException("No Role with name " + game.getLaneName() + " was found.");
+		if(game.getLaneName().isEmpty() || game.getLaneName() == null) {
+			log.error("isLaneExceptionHandler: lane of the game to create is empty or null, so can't proceed.");
+			throw new IllegalArgumentException("lane of the game to create is empty or null, so can't proceed.");
+		}
+		if(!roleAndLaneService.isLane(game.getLaneName())) {
+			log.error("isLaneExceptionHandler: No Lane with name {} was found.", game.getLaneName());
+			throw new NoElementFoundException("No Lane with name " + game.getLaneName() + " was found.");
 		}
 	}
 
