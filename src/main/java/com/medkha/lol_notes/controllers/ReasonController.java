@@ -30,34 +30,34 @@ public class ReasonController {
 	public ReasonController(ReasonService reasonService) {
 		this.reasonService = reasonService; 
 	}
-	
-	@GetMapping(produces = "application/json")
-	public Set<Reason> allReasons(){
-		return this.reasonService.findAllReasons(); 
-	}
-	
-	@GetMapping(value = "/{reasonId}", produces = "application/json")
-	public Reason getReason(@PathVariable("reasonId") Long reasonId) {
-		return this.reasonService.findById(reasonId); 
-	}
-	@PostMapping(consumes = "application/json")
-	@ResponseStatus(HttpStatus.CREATED)
-	public Reason postReason(@Valid @RequestBody Reason reason) throws Exception {
-		return this.reasonService.createReason(reason); 
-	}
-	
-	@PutMapping(path = "/{reasonId}", consumes = "application/json")
-	@ResponseStatus(HttpStatus.OK)
-	public Reason putReason(@PathVariable("reasonId") Long reasonId, 
-							@Valid @RequestBody Reason reason) throws Exception { 
-		reason.setId(reasonId);
-		return this.reasonService.updateReason(reason); 
-	}
-	
-	@DeleteMapping(value = "/{reasonId}")
-	@ResponseStatus(HttpStatus.NO_CONTENT)
-	public void deleteReason(@PathVariable("reasonId") Long reasonId) {
-		this.reasonService.deleteReason(reasonId);
-	}
-	
+	// This is commented out until it reachs its turn to be refactored.
+//	@GetMapping(produces = "application/json")
+//	public Set<Reason> allReasons(){
+//		return this.reasonService.findAllReasons();
+//	}
+//
+//	@GetMapping(value = "/{reasonId}", produces = "application/json")
+//	public Reason getReason(@PathVariable("reasonId") Long reasonId) {
+//		return this.reasonService.findById(reasonId);
+//	}
+//	@PostMapping(consumes = "application/json")
+//	@ResponseStatus(HttpStatus.CREATED)
+//	public Reason postReason(@Valid @RequestBody Reason reason) throws Exception {
+//		return this.reasonService.createReason(reason);
+//	}
+//
+//	@PutMapping(path = "/{reasonId}", consumes = "application/json")
+//	@ResponseStatus(HttpStatus.OK)
+//	public Reason putReason(@PathVariable("reasonId") Long reasonId,
+//							@Valid @RequestBody Reason reason) throws Exception {
+//		reason.setId(reasonId);
+//		return this.reasonService.updateReason(reason);
+//	}
+//
+//	@DeleteMapping(value = "/{reasonId}")
+//	@ResponseStatus(HttpStatus.NO_CONTENT)
+//	public void deleteReason(@PathVariable("reasonId") Long reasonId) {
+//		this.reasonService.deleteReason(reasonId);
+//	}
+//
 }

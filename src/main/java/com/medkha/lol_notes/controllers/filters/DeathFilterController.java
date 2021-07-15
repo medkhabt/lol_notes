@@ -37,24 +37,24 @@ public class DeathFilterController {
 	@Autowired private GameService gameService;
 	@Autowired private ReasonService reasonService;
 	@Autowired private DeathService deathService;
-
-	@GetMapping(value = "/filter")
-	@ResponseStatus(HttpStatus.OK)
-	public Set<Death> getDeathsByFiltersController(
-			@RequestParam Optional<Long> gameId,
-			@RequestParam Optional<Long> reasonId){
-
-		List<Predicate<Death>> deathFilterPredicates = new ArrayList<>();
-
-		if(gameId.isPresent()) {
-			GameDTO game = gameService.findById(gameId.get());
-			deathFilterPredicates.add(game.getPredicate());
-		}
-		if(reasonId.isPresent()) {
-			Reason reason = reasonService.findById(reasonId.get());
-			deathFilterPredicates.add(reason.getPredicate());
-		}
-		return deathFilterService.getDeathsByFilter(deathFilterPredicates).collect(Collectors.toSet());
-
-	}
+// TODO: refactor this after ReasonDTO.
+//	@GetMapping(value = "/filter")
+//	@ResponseStatus(HttpStatus.OK)
+//	public Set<Death> getDeathsByFiltersController(
+//			@RequestParam Optional<Long> gameId,
+//			@RequestParam Optional<Long> reasonId){
+//
+//		List<Predicate<Death>> deathFilterPredicates = new ArrayList<>();
+//
+//		if(gameId.isPresent()) {
+//			GameDTO game = gameService.findById(gameId.get());
+//			deathFilterPredicates.add(game.getPredicate());
+//		}
+//		if(reasonId.isPresent()) {
+//			Reason reason = reasonService.findById(reasonId.get());
+//			deathFilterPredicates.add(reason.getPredicate());
+//		}
+//		return deathFilterService.getDeathsByFilter(deathFilterPredicates).collect(Collectors.toSet());
+//
+//	}
 }

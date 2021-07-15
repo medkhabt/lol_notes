@@ -18,6 +18,13 @@ public class ReasonDTO implements DeathFilterEntity {
 
     public ReasonDTO(){}
 
+    public static ReasonDTO copy(ReasonDTO reasonToCopy){
+        ReasonDTO newReason = new ReasonDTO();
+        newReason.setId(reasonToCopy.getId());
+        newReason.setDescription(reasonToCopy.getDescription());
+        return newReason;
+    }
+
     public Long getId() {
         return id;
     }
