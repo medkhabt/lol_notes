@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.medkha.lol_notes.dto.ReasonDTO;
 import com.medkha.lol_notes.entities.Reason;
 import com.medkha.lol_notes.services.ReasonService;
 
@@ -23,41 +24,39 @@ import com.medkha.lol_notes.services.ReasonService;
 @RequestMapping(path="reasons",
 				produces="application/json")
 public class ReasonController {
-	
-	@Autowired
+
 	private ReasonService reasonService;
 	
 	public ReasonController(ReasonService reasonService) {
 		this.reasonService = reasonService; 
 	}
-	// This is commented out until it reachs its turn to be refactored.
-//	@GetMapping(produces = "application/json")
-//	public Set<Reason> allReasons(){
-//		return this.reasonService.findAllReasons();
-//	}
-//
-//	@GetMapping(value = "/{reasonId}", produces = "application/json")
-//	public Reason getReason(@PathVariable("reasonId") Long reasonId) {
-//		return this.reasonService.findById(reasonId);
-//	}
-//	@PostMapping(consumes = "application/json")
-//	@ResponseStatus(HttpStatus.CREATED)
-//	public Reason postReason(@Valid @RequestBody Reason reason) throws Exception {
-//		return this.reasonService.createReason(reason);
-//	}
-//
-//	@PutMapping(path = "/{reasonId}", consumes = "application/json")
-//	@ResponseStatus(HttpStatus.OK)
-//	public Reason putReason(@PathVariable("reasonId") Long reasonId,
-//							@Valid @RequestBody Reason reason) throws Exception {
-//		reason.setId(reasonId);
-//		return this.reasonService.updateReason(reason);
-//	}
-//
-//	@DeleteMapping(value = "/{reasonId}")
-//	@ResponseStatus(HttpStatus.NO_CONTENT)
-//	public void deleteReason(@PathVariable("reasonId") Long reasonId) {
-//		this.reasonService.deleteReason(reasonId);
-//	}
-//
+	@GetMapping(produces = "application/json")
+	public Set<ReasonDTO> allReasons(){
+		return this.reasonService.findAllReasons();
+	}
+
+	@GetMapping(value = "/{reasonId}", produces = "application/json")
+	public ReasonDTO getReason(@PathVariable("reasonId") Long reasonId) {
+		return this.reasonService.findById(reasonId);
+	}
+	@PostMapping(consumes = "application/json")
+	@ResponseStatus(HttpStatus.CREATED)
+	public ReasonDTO postReason(@Valid @RequestBody ReasonDTO reason) {
+		return this.reasonService.createReason(reason);
+	}
+
+	@PutMapping(path = "/{reasonId}", consumes = "application/json")
+	@ResponseStatus(HttpStatus.OK)
+	public ReasonDTO putReason(@PathVariable("reasonId") Long reasonId,
+							@Valid @RequestBody ReasonDTO reason) {
+		reason.setId(reasonId);
+		return this.reasonService.updateReason(reason);
+	}
+
+	@DeleteMapping(value = "/{reasonId}")
+	@ResponseStatus(HttpStatus.NO_CONTENT)
+	public void deleteReason(@PathVariable("reasonId") Long reasonId) {
+		this.reasonService.deleteReason(reasonId);
+	}
+
 }
