@@ -2,24 +2,22 @@ package com.medkha.lol_notes.dto;
 
 import java.util.Objects;
 
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.medkha.lol_notes.entities.Constants;
-import com.medkha.lol_notes.entities.Game;
-import com.medkha.lol_notes.entities.Reason;
-
 public class DeathDTO {
     private Long id;
     private int minute;
-    private Reason reason ;
-    private Game game;
+    private ReasonDTO reason ;
+    private GameDTO game;
 
     public DeathDTO(){}
+
+    public static DeathDTO copy(DeathDTO deathToCopy){
+        DeathDTO newDeath = new DeathDTO();
+        newDeath.setId(deathToCopy.getId());
+        newDeath.setMinute(deathToCopy.getMinute());
+        newDeath.setReason(deathToCopy.getReason());
+        newDeath.setGame(deathToCopy.getGame());
+        return newDeath;
+    }
 
     public Long getId() {
         return id;
@@ -37,19 +35,19 @@ public class DeathDTO {
         this.minute = minute;
     }
 
-    public Reason getReason() {
+    public ReasonDTO getReason() {
         return reason;
     }
 
-    public void setReason(Reason reason) {
+    public void setReason(ReasonDTO reason) {
         this.reason = reason;
     }
 
-    public Game getGame() {
+    public GameDTO getGame() {
         return game;
     }
 
-    public void setGame(Game game) {
+    public void setGame(GameDTO game) {
         this.game = game;
     }
 

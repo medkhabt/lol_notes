@@ -20,39 +20,40 @@ import com.medkha.lol_notes.services.DeathService;
 @RestController
 @RequestMapping("deaths")
 public class DeathController {
-	@Autowired 
-	private DeathService deathService ;
-	
-	@GetMapping(produces="application/json")
-	@ResponseStatus(HttpStatus.OK)
-	public Set<Death> getAllDeaths(){
-		return this.deathService.findAllDeaths(); 
-	}
-	
-	@GetMapping(value="/{deathId}", produces="application/json")
-	@ResponseStatus(HttpStatus.OK)
-	public Death getDeathById(
-			@PathVariable("deathId") Long death_id) { 
-		return this.deathService.findById(death_id); 
-	}
-	
-	@PostMapping(consumes = "application/json")
-	@ResponseStatus(HttpStatus.CREATED)
-	public Death postDeath(@RequestBody Death death) { 
-		return this.deathService.createDeath(death); 
-	}
-	
-	@PutMapping(value = "/{deathId}", consumes = "application/json")
-	@ResponseStatus(HttpStatus.OK)
-	public Death putDeath(@PathVariable("deathId") Long death_id,
-							@RequestBody Death death) {
-		death.setId(death_id);
-		return this.deathService.updateDeath(death); 
-	}
-	
-	@DeleteMapping(value="/{deathId}")
-	@ResponseStatus(HttpStatus.NO_CONTENT)
-	public void deleteDeath(@PathVariable("deathId") Long death_id) { 
-		this.deathService.deleteDeathById(death_id);
-	}
+	// TODO : Refactor this.
+//	@Autowired
+//	private DeathService deathService ;
+//
+//	@GetMapping(produces="application/json")
+//	@ResponseStatus(HttpStatus.OK)
+//	public Set<Death> getAllDeaths(){
+//		return this.deathService.findAllDeaths();
+//	}
+//
+//	@GetMapping(value="/{deathId}", produces="application/json")
+//	@ResponseStatus(HttpStatus.OK)
+//	public Death getDeathById(
+//			@PathVariable("deathId") Long death_id) {
+//		return this.deathService.findById(death_id);
+//	}
+//
+//	@PostMapping(consumes = "application/json")
+//	@ResponseStatus(HttpStatus.CREATED)
+//	public Death postDeath(@RequestBody Death death) {
+//		return this.deathService.createDeath(death);
+//	}
+//
+//	@PutMapping(value = "/{deathId}", consumes = "application/json")
+//	@ResponseStatus(HttpStatus.OK)
+//	public Death putDeath(@PathVariable("deathId") Long death_id,
+//							@RequestBody Death death) {
+//		death.setId(death_id);
+//		return this.deathService.updateDeath(death);
+//	}
+//
+//	@DeleteMapping(value="/{deathId}")
+//	@ResponseStatus(HttpStatus.NO_CONTENT)
+//	public void deleteDeath(@PathVariable("deathId") Long death_id) {
+//		this.deathService.deleteDeathById(death_id);
+//	}
 }
