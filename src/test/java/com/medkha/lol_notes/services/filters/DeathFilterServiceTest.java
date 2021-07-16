@@ -23,6 +23,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import com.medkha.lol_notes.dto.ChampionEssentielsDto;
 import com.medkha.lol_notes.dto.DeathDTO;
 import com.medkha.lol_notes.dto.GameDTO;
+import com.medkha.lol_notes.dto.LaneDTO;
 import com.medkha.lol_notes.dto.ReasonDTO;
 import com.medkha.lol_notes.dto.RoleDTO;
 import com.medkha.lol_notes.services.DeathService;
@@ -82,6 +83,21 @@ public class DeathFilterServiceTest {
 				() -> assertEquals(2,
 						deathFilterService.getDeathsByFilter(
 								Stream.of(mapOfRolesDto().get("SOLO").getPredicate()).collect(Collectors.toList())
+						).count())
+		);
+	}
+
+	@Test
+	public void shouldFilterDeathsByLane_getDeathsByFilter() {
+		when(deathService.findAllDeaths()).thenReturn(listOfDeaths());
+		assertAll(
+				() -> assertEquals(2,
+						deathFilterService.getDeathsByFilter(
+								Stream.of(mapOfLanesDto().get("MIDDLE").getPredicate()).collect(Collectors.toList())
+						).count()),
+				() -> assertEquals(2,
+						deathFilterService.getDeathsByFilter(
+								Stream.of(mapOfLanesDto().get("BOTTOM").getPredicate()).collect(Collectors.toList())
 						).count())
 		);
 	}
@@ -167,6 +183,15 @@ public class DeathFilterServiceTest {
 		result.put("SOLO", role1);
 		RoleDTO role2 = new RoleDTO("DUO");
 		result.put("DUO", role2);
+		return new HashMap<>(result);
+	}
+
+	private Map<String, LaneDTO> mapOfLanesDto() {
+		Map<String, LaneDTO> result = new HashMap<>();
+		LaneDTO lane1 = new LaneDTO("MIDDLE");
+		result.put("MIDDLE", lane1);
+		LaneDTO lane2 = new LaneDTO("BOTTOM");
+		result.put("BOTTOM", lane2);
 		return new HashMap<>(result);
 	}
 }
