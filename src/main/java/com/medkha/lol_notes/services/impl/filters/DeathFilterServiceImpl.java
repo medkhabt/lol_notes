@@ -23,13 +23,11 @@ public class DeathFilterServiceImpl implements DeathFilterService{
 	public DeathFilterServiceImpl(DeathService deathService) {
 		this.deathService = deathService;
 	}
-// TODO : Refactor this.
 	@Override
 	public Stream<DeathDTO> getDeathsByFilter(List<Predicate<DeathDTO>> listDeathPredicate) {
 //		// hmm doesn't feel quite right getting all Deaths from the db, this will cause performance issues in the future.
 //		// At least i should get it a stream, so i can cap the result when i find what i wanted ( for example a page of 100
 //		// result after the filters.
-		Supplier<Death> s;
 		log.info("enter getDeathsByFilter:");
 		Stream<DeathDTO> deaths = deathService.findAllDeaths().stream()
 										.filter(listDeathPredicate.stream().reduce(x->true, Predicate::and));
