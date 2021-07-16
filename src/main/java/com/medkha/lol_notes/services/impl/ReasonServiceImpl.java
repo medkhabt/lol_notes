@@ -6,12 +6,13 @@ import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.stereotype.Service;
 
+import com.medkha.lol_notes.dto.ReasonDTO;
 import com.medkha.lol_notes.entities.Reason;
 import com.medkha.lol_notes.exceptions.NoElementFoundException;
+import com.medkha.lol_notes.mapper.MapperService;
 import com.medkha.lol_notes.repositories.ReasonRepository;
 import com.medkha.lol_notes.services.ReasonService;
 
@@ -22,52 +23,45 @@ public class ReasonServiceImpl implements ReasonService{
 			LoggerFactory.getLogger(ReasonServiceImpl.class); 
 	
 	private final ReasonRepository reasonRepository;
+	private final MapperService mapperService;
 
-	public ReasonServiceImpl(ReasonRepository reasonRepository) {
+	public ReasonServiceImpl(ReasonRepository reasonRepository, MapperService mapperService) {
 		this.reasonRepository = reasonRepository;
+		this.mapperService = mapperService;
 	}
 
 	@Override
-	public Reason createReason(Reason reason){
+	public ReasonDTO createReason(ReasonDTO reason){
 		try {
-			Reason createdReason = this.reasonRepository.save(reason);
+			Reason createdReason = this.reasonRepository.save(mapperService.convert(reason, Reason.class));
 			log.info("createReason: Reason with id: " + createdReason.getId() + " created successfully.");
-			return  createdReason; 
+			return mapperService.convert(createdReason, ReasonDTO.class);
 		
 		} catch (InvalidDataAccessApiUsageException | NullPointerException err) {
 			log.error("createReason: Reason Object is null and cannot be proceed");
 			throw new IllegalArgumentException("Reason Object is null and cannot be processed", err); 
 		}
-	
 	}
 
 	@Override
-	public Reason updateReason(Reason reason){
+	public ReasonDTO updateReason(ReasonDTO reason){
 		try {
-			
-			findById(reason.getId()); 
-			
-			Reason updatedReason = reasonRepository.save(reason); 
+			findById(reason.getId());
+			Reason updatedReason = reasonRepository.save(mapperService.convert(reason, Reason.class));
 			log.info("updateReason: Reason with id: " + updatedReason.getId() + " was updated successfully.");
-			return updatedReason; 
-			
+			return mapperService.convert(updatedReason, ReasonDTO.class);
 		} catch (InvalidDataAccessApiUsageException | NullPointerException err) {
-			
 			log.error("updateReason: Reason Object is null and cannot be proceed");
 			throw new IllegalArgumentException("Resaon Object is null and cannot be processed", err);
 		}
-		
 	}
 
 	@Override
 	public void deleteReason(Long id) {
-		findById(id); 
-		
+		findById(id);
 		try {
-			
 			this.reasonRepository.deleteById(id);
 			log.info("deleteReason: Reason with id: " + id + " was deleted successfully.");
-			
 		} catch (IllegalArgumentException err) {
 			log.error("deleteReason: Reason id is null, so can't proceed.");
 			throw new IllegalArgumentException("Reason id is null, so can't proceed.", err); 
@@ -75,29 +69,23 @@ public class ReasonServiceImpl implements ReasonService{
 	}
 
 	@Override
-	public Set<Reason> findAllReasons() {
+	public Set<ReasonDTO> findAllReasons() {
 		Set<Reason> findallReasonsSet = new HashSet<>(); 
 		this.reasonRepository.findAll().forEach(findallReasonsSet::add);
-		
 		log.info("findAllReasons: " + findallReasonsSet.size() + " reasons were found.");
-		
-		return findallReasonsSet;
+		return mapperService.convertSet(findallReasonsSet, ReasonDTO.class);
 	}
 
 	@Override
-	public Reason findById(Long id) {
+	public ReasonDTO findById(Long id) {
 		try {
-			
 			Reason foundReason = reasonRepository.findById(id).orElseThrow();
 			log.info("findById: Reason with id: " + id + " was found successfully.");
-			return foundReason; 	
-			
+			return mapperService.convert(foundReason, ReasonDTO.class);
 		} catch (InvalidDataAccessApiUsageException | NullPointerException err ) {
-			
 			log.error("findById: Reason Object has null id, and cannot be processed");
 			throw new IllegalArgumentException("Reason Object has null id, and cannot be processed", err); 
-		} catch (NoSuchElementException err) { 
-			
+		} catch (NoSuchElementException err) {
 			log.error("No Element of type Reason with id " + id + " was found in the database.");
 			throw new NoElementFoundException("No Element of type Reason with id " + id + " was found in the database.", err); 
 		}

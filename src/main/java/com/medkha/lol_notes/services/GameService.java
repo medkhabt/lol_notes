@@ -2,14 +2,14 @@ package com.medkha.lol_notes.services;
 
 import java.util.Set;
 
-import com.medkha.lol_notes.entities.Game;
+import com.medkha.lol_notes.dto.GameDTO;
 
 public interface GameService {
 	
-	public Game createGame(Game game);
-	public Game updateGame(Game game); 
+	public GameDTO createGame(GameDTO game);
+	public GameDTO updateGame(GameDTO game);
 	public void deleteGame(Long id);
-	public Set<Game> findAllGames(); 
-	public Game findById(Long id); 
+	public Set<GameDTO> findAllGames();
+	public GameDTO findById(Long id);
 	public Boolean existsInDataBase(Long id);
 }

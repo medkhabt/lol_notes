@@ -11,15 +11,14 @@ import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import com.medkha.lol_notes.dto.ReasonDTO;
 import com.medkha.lol_notes.entities.Reason;
 import com.medkha.lol_notes.exceptions.NoElementFoundException;
+import com.medkha.lol_notes.mapper.MapperService;
 import com.medkha.lol_notes.repositories.ReasonRepository;
 import com.medkha.lol_notes.services.impl.ReasonServiceImpl;
 
@@ -28,19 +27,42 @@ import com.medkha.lol_notes.services.impl.ReasonServiceImpl;
 public class ReasonServiceTest {
 
 	private ReasonRepository reasonRepositoryMock;
+	private MapperService mapperServiceMock;
 	private ReasonService reasonService;
+
+	private ReasonDTO sampleReasonDTOWithId(){
+		ReasonDTO reason = new ReasonDTO();
+		reason.setId((long) 1);
+		reason.setDescription("sample reason");
+		return reason;
+	}
+
+	private ReasonDTO sampleReasonDTOWithoutId() {
+		ReasonDTO reason = new ReasonDTO();
+		reason.setDescription("sample reason");
+		return reason;
+	}
+
+	private Reason sampleReasonWithId(){
+		Reason reason = new Reason("sample reason");
+		reason.setId((long) 1);
+		return reason;
+	}
+
+	private Reason sampleReasonWithoutId(){
+		return new Reason("sample reason");
+	}
 
 	@BeforeEach
 	public void setupMock() {
 		reasonRepositoryMock = mock(ReasonRepository.class);
-		reasonService = new ReasonServiceImpl(reasonRepositoryMock);
-
+		mapperServiceMock = mock(MapperService.class);
+		reasonService = new ReasonServiceImpl(reasonRepositoryMock, mapperServiceMock);
 	}
 
 	@Test
 	public void shouldReturnIllegalArgumentException_When_ReasonIsNull_createReason() { 
-		when(reasonRepositoryMock.save(null)).thenThrow(InvalidDataAccessApiUsageException.class); 
-		
+		when(reasonRepositoryMock.save(null)).thenThrow(InvalidDataAccessApiUsageException.class);
 		assertThrows(IllegalArgumentException.class, ()-> {
 			this.reasonService.createReason(null); 
 		});
@@ -48,72 +70,72 @@ public class ReasonServiceTest {
 	
 	@Test
 	public void shouldCreateReason() {
-		Reason reasonToCreate = new Reason("Outnumbered"); 
-		Reason resultReasonSaved = new Reason(reasonToCreate.getDescription());
-		resultReasonSaved.setId((long) 1);
-		
-		when(reasonRepositoryMock.save(reasonToCreate)).thenReturn(resultReasonSaved); 
-		assertEquals(resultReasonSaved, this.reasonService.createReason(reasonToCreate)); 
+		// given
+		when(mapperServiceMock.convert(sampleReasonDTOWithoutId(), Reason.class)).thenReturn(sampleReasonWithoutId());
+		when(mapperServiceMock.convert(sampleReasonWithId(), ReasonDTO.class)).thenReturn(sampleReasonDTOWithId());
+		when(reasonRepositoryMock.save(mapperServiceMock.convert(sampleReasonDTOWithoutId(), Reason.class))).thenReturn(sampleReasonWithId());
+
+		// when
+		ReasonDTO result = this.reasonService.createReason(sampleReasonDTOWithoutId());
+
+		// then
+		assertEquals(sampleReasonDTOWithId(), result);
 	}
 	
 	@Test
-	public void shouldReturnIllegalArgumentException_When_ReasonIsNull_updateReason() { 
-		Reason nullIdReason = new Reason("null id");
+	public void shouldReturnIllegalArgumentException_When_ReasonIsNull_updateReason() {
 		when(reasonRepositoryMock.findById(null)).thenThrow(InvalidDataAccessApiUsageException.class);
-		
 		assertAll(
 				() -> assertThrows(IllegalArgumentException.class, ()-> {				
 					this.reasonService.updateReason(null); 
 				}), 
 				
 				() -> assertThrows(IllegalArgumentException.class, ()-> {
-					this.reasonService.updateReason(nullIdReason); 
+					this.reasonService.updateReason(sampleReasonDTOWithoutId());
 				})
 		); 
 	}
 	
 	@Test
-	public void shouldReturnNoElementFoundException_When_ReasonDoesntExistInDb_updateReason() { 
-		Reason reasonNoInDb = new Reason("Reason not in db"); 
-		reasonNoInDb.setId((long)1);
-		
-		when(reasonRepositoryMock.findById(reasonNoInDb.getId())).thenReturn(Optional.empty());
-		
+	public void shouldReturnNoElementFoundException_When_ReasonDoesntExistInDb_updateReason() {
+		when(reasonRepositoryMock.findById(sampleReasonDTOWithId().getId())).thenReturn(Optional.empty());
 		assertThrows(NoElementFoundException.class, ()-> {
-			this.reasonService.updateReason(reasonNoInDb);
+			this.reasonService.updateReason(sampleReasonDTOWithId());
 		});
-		
 	}
 	
 	@Test 
 	public void shouldUpdateReason() {
-		Reason existingReason = new Reason("existing Resason") ; 
-		existingReason.setId((long)1); 
-		
+		// given
+		ReasonDTO updatedReasonDto = ReasonDTO.copy(sampleReasonDTOWithId());
+		updatedReasonDto.setDescription("updated Reason");
 		Reason updatedReason = new Reason("updated Reason"); 
-		updatedReason.setId(existingReason.getId());
-		
-		when(reasonRepositoryMock.findById(updatedReason.getId())).thenReturn(Optional.of(existingReason)); 
-		when(reasonRepositoryMock.save(updatedReason)).thenReturn(updatedReason); 
-		assertEquals(updatedReason, this.reasonService.updateReason(updatedReason)); 
+		updatedReason.setId(sampleReasonDTOWithId().getId());
+		// reasonService.findById mocks
+		when(reasonRepositoryMock.findById(updatedReasonDto.getId())).thenReturn(Optional.of(sampleReasonWithId()));
+		when(mapperServiceMock.convert(sampleReasonWithId(), ReasonDTO.class)).thenReturn(sampleReasonDTOWithId());
+		// reasonService.updateReason mocks
+		when(mapperServiceMock.convert(updatedReason, ReasonDTO.class)).thenReturn(updatedReasonDto);
+		when(mapperServiceMock.convert(updatedReasonDto, Reason.class)).thenReturn(updatedReason);
+		when(reasonRepositoryMock.save(mapperServiceMock.convert(updatedReasonDto, Reason.class))).thenReturn(updatedReason);
+
+		// when
+		ReasonDTO result = this.reasonService.updateReason(updatedReasonDto);
+
+		// then
+		assertEquals(updatedReasonDto, result);
 	} 	
 	
 	@Test
 	public void shouldThrowNoElementFoundException_When_ReasonIdDoesntExistInDb_deleteReason() {
-		Reason reasonToDelete = new Reason("reason to delete"); 
-		reasonToDelete.setId((long)1);
-		
-		when(reasonRepositoryMock.findById(reasonToDelete.getId())).thenReturn(Optional.empty());
-		
+		when(reasonRepositoryMock.findById(sampleReasonDTOWithId().getId())).thenReturn(Optional.empty());
 		assertThrows(NoElementFoundException.class, () -> {
-			this.reasonService.deleteReason(reasonToDelete.getId());
+			this.reasonService.deleteReason(sampleReasonDTOWithId().getId());
 		}); 
 	}
 	
 	@Test
 	public void shouldThrowIllegalArgumentUsage_When_ReasonIdIsNull_deleteReason() {
-		
-		
 		when(reasonRepositoryMock.findById(null)).thenThrow(InvalidDataAccessApiUsageException.class); 
 		assertThrows(IllegalArgumentException.class, () -> {
 			this.reasonService.deleteReason(null);

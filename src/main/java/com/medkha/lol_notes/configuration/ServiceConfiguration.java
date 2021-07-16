@@ -22,18 +22,18 @@ import com.medkha.lol_notes.services.impl.ReasonServiceImpl;
 public class ServiceConfiguration {
 
     @Bean
-    public GameService gameService(GameRepository gameRepository, ChampionService championService, RoleAndLaneService roleAndLaneService) {
-        return new GameServiceImpl(gameRepository, championService, roleAndLaneService);
+    public GameService gameService(GameRepository gameRepository, ChampionService championService, RoleAndLaneService roleAndLaneService, MapperService mapperService) {
+        return new GameServiceImpl(gameRepository, championService, roleAndLaneService, mapperService);
     }
 
     @Bean
-    public ReasonService reasonService(ReasonRepository reasonRepository) {
-        return new ReasonServiceImpl(reasonRepository);
+    public ReasonService reasonService(ReasonRepository reasonRepository, MapperService mapperService) {
+        return new ReasonServiceImpl(reasonRepository, mapperService);
     }
 
     @Bean
-    public DeathService deathService(DeathRepository deathRepository) {
-        return new DeathServiceImpl(deathRepository);
+    public DeathService deathService(DeathRepository deathRepository, MapperService mapperService) {
+        return new DeathServiceImpl(deathRepository, mapperService);
     }
 
 

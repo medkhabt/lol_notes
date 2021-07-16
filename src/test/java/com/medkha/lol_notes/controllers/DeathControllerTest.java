@@ -19,11 +19,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.medkha.lol_notes.entities.Champion;
-import com.medkha.lol_notes.entities.Death;
-import com.medkha.lol_notes.entities.Game;
-import com.medkha.lol_notes.entities.Reason;
-import com.medkha.lol_notes.entities.Role;
+import com.medkha.lol_notes.dto.DeathDTO;
+import com.medkha.lol_notes.dto.GameDTO;
+import com.medkha.lol_notes.dto.ReasonDTO;
 import com.medkha.lol_notes.exceptions.NoElementFoundException;
 import com.medkha.lol_notes.services.DeathService;
 
@@ -32,115 +30,107 @@ import com.medkha.lol_notes.services.DeathService;
 public class DeathControllerTest {
 	
 	@MockBean
-	private DeathService deathService; 
-	
+	private DeathService deathService;
 	@Autowired 
 	private ObjectMapper objectMapper;
-	
 	@Autowired 
 	private MockMvc mockMvc;
-	
-	public Death initDeath() {
-		Reason reason = new Reason("reason"); 
-		reason.setId((long)1);
-		Game game = new Game(10, "solo", "midlane");
-		game.setId((long)1);
-		
-		Death death = new Death(11, reason, game); 
-		death.setId((long)1);
-		return death; 
-	}
-	@Test 
-	public void whenValidInput_ThenReturns201_CreateDeath() throws Exception {
-		 
-		Death death = initDeath(); 
-		
-		mockMvc.perform(post("/deaths")
-						.contentType("application/json")
-						.content(objectMapper.writeValueAsString(death)))
-					.andExpect(status().isCreated()); 
-	}
-	
+
 	@Test
-	public void whenNullDeath_thenReturns400_CreateDeath() throws Exception { 
-		Death death = null;
-		
+	public void whenValidInput_ThenReturns201_CreateDeath() throws Exception {
 		mockMvc.perform(post("/deaths")
 						.contentType("application/json")
-						.content(objectMapper.writeValueAsString(death)))
-				.andExpect(status().isBadRequest());
-		
+						.content(objectMapper.writeValueAsString(sampleDeathDTOWithId())))
+					.andExpect(status().isCreated());
 	}
-	
+
+	@Test
+	public void whenNullDeath_thenReturns400_CreateDeath() throws Exception {
+		mockMvc.perform(post("/deaths")
+						.contentType("application/json")
+						.content(objectMapper.writeValueAsString(null)))
+				.andExpect(status().isBadRequest());
+	}
+
 	@Test
 	public void whenDeathIdIsntInDb_theReturn403_UpdateDeath() throws Exception{
-		Death death = initDeath(); 
-		
-		
-		when(this.deathService.updateDeath(death)).thenThrow(NoElementFoundException.class);
-		
-		mockMvc.perform(put("/deaths/{deathId}", death.getId())
+		when(this.deathService.updateDeath(sampleDeathDTOWithId())).thenThrow(NoElementFoundException.class);
+
+		mockMvc.perform(put("/deaths/{deathId}", sampleDeathDTOWithId().getId())
 					.contentType("application/json")
-					.content(objectMapper.writeValueAsString(death)))
+					.content(objectMapper.writeValueAsString(sampleDeathDTOWithId())))
 				.andExpect(status().isForbidden());
 	}
-	
+
 	@Test
-	public void whenValidInput_ThenReturns200_UpdateDeath() throws Exception{ 
-		Death death = initDeath(); 
-		
-		when(this.deathService.updateDeath(death)).thenReturn(death); 
-		
-		mockMvc.perform(put("/deaths/{deathId}", death.getId()) 
+	public void whenValidInput_ThenReturns200_UpdateDeath() throws Exception{
+		when(this.deathService.updateDeath(sampleDeathDTOWithId())).thenReturn(sampleDeathDTOWithId());
+
+		mockMvc.perform(put("/deaths/{deathId}", sampleDeathDTOWithId().getId())
 					.contentType("application/json")
-					.content(objectMapper.writeValueAsString(death)))
+					.content(objectMapper.writeValueAsString(sampleDeathDTOWithId())))
 				.andExpect(status().isOk());
 	}
-	
-	@Test 
+
+	@Test
 	public void whenDeathIdIsntInDb_thenReturn403_getDeathById() throws Exception {
-		Long id = (long)1;  
-		
+		Long id = (long)1;
 		when(this.deathService.findById(id)).thenThrow(NoElementFoundException.class);
-		
 		mockMvc.perform(get("/deaths/{deathId}",id)
 					.contentType("application/json"))
 		   		.andExpect(status().isForbidden());
 	}
-	
-	@Test 
-	public void whenValidInput_ThenReturns200_getDeathById() throws Exception { 
-		Death death = initDeath(); 
-		
-		when(this.deathService.findById(death.getId())).thenReturn(death);
-		
-		MvcResult mvcResult = mockMvc.perform(get("/deaths/{deathId}", death.getId())
+
+	@Test
+	public void whenValidInput_ThenReturns200_getDeathById() throws Exception {
+		when(this.deathService.findById(sampleDeathDTOWithId().getId())).thenReturn(sampleDeathDTOWithId());
+
+		MvcResult mvcResult = mockMvc.perform(get("/deaths/{deathId}", sampleDeathDTOWithId().getId())
 					.contentType("application/json"))
 				.andExpect(status().isOk())
-				.andReturn(); 
+				.andReturn();
 		String actualResponseBody = mvcResult.getResponse().getContentAsString();
-		
 		assertThat(actualResponseBody).isEqualToIgnoringWhitespace(
-						objectMapper.writeValueAsString(death)
-				); 
+						objectMapper.writeValueAsString(sampleDeathDTOWithId())
+				);
 	}
-	
+
 	@Test
-	public void whenDeathIdIsntInDb_thenReturn403_deleteById() throws Exception { 
-		Long id = (long) 1; 
-		
+	public void whenDeathIdIsntInDb_thenReturn403_deleteById() throws Exception {
+		Long id = (long) 1;
 		doThrow(NoElementFoundException.class).when(this.deathService).deleteDeathById(id);
-		
 		mockMvc.perform(delete("/deaths/{deathId}", id))
 		.andExpect(status().isForbidden());
 	}
-	
-	@Test 
-	public void whenValidInput_ThenReturn204_deleteById() throws Exception { 
-		Death death = initDeath(); 
-		
-		mockMvc.perform(delete("/deaths/{deathId}", death.getId()))
-				.andExpect(status().isNoContent()); 
+
+	@Test
+	public void whenValidInput_ThenReturn204_deleteById() throws Exception {
+		mockMvc.perform(delete("/deaths/{deathId}", sampleDeathDTOWithId().getId()))
+				.andExpect(status().isNoContent());
 	}
 
+	private DeathDTO sampleDeathDTOWithId(){
+		DeathDTO death = new DeathDTO();
+		death.setId((long)1);
+		death.setMinute(1);
+		death.setGame(GameDTO.copy(sampleGameDTOWithId()));
+		death.setReason(ReasonDTO.copy(sampleReasonDTOWithId()));
+		return death;
+	}
+
+	private ReasonDTO sampleReasonDTOWithId(){
+		ReasonDTO reason = new ReasonDTO();
+		reason.setId((long) 1);
+		reason.setDescription("sample reason");
+		return reason;
+	}
+
+	private GameDTO sampleGameDTOWithId(){
+		GameDTO game = new GameDTO();
+		game.setChampionId(10);
+		game.setRoleName("SOLO");
+		game.setLaneName("MIDLANE");
+		game.setId((long) 1);
+		return game;
+	}
 }

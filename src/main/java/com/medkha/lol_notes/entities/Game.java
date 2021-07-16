@@ -2,28 +2,18 @@ package com.medkha.lol_notes.entities;
 
 import java.util.Date;
 import java.util.Objects;
-import java.util.function.Predicate;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.medkha.lol_notes.entities.interfaces.DeathFilterEntity;
-
 
 @Entity
-public class Game implements DeathFilterEntity {
-	private static Logger log = LoggerFactory.getLogger(Game.class);
-
+public class Game {
 	@Id
 	@GeneratedValue(generator = Constants.ID_GENERATOR)
 	private Long id; 
@@ -108,14 +98,4 @@ public class Game implements DeathFilterEntity {
 		return Objects.hash(id);
 	}
 
-	@Override
-	public Predicate<Death> getPredicate() {
-		return (Death death) -> {
-			log.info("getDeathFilterByGamePredicate: Filter by Game with id: {}", this.getId());
-			Boolean result = death.getGame().getId().equals(this.getId());
-			log.info("Death with id: {} has Game with id: {} equals Filter Game with id:{} ? {} ",
-					death.getId(), death.getGame().getId(), this.getId(), result);
-			return result;
-		};
-	}
 }

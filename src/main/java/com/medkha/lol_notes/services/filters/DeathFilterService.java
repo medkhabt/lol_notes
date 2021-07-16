@@ -4,8 +4,8 @@ import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
-import com.medkha.lol_notes.entities.Death;
+import com.medkha.lol_notes.dto.DeathDTO;
 
 public interface DeathFilterService {
-	public Stream<Death> getDeathsByFilter(List<Predicate<Death>> listDeathPredicate);
+	public Stream<DeathDTO> getDeathsByFilter(List<Predicate<DeathDTO>> listDeathPredicate);
 }
