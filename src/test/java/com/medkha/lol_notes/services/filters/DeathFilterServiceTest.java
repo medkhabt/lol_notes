@@ -24,6 +24,7 @@ import com.medkha.lol_notes.dto.ChampionEssentielsDto;
 import com.medkha.lol_notes.dto.DeathDTO;
 import com.medkha.lol_notes.dto.GameDTO;
 import com.medkha.lol_notes.dto.ReasonDTO;
+import com.medkha.lol_notes.dto.RoleDTO;
 import com.medkha.lol_notes.services.DeathService;
 import com.medkha.lol_notes.services.impl.filters.DeathFilterServiceImpl;
 
@@ -74,6 +75,17 @@ public class DeathFilterServiceTest {
 		);
 	}
 
+	@Test
+	public void shouldFilterDeathsByRole_getDeathsByFilter() {
+		when(deathService.findAllDeaths()).thenReturn(listOfDeaths());
+		assertAll(
+				() -> assertEquals(2,
+						deathFilterService.getDeathsByFilter(
+								Stream.of(mapOfRolesDto().get("SOLO").getPredicate()).collect(Collectors.toList())
+						).count())
+		);
+	}
+
 	private Set<DeathDTO> listOfDeaths(){
 		DeathDTO death1 = new DeathDTO();
 		death1.setId((long)1);
@@ -107,13 +119,13 @@ public class DeathFilterServiceTest {
 		GameDTO game1 = new GameDTO();
 		game1.setChampionId(10);
 		game1.setRoleName("SOLO");
-		game1.setLaneName("MIDLANE");
+		game1.setLaneName("MIDDLE");
 		game1.setId((long) 1);
 
 		GameDTO game2 = new GameDTO();
 		game2.setChampionId(11);
-		game2.setRoleName("SOLO");
-		game2.setLaneName("TOPLANE");
+		game2.setRoleName("DUO");
+		game2.setLaneName("BOTTOM");
 		game2.setId((long) 2);
 
 		List<GameDTO> listGamesWithId = Stream.of(game1, game2).collect(Collectors.toList());
@@ -146,6 +158,15 @@ public class DeathFilterServiceTest {
 		champion2.setName("Champion 2");
 		result.put(champion2.getId(), champion2);
 
+		return new HashMap<>(result);
+	}
+
+	private Map<String, RoleDTO> mapOfRolesDto() {
+		Map<String, RoleDTO> result = new HashMap<>();
+		RoleDTO role1 = new RoleDTO("SOLO");
+		result.put("SOLO", role1);
+		RoleDTO role2 = new RoleDTO("DUO");
+		result.put("DUO", role2);
 		return new HashMap<>(result);
 	}
 }
