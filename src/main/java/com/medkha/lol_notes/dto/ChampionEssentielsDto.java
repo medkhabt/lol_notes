@@ -1,6 +1,10 @@
 package com.medkha.lol_notes.dto;
 
-public class ChampionEssentielsDto {
+import java.util.function.Predicate;
+
+import com.medkha.lol_notes.dto.interfaces.DeathFilterOption;
+
+public class ChampionEssentielsDto implements DeathFilterOption {
     private int id;
     private String name;
 
@@ -34,5 +38,10 @@ public class ChampionEssentielsDto {
                 "id=" + id +
                 ", name='" + name + '\'' +
                 '}';
+    }
+
+    @Override
+    public Predicate<DeathDTO> getPredicate() {
+        return null;
     }
 }

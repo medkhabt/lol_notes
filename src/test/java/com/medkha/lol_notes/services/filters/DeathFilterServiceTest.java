@@ -6,8 +6,10 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -18,6 +20,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import com.medkha.lol_notes.dto.ChampionEssentielsDto;
 import com.medkha.lol_notes.dto.DeathDTO;
 import com.medkha.lol_notes.dto.GameDTO;
 import com.medkha.lol_notes.dto.ReasonDTO;
@@ -52,6 +55,20 @@ public class DeathFilterServiceTest {
 				() -> assertEquals(1,
 						deathFilterService.getDeathsByFilter(
 								Stream.of(listReasonsWithId().get(0).getPredicate(), listGamesWithId().get(0).getPredicate()).collect(Collectors.toList())
+						).count())
+		);
+	}
+
+	@Test
+	public void shouldFilterDeathsByChampion_getDeathsByFilter() {
+		assertAll(
+				() -> assertEquals(2,
+						deathFilterService.getDeathsByFilter(
+								Stream.of(mapOfChampionEssentielsDto().get(10).getPredicate()).collect(Collectors.toList())
+						).count()),
+				() -> assertEquals(2,
+						deathFilterService.getDeathsByFilter(
+								Stream.of(mapOfChampionEssentielsDto().get(11).getPredicate()).collect(Collectors.toList())
 						).count())
 		);
 	}
@@ -113,5 +130,21 @@ public class DeathFilterServiceTest {
 
 		List<ReasonDTO> listReasonsWithId = Stream.of(reason1, reason2).collect(Collectors.toList());
 		return new ArrayList<>(listReasonsWithId);
+	}
+
+	private Map<Integer, ChampionEssentielsDto> mapOfChampionEssentielsDto() {
+		Map<Integer, ChampionEssentielsDto> result = new HashMap<>();
+
+		ChampionEssentielsDto champion1 = new ChampionEssentielsDto();
+		champion1.setId(10);
+		champion1.setName("Champion 1");
+		result.put(champion1.getId(), champion1);
+
+		ChampionEssentielsDto champion2 = new ChampionEssentielsDto();
+		champion2.setId(11);
+		champion2.setName("Champion 2");
+		result.put(champion2.getId(), champion2);
+
+		return new HashMap<>(result);
 	}
 }
