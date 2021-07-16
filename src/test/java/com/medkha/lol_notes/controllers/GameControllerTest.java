@@ -2,7 +2,6 @@ package com.medkha.lol_notes.controllers;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -21,9 +20,6 @@ import org.springframework.test.web.servlet.MvcResult;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.medkha.lol_notes.dto.GameDTO;
-import com.medkha.lol_notes.entities.Champion;
-import com.medkha.lol_notes.entities.Game;
-import com.medkha.lol_notes.entities.Role;
 import com.medkha.lol_notes.exceptions.NoElementFoundException;
 import com.medkha.lol_notes.services.GameService;
 

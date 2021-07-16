@@ -14,8 +14,6 @@ public class ReasonDTO implements DeathFilterOption {
     private Long id;
     private String description;
 
-    public ReasonDTO(){}
-
     public static ReasonDTO copy(ReasonDTO reasonToCopy){
         ReasonDTO newReason = new ReasonDTO();
         newReason.setId(reasonToCopy.getId());

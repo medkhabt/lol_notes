@@ -3,7 +3,6 @@ package com.medkha.lol_notes.services;
 import java.util.Set;
 
 import com.medkha.lol_notes.dto.ReasonDTO;
-import com.medkha.lol_notes.entities.Reason;
 
 public interface ReasonService {
 	

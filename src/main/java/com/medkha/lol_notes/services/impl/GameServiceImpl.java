@@ -3,14 +3,10 @@ package com.medkha.lol_notes.services.impl;
 import java.util.HashSet;
 import java.util.NoSuchElementException;
 import java.util.Set;
-import java.util.stream.Collectors;
-
 import javax.transaction.Transactional;
 
-import org.modelmapper.internal.bytebuddy.description.method.MethodDescription.TypeToken;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.stereotype.Service;
 

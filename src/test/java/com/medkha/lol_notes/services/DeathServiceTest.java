@@ -11,7 +11,6 @@ import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mapstruct.Mapper;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -102,11 +101,7 @@ public class DeathServiceTest {
 	}
 	
 	@Test
-	public void shouldcreateDeath() { 
-		Reason reason = new Reason("ganked");
-		Game game = new Game(10, "solo", "midlane");
-		game.setId((long)1);
-
+	public void shouldcreateDeath() {
 		when(this.mapperServiceMock.convert(sampleDeathDTOWithoutId(), Death.class)).thenReturn(sampleDeathWithouId());
 		when(this.deathRepositoryMock.save(mapperServiceMock.convert(sampleDeathDTOWithoutId(), Death.class))).thenReturn(sampleDeathWithId());
 		when(this.mapperServiceMock.convert(sampleDeathWithId(), DeathDTO.class)).thenReturn(sampleDeathDTOWithId());

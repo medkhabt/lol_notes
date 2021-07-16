@@ -20,7 +20,6 @@ import org.springframework.test.web.servlet.MvcResult;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.medkha.lol_notes.dto.ReasonDTO;
-import com.medkha.lol_notes.entities.Reason;
 import com.medkha.lol_notes.exceptions.NoElementFoundException;
 import com.medkha.lol_notes.services.ReasonService;
 

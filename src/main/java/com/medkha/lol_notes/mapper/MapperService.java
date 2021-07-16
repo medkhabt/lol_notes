@@ -1,6 +1,5 @@
 package com.medkha.lol_notes.mapper;
 
-import java.util.Collection;
 import java.util.Set;
 
 public interface MapperService {
