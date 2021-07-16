@@ -54,11 +54,4 @@ public class ChampionEssentielsDto implements DeathFilterOption {
             return result;
         };
     }
-//      return (DeathDTO death) -> {
-//        log.info("getDeathFilterByGamePredicate: Filter by Game with id: {}", this.getId());
-//        Boolean result = death.getGame().getId().equals(this.getId());
-//        log.info("Death with id: {} has Game with id: {} equals Filter Game with id:{} ? {} ",
-//                death.getId(), death.getGame().getId(), this.getId(), result);
-//        return result;
-//    };
 }
