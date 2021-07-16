@@ -82,7 +82,7 @@ public class DeathFilterServiceTest {
 				() -> assertEquals(2,
 						deathFilterService.getDeathsByFilter(
 								Stream.of(mapOfRolesDto().get("SOLO").getPredicate()).collect(Collectors.toList())
-						))
+						).count())
 		);
 	}
 
