@@ -39,7 +39,7 @@ public class RoleDTO implements DeathFilterOption {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         RoleDTO roleDTO = (RoleDTO) o;
-        return Objects.equals(roleName.toUpperCase(), roleDTO.roleName.toUpperCase());
+        return this.roleName.equalsIgnoreCase(roleDTO.roleName);
     }
 
     @Override
