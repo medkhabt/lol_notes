@@ -61,6 +61,7 @@ public class DeathFilterServiceTest {
 
 	@Test
 	public void shouldFilterDeathsByChampion_getDeathsByFilter() {
+		when(deathService.findAllDeaths()).thenReturn(listOfDeaths());
 		assertAll(
 				() -> assertEquals(2,
 						deathFilterService.getDeathsByFilter(
