@@ -1,26 +1,29 @@
 package com.medkha.lol_notes.mapper.impl;
 
+import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
-import org.modelmapper.ModelMapper;
+import org.reflections.Reflections;
 import org.springframework.stereotype.Service;
 
-import com.medkha.lol_notes.mapper.MapperService;
+import com.medkha.lol_notes.dto.FilterSearchRequest;
+import com.medkha.lol_notes.dto.interfaces.DeathFilterOption;
 
 @Service
-public class MapperServiceImpl implements MapperService{
-    private ModelMapper modelMapper = new ModelMapper();
+public class MapperServiceImpl extends MapperBaseService{
 
     @Override
-    public <D> D convert(Object source, Class<D> destination) {
-        return modelMapper.map(source, destination);
+    public Set<DeathFilterOption> convertFilterSearchRequestToDeathFilterOptions(FilterSearchRequest filterDeathRequest) {
+        // get all implementatiosn of deatFilterOption
+        Reflections reflections = new Reflections("com.medkha.lol_notes.dto");
+        Set<Class<? extends DeathFilterOption>> classes = reflections.getSubTypesOf(DeathFilterOption.class);
+
+        // loop for the  filterDeathRequest
+        // get paramNames from Classes
+        classes.stream().map(c -> c.getClass().getSimpleName().split("DTO")[0]);
+        return null;
     }
 
-    @Override
-    public <D> Set<D> convertSet(Set source, Class<D> destination) {
-        return (Set<D>) source.stream().map(s -> modelMapper.map(s, destination)).collect(Collectors.toSet());
-    }
 }
 
 
