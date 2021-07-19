@@ -1,6 +1,7 @@
 package com.medkha.lol_notes.mapper.impl;
 
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
@@ -34,10 +35,18 @@ public abstract class MapperBaseService implements MapperService {
     }
 
     @Override
-    public Set<String> convertInterfaceImplementationsToParamsByInterface(Class interfaceClass) {
-        Reflections reflections = new Reflections("com.medkha.lol_notes");
-        Set<Class<? extends DeathFilterOption>> classes = reflections.getSubTypesOf(interfaceClass);
-        return classes.stream().map(this::mapClassDtoToParamName).collect(Collectors.toSet());
+    public Set<String> convertInterfaceImplementationsToParamsByInterfaceAndSingleClassMapperFunction(
+                            Class interfaceClass,
+                            Function<Class, String> singleClassMapperFunction) {
+        if(interfaceClass.isInterface()) {
+            Reflections reflections = new Reflections("com.medkha.lol_notes");
+            Set<Class<? extends DeathFilterOption>> classes = reflections.getSubTypesOf(interfaceClass);
+            return classes.stream().map(singleClassMapperFunction).collect(Collectors.toSet());
+        }
+        else {
+            throw new IllegalArgumentException(interfaceClass.getSimpleName() + " is not an interface so can't proceed.");
+        }
+
     }
 
     @Override

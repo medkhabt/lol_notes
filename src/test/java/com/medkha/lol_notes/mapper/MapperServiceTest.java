@@ -82,7 +82,10 @@ public class MapperServiceTest {
     void mapInterfaceImplementationsToParams() {
 
         // when
-        Set<String> result = this.mapper.convertInterfaceImplementationsToParamsByInterface(DeathFilterOption.class);
+        Set<String> result =
+                this.mapper.convertInterfaceImplementationsToParamsByInterfaceAndSingleClassMapperFunction(
+                        DeathFilterOption.class,
+                        mapper::mapClassDtoToParamName);
         // then
         assertAll(
                 () -> assertTrue(result.contains("game")),
@@ -90,7 +93,9 @@ public class MapperServiceTest {
                 () -> assertTrue(result.size() > 0),
                 () -> assertThrows(
                         IllegalArgumentException.class,
-                        () -> this.mapper.convertInterfaceImplementationsToParamsByInterface(GameDTO.class))
+                        () -> this.mapper.convertInterfaceImplementationsToParamsByInterfaceAndSingleClassMapperFunction(
+                                GameDTO.class,
+                                mapper::mapClassDtoToParamName))
         );
 
     }
