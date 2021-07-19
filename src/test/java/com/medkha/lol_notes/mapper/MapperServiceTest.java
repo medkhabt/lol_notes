@@ -51,6 +51,25 @@ public class MapperServiceTest {
         );
     }
 
+    @Test
+    void mapValidClassDtoToParamName(){
+        // given
+        Class gameDTOClass = GameDTO.class;
+        Class gameClass = Game.class;
+
+        // when
+        String resultValid = this.mapper.mapClassDtoToParamName(gameDTOClass);
+        String resultInvalid = this.mapper.mapClassDtoToParamName(gameClass);
+
+        // then
+        assertAll(
+                () -> assertEquals("game", resultValid),
+                () -> assertEquals("", resultInvalid)
+        );
+
+
+    }
+
     private GameDTO sampleGameDTOWithId(){
         GameDTO game = new GameDTO();
         game.setChampionId(10);
