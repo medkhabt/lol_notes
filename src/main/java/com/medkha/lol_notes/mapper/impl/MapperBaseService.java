@@ -40,7 +40,7 @@ public abstract class MapperBaseService implements MapperService {
                             Function<Class, String> singleClassMapperFunction) {
         if(interfaceClass.isInterface()) {
             Reflections reflections = new Reflections("com.medkha.lol_notes");
-            Set<Class<? extends DeathFilterOption>> classes = reflections.getSubTypesOf(interfaceClass);
+            Set<Class> classes = reflections.getSubTypesOf(interfaceClass);
             return classes.stream().map(singleClassMapperFunction).collect(Collectors.toSet());
         }
         else {

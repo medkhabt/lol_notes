@@ -16,6 +16,12 @@ public class GameDTO implements DeathFilterOption {
     private String laneName;
     private Integer championId;
 
+    public GameDTO() { }
+
+    public GameDTO(String idParam) {
+        this.id = Long.parseLong(idParam);
+    }
+    
     public static GameDTO copy(GameDTO gameToCopy) {
         GameDTO game = new GameDTO();
         game.setId(gameToCopy.getId());

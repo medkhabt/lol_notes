@@ -1,5 +1,6 @@
 package com.medkha.lol_notes.mapper.impl;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import org.reflections.Reflections;
@@ -13,13 +14,24 @@ public class MapperServiceImpl extends MapperBaseService{
 
     @Override
     public Set<DeathFilterOption> convertFilterSearchRequestToDeathFilterOptions(FilterSearchRequest filterDeathRequest) {
+        Set<DeathFilterOption> deathFilterOptions = new HashSet<>();
         // get all implementatiosn of deatFilterOption
-        Reflections reflections = new Reflections("com.medkha.lol_notes.dto");
-        Set<Class<? extends DeathFilterOption>> classes = reflections.getSubTypesOf(DeathFilterOption.class);
+        Set<String> paramNames = this.convertInterfaceImplementationsToParamsByInterfaceAndSingleClassMapperFunction(
+                DeathFilterOption.class,
+                this::mapClassDtoToParamName);
 
         // loop for the  filterDeathRequest
+        paramNames.stream().forEach(
+                (param) -> {
+                    try{
+                        filterDeathRequest.getParams().get(param);
+                        // TODO: FactoryMethod for creating DeathFitlerOptions.
+                    } catch (NullPointerException err) {
+                        // TODO: Log it.
+                    }
+                }
+        );
         // get paramNames from Classes
-        classes.stream().map(this::mapClassDtoToParamName);
         return null;
     }
 

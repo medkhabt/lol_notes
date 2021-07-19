@@ -11,8 +11,12 @@ public class ChampionEssentielsDto implements DeathFilterOption {
     private String name;
 
     public ChampionEssentielsDto() {
-
     }
+
+    public ChampionEssentielsDto(String paramId) {
+        this.id = Integer.getInteger(paramId);
+    }
+
     public ChampionEssentielsDto(int id, String name) {
         this.id = id;
         this.name = name;
