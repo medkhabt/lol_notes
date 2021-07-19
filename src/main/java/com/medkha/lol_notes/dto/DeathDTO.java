@@ -8,6 +8,11 @@ public class DeathDTO {
     private ReasonDTO reason ;
     private GameDTO game;
 
+    public DeathDTO(){}
+    public DeathDTO(String idParam) {
+        this.id = Long.getLong(idParam);
+    }
+
     public static DeathDTO copy(DeathDTO deathToCopy){
         DeathDTO newDeath = new DeathDTO();
         newDeath.setId(deathToCopy.getId());

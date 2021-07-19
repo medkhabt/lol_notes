@@ -6,8 +6,6 @@ import java.util.function.Predicate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.medkha.lol_notes.dto.interfaces.DeathFilterOption;
-
 public class RoleDTO implements DeathFilterOption {
     private static Logger log = LoggerFactory.getLogger(RoleDTO.class);
     private String roleName;
@@ -27,7 +25,7 @@ public class RoleDTO implements DeathFilterOption {
     public Predicate<DeathDTO> getPredicate() {
         return (DeathDTO death) -> {
             log.info("getDeathFilterByRolePredicate: Filter by Role with a name: {}", this.getRoleName());
-            Boolean result = death.getGame().getRoleName().equals(this.getRoleName());
+            Boolean result = death.getGame().getRoleName().equalsIgnoreCase(this.getRoleName());
             log.info("Death with id: {} has Role with name: {} equals Filter Role with id:{} ? {} ",
                     death.getId(), death.getGame().getRoleName(), this.getRoleName(), result);
             return result;

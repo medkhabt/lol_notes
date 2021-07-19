@@ -7,8 +7,6 @@ import java.util.function.Predicate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.medkha.lol_notes.dto.interfaces.DeathFilterOption;
-
 public class GameDTO implements DeathFilterOption {
     private static Logger log = LoggerFactory.getLogger(GameDTO.class);
 
@@ -18,6 +16,12 @@ public class GameDTO implements DeathFilterOption {
     private String laneName;
     private Integer championId;
 
+    public GameDTO() { }
+
+    public GameDTO(String idParam) {
+        this.id = Long.parseLong(idParam);
+    }
+    
     public static GameDTO copy(GameDTO gameToCopy) {
         GameDTO game = new GameDTO();
         game.setId(gameToCopy.getId());
@@ -25,6 +29,12 @@ public class GameDTO implements DeathFilterOption {
         game.setRoleName(gameToCopy.getRoleName());
         game.setChampionId(gameToCopy.getChampionId());
         game.setCreatedOn(gameToCopy.getCreatedOn());
+        return game;
+    }
+
+    public static GameDTO proxy(Long id) {
+        GameDTO game = new GameDTO();
+        game.setId(id);
         return game;
     }
 

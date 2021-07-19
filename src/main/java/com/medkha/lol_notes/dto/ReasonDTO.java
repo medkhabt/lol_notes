@@ -7,18 +7,28 @@ import java.util.function.Predicate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.medkha.lol_notes.dto.interfaces.DeathFilterOption;
-
 public class ReasonDTO implements DeathFilterOption {
     private static Logger log = LoggerFactory.getLogger(ReasonDTO.class);
     private Long id;
     private String description;
+
+    public ReasonDTO(){}
+
+    public ReasonDTO(String paramId) {
+        this.id = Long.parseLong(paramId);
+    }
 
     public static ReasonDTO copy(ReasonDTO reasonToCopy){
         ReasonDTO newReason = new ReasonDTO();
         newReason.setId(reasonToCopy.getId());
         newReason.setDescription(reasonToCopy.getDescription());
         return newReason;
+    }
+
+    public static ReasonDTO proxy(Long id) {
+        ReasonDTO reason = new ReasonDTO();
+        reason.setId(id);
+        return reason;
     }
 
     public Long getId() {

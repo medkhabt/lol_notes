@@ -5,19 +5,27 @@ import java.util.function.Predicate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.medkha.lol_notes.dto.interfaces.DeathFilterOption;
-
 public class ChampionEssentielsDto implements DeathFilterOption {
     private static Logger log = LoggerFactory.getLogger(ChampionEssentielsDto.class);
     private int id;
     private String name;
 
     public ChampionEssentielsDto() {
-
     }
+
+    public ChampionEssentielsDto(String paramId) {
+        this.id = Integer.parseInt(paramId);
+    }
+
     public ChampionEssentielsDto(int id, String name) {
         this.id = id;
         this.name = name;
+    }
+
+    public static ChampionEssentielsDto proxy(int id) {
+        ChampionEssentielsDto champion = new ChampionEssentielsDto();
+        champion.setId(id);
+        return champion;
     }
 
     public int getId() {
