@@ -1,10 +1,8 @@
 package com.medkha.lol_notes.controllers.filters;
 
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -18,14 +16,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.medkha.lol_notes.dto.ChampionEssentielsDto;
 import com.medkha.lol_notes.dto.DeathDTO;
 import com.medkha.lol_notes.dto.DeathFilterOption;
 import com.medkha.lol_notes.dto.FilterSearchRequest;
-import com.medkha.lol_notes.dto.GameDTO;
-import com.medkha.lol_notes.dto.LaneDTO;
-import com.medkha.lol_notes.dto.ReasonDTO;
-import com.medkha.lol_notes.dto.RoleDTO;
 import com.medkha.lol_notes.mapper.MapperService;
 import com.medkha.lol_notes.services.filters.DeathFilterService;
 
