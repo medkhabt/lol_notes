@@ -54,8 +54,8 @@ public class MapperServiceTest {
     @Test
     void mapValidClassDtoToParamName(){
         // given
-        Class gameDTOClass = GameDTO.class;
-        Class gameClass = Game.class;
+        Class<GameDTO> gameDTOClass = GameDTO.class;
+        Class<Game> gameClass = Game.class;
 
         // when
         String resultValid = this.mapper.mapClassDtoToParamName(gameDTOClass);
