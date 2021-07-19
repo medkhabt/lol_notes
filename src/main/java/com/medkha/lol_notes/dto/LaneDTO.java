@@ -26,7 +26,7 @@ public class LaneDTO implements DeathFilterOption {
     public Predicate<DeathDTO> getPredicate() {
         return (DeathDTO death) -> {
             log.info("getDeathFilterByLanePredicate: Filter by Lane with name: {}", this.getLaneName());
-            Boolean result = death.getGame().getLaneName().equals(this.getLaneName());
+            Boolean result = death.getGame().getLaneName().equalsIgnoreCase(this.getLaneName());
             log.info("Death with id: {} has Lane with name: {} equals Filter Lane with id:{} ? {} ",
                     death.getId(), death.getGame().getLaneName(), this.getLaneName(), result);
             return result;

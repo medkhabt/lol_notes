@@ -14,7 +14,7 @@ public class ChampionEssentielsDto implements DeathFilterOption {
     }
 
     public ChampionEssentielsDto(String paramId) {
-        this.id = Integer.getInteger(paramId);
+        this.id = Integer.parseInt(paramId);
     }
 
     public ChampionEssentielsDto(int id, String name) {

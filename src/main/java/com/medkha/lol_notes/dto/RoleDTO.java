@@ -25,7 +25,7 @@ public class RoleDTO implements DeathFilterOption {
     public Predicate<DeathDTO> getPredicate() {
         return (DeathDTO death) -> {
             log.info("getDeathFilterByRolePredicate: Filter by Role with a name: {}", this.getRoleName());
-            Boolean result = death.getGame().getRoleName().equals(this.getRoleName());
+            Boolean result = death.getGame().getRoleName().equalsIgnoreCase(this.getRoleName());
             log.info("Death with id: {} has Role with name: {} equals Filter Role with id:{} ? {} ",
                     death.getId(), death.getGame().getRoleName(), this.getRoleName(), result);
             return result;
