@@ -20,6 +20,12 @@ public class ChampionEssentielsDto implements DeathFilterOption {
         this.name = name;
     }
 
+    public static ChampionEssentielsDto proxy(int id) {
+        ChampionEssentielsDto champion = new ChampionEssentielsDto();
+        champion.setId(id);
+        return champion;
+    }
+
     public int getId() {
         return id;
     }

@@ -19,9 +19,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.medkha.lol_notes.dto.ChampionEssentielsDto;
 import com.medkha.lol_notes.dto.DeathDTO;
 import com.medkha.lol_notes.dto.GameDTO;
+import com.medkha.lol_notes.dto.LaneDTO;
 import com.medkha.lol_notes.dto.ReasonDTO;
+import com.medkha.lol_notes.dto.RoleDTO;
 import com.medkha.lol_notes.services.DeathService;
 import com.medkha.lol_notes.services.GameService;
 import com.medkha.lol_notes.services.ReasonService;
@@ -45,16 +48,31 @@ public class DeathFilterController {
 	@ResponseStatus(HttpStatus.OK)
 	public Set<DeathDTO> getDeathsByFiltersController(
 			@RequestParam Optional<Long> gameId,
-			@RequestParam Optional<Long> reasonId){
+			@RequestParam Optional<Long> reasonId,
+			@RequestParam Optional<Integer> championId,
+			@RequestParam(name = "role") Optional<String> roleString,
+			@RequestParam(name = "lane") Optional<String> laneString){
 
 		List<Predicate<DeathDTO>> deathFilterPredicates = new ArrayList<>();
 		if(gameId.isPresent()) {
-			GameDTO game = gameService.findById(gameId.get());
+			GameDTO game = GameDTO.proxy(gameId.get());
 			deathFilterPredicates.add(game.getPredicate());
 		}
 		if(reasonId.isPresent()) {
-			ReasonDTO reason = reasonService.findById(reasonId.get());
+			ReasonDTO reason = ReasonDTO.proxy(reasonId.get());
 			deathFilterPredicates.add(reason.getPredicate());
+		}
+		if(championId.isPresent()) {
+			ChampionEssentielsDto champion = ChampionEssentielsDto.proxy(championId.get());
+			deathFilterPredicates.add(champion.getPredicate());
+		}
+		if(roleString.isPresent()) {
+			RoleDTO role = new RoleDTO(roleString.get());
+			deathFilterPredicates.add(role.getPredicate());
+		}
+		if(laneString.isPresent()) {
+			LaneDTO lane = new LaneDTO(laneString.get());
+			deathFilterPredicates.add(lane.getPredicate());
 		}
 		return deathFilterService.getDeathsByFilter(deathFilterPredicates).collect(Collectors.toSet());
 	}

@@ -28,6 +28,12 @@ public class GameDTO implements DeathFilterOption {
         return game;
     }
 
+    public static GameDTO proxy(Long id) {
+        GameDTO game = new GameDTO();
+        game.setId(id);
+        return game;
+    }
+
     public Long getId() {
         return id;
     }

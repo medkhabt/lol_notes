@@ -21,6 +21,12 @@ public class ReasonDTO implements DeathFilterOption {
         return newReason;
     }
 
+    public static ReasonDTO proxy(Long id) {
+        ReasonDTO reason = new ReasonDTO();
+        reason.setId(id);
+        return reason;
+    }
+
     public Long getId() {
         return id;
     }
