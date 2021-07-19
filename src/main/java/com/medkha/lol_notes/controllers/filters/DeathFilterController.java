@@ -3,6 +3,7 @@ package com.medkha.lol_notes.controllers.filters;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
@@ -19,10 +20,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.medkha.lol_notes.dto.ChampionEssentielsDto;
 import com.medkha.lol_notes.dto.DeathDTO;
+import com.medkha.lol_notes.dto.DeathFilterOption;
+import com.medkha.lol_notes.dto.FilterSearchRequest;
 import com.medkha.lol_notes.dto.GameDTO;
 import com.medkha.lol_notes.dto.LaneDTO;
 import com.medkha.lol_notes.dto.ReasonDTO;
 import com.medkha.lol_notes.dto.RoleDTO;
+import com.medkha.lol_notes.mapper.MapperService;
 import com.medkha.lol_notes.services.filters.DeathFilterService;
 
 @RestController
@@ -30,46 +34,26 @@ import com.medkha.lol_notes.services.filters.DeathFilterService;
 public class DeathFilterController {
 	private static Logger log = LoggerFactory.getLogger(DeathFilterController.class);
 	private final DeathFilterService deathFilterService;
+	private final MapperService mapperService;
 
-	public DeathFilterController(DeathFilterService deathFilterService){
+	public DeathFilterController(DeathFilterService deathFilterService, MapperService mapperService){
 		this.deathFilterService = deathFilterService;
+		this.mapperService = mapperService;
+
 	}
 
 	@GetMapping(value = "/filter")
 	@ResponseStatus(HttpStatus.OK)
 	public Set<DeathDTO> getDeathsByFiltersController(
-			@RequestParam Optional<Long> gameId,
-			@RequestParam Optional<Long> reasonId,
-			@RequestParam Optional<Integer> championId,
-			@RequestParam(name = "role") Optional<String> roleString,
-			@RequestParam(name = "lane") Optional<String> laneString){
-
-		List<Predicate<DeathDTO>> deathFilterPredicates = new ArrayList<>();
-		if(gameId.isPresent()) {
-			GameDTO game = GameDTO.proxy(gameId.get());
-			deathFilterPredicates.add(game.getPredicate());
-			log.info("predicate of a game with id {} is added to the list of Predicates.", game.getId());
-		}
-		if(reasonId.isPresent()) {
-			ReasonDTO reason = ReasonDTO.proxy(reasonId.get());
-			deathFilterPredicates.add(reason.getPredicate());
-			log.info("predicate of a reason with id {} is added to the list of Predicates.", reason.getId());
-		}
-		if(championId.isPresent()) {
-			ChampionEssentielsDto champion = ChampionEssentielsDto.proxy(championId.get());
-			deathFilterPredicates.add(champion.getPredicate());
-			log.info("predicate of a champion with id {} is added to the list of Predicates.", champion.getId());
-		}
-		if(roleString.isPresent()) {
-			RoleDTO role = new RoleDTO(roleString.get());
-			deathFilterPredicates.add(role.getPredicate());
-			log.info("predicate of a role with name {} is added to the list of Predicates.", role.getRoleName());
-		}
-		if(laneString.isPresent()) {
-			LaneDTO lane = new LaneDTO(laneString.get());
-			deathFilterPredicates.add(lane.getPredicate());
-			log.info("predicate of a lane with name {} is added to the list of Predicates.", lane.getLaneName());
-		}
+			@RequestParam Map<String,String> requestParams){
+		FilterSearchRequest filterDeathRequest = new FilterSearchRequest();
+		filterDeathRequest.setParams(requestParams);
+		log.info("FilterDeathRequest: " + filterDeathRequest.getParams());
+		Set<DeathFilterOption> deathFilterOptions =
+				this.mapperService.convertFilterSearchRequestToDeathFilterOptions(filterDeathRequest);
+		log.info("deathFitlterOptions: " + deathFilterOptions );
+		List<Predicate<DeathDTO>> deathFilterPredicates =
+				deathFilterOptions.stream().map(DeathFilterOption::getPredicate).collect(Collectors.toList());
 		return deathFilterService.getDeathsByFilter(deathFilterPredicates).collect(Collectors.toSet());
 	}
 }

@@ -2,7 +2,6 @@ package com.medkha.lol_notes.services.impl.filters;
 
 import java.util.List;
 import java.util.function.Predicate;
-import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import org.slf4j.Logger;
@@ -10,7 +9,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import com.medkha.lol_notes.dto.DeathDTO;
-import com.medkha.lol_notes.entities.Death;
 import com.medkha.lol_notes.services.DeathService;
 import com.medkha.lol_notes.services.filters.DeathFilterService;
 

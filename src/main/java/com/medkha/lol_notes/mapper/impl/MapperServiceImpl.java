@@ -40,11 +40,13 @@ public class MapperServiceImpl extends MapperBaseService{
                 (param) -> {
                     try{
                         String value = filterDeathRequest.getParams().get(param);
-                        DeathFilterOption deathFilterOption =
-                                this.deathFilterOptionFactory.createDeathFilterOptionByParamAndItsValue(param, value);
-                        deathFilterOptions.add(deathFilterOption);
+                        if(value != null) {
+                            DeathFilterOption deathFilterOption =
+                                    this.deathFilterOptionFactory.createDeathFilterOptionByParamAndItsValue(param, value);
+                            deathFilterOptions.add(deathFilterOption);
+                        }
                     } catch (NullPointerException err) {
-                        // TODO: Log it.
+                        // TODO: Log it. Or Remove the nullpointerException catch as it is not needed.
                     }
                 }
         );

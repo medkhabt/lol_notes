@@ -11,6 +11,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,36 +37,8 @@ public class DeathFilterControllerTest {
 	@MockBean 
 	private DeathFilterService deathFilterService;
 	
-	@MockBean 
-	private GameService gameService; 
-
-	@MockBean
-	private ReasonService reasonService;
-
-	@MockBean
-	private DeathService deathService;
-	
 	@Autowired 
 	private MockMvc mockMvc;
-
-	@Test 
-	public void whenGameIdDoesntExistIndDb_ThenReturn403_GetDeathsByGame() throws Exception {
-		when(gameService.findById((long) 10)).thenThrow(NoElementFoundException.class);
-		mockMvc.perform(get("/deaths/filter")
-					.param("gameId", "10")
-					.contentType("application/json")
-					)
-				.andExpect(status().isForbidden()); 
-	}
-
-	@Test
-	public void  whenNoQueryParam_ThenReturn200_FindAllDeaths() throws Exception {
-		when(deathService.findAllDeaths()).thenReturn(listOfDeaths());
-		mockMvc.perform(get("/deaths/filter")
-				.contentType("application/json")
-		)
-				.andExpect(status().isOk());
-	}
 
 	private Set<DeathDTO> listOfDeaths(){
 		DeathDTO death1 = new DeathDTO();
