@@ -5,8 +5,6 @@ import java.util.function.Predicate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.medkha.lol_notes.dto.interfaces.DeathFilterOption;
-
 public class ChampionEssentielsDto implements DeathFilterOption {
     private static Logger log = LoggerFactory.getLogger(ChampionEssentielsDto.class);
     private int id;

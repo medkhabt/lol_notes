@@ -1,4 +1,4 @@
-package com.medkha.lol_notes.dto.interfaces;
+package com.medkha.lol_notes.dto;
 
 import java.util.function.Predicate;
 

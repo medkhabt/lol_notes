@@ -7,8 +7,6 @@ import java.util.function.Predicate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.medkha.lol_notes.dto.interfaces.DeathFilterOption;
-
 public class GameDTO implements DeathFilterOption {
     private static Logger log = LoggerFactory.getLogger(GameDTO.class);
 

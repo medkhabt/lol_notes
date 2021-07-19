@@ -4,9 +4,10 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
+import org.reflections.Reflections;
 
 import com.medkha.lol_notes.dto.FilterSearchRequest;
-import com.medkha.lol_notes.dto.interfaces.DeathFilterOption;
+import com.medkha.lol_notes.dto.DeathFilterOption;
 import com.medkha.lol_notes.mapper.MapperService;
 
 public abstract class MapperBaseService implements MapperService {
@@ -23,9 +24,6 @@ public abstract class MapperBaseService implements MapperService {
     }
 
     @Override
-    public abstract Set<DeathFilterOption> convertFilterSearchRequestToDeathFilterOptions(FilterSearchRequest filterDeathRequest);
-
-    @Override
     public String mapClassDtoToParamName(Class classDto) {
         if(classDto.getSimpleName().endsWith("DTO")) {
             return classDto.getSimpleName().split("DTO")[0].toLowerCase();
@@ -34,6 +32,16 @@ public abstract class MapperBaseService implements MapperService {
             return "";
         }
     }
+
+    @Override
+    public Set<String> convertInterfaceImplementationsToParamsByInterface(Class interfaceClass) {
+        Reflections reflections = new Reflections("com.medkha.lol_notes");
+        Set<Class<? extends DeathFilterOption>> classes = reflections.getSubTypesOf(interfaceClass);
+        return classes.stream().map(this::mapClassDtoToParamName).collect(Collectors.toSet());
+    }
+
+    @Override
+    public abstract Set<DeathFilterOption> convertFilterSearchRequestToDeathFilterOptions(FilterSearchRequest filterDeathRequest);
 }
 
 

@@ -2,8 +2,14 @@ package com.medkha.lol_notes.mapper;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -12,6 +18,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import com.medkha.lol_notes.dto.ChampionEssentielsDto;
 import com.medkha.lol_notes.dto.DeathDTO;
+import com.medkha.lol_notes.dto.DeathFilterOption;
 import com.medkha.lol_notes.dto.GameDTO;
 import com.medkha.lol_notes.dto.ReasonDTO;
 import com.medkha.lol_notes.entities.Death;
@@ -66,10 +73,27 @@ public class MapperServiceTest {
                 () -> assertEquals("game", resultValid),
                 () -> assertEquals("", resultInvalid)
         );
-
-
     }
 
+    /**
+     * I'm trying to make this test valable even in the future, but probably i should change this test.
+     */
+    @Test
+    void mapInterfaceImplementationsToParams() {
+
+        // when
+        Set<String> result = this.mapper.convertInterfaceImplementationsToParamsByInterface(DeathFilterOption.class);
+        // then
+        assertAll(
+                () -> assertTrue(result.contains("game")),
+                () -> assertTrue(result.contains("reason")),
+                () -> assertTrue(result.size() > 0),
+                () -> assertThrows(
+                        IllegalArgumentException.class,
+                        () -> this.mapper.convertInterfaceImplementationsToParamsByInterface(GameDTO.class))
+        );
+
+    }
     private GameDTO sampleGameDTOWithId(){
         GameDTO game = new GameDTO();
         game.setChampionId(10);
