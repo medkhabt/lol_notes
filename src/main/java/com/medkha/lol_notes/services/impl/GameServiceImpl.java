@@ -133,9 +133,4 @@ public class GameServiceImpl implements GameService{
 		}
 	}
 
-	@Override
-	public Boolean existsInDataBase(Long id) {
-		return id != null && findById(id) != null; 	
-	}
-
 }

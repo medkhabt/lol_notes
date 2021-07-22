@@ -11,5 +11,4 @@ public interface GameService {
 	public void deleteGame(Long id);
 	public Set<GameDTO> findAllGames();
 	public GameDTO findById(Long id);
-	public Boolean existsInDataBase(Long id);
 }
