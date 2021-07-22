@@ -4,6 +4,8 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import javax.annotation.PostConstruct;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +30,12 @@ public class ChampionServiceImpl implements ChampionService {
         this.mapper = mapper;
     }
 
-
+    @PostConstruct
+    public void init() {
+        log.info("init: Start initialization of ChampionService...");
+        getAllChampions();
+        log.info("init: Got all champions successfully");
+    }
     @Override
     @Cacheable("allChampions")
     public Set<ChampionEssentielsDto> getAllChampions() {
