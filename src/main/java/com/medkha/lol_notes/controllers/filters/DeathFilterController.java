@@ -49,4 +49,19 @@ public class DeathFilterController {
 				deathFilterOptions.stream().map(DeathFilterOption::getPredicate).collect(Collectors.toList());
 		return deathFilterService.getDeathsByFilter(deathFilterPredicates).collect(Collectors.toSet());
 	}
+
+	@GetMapping(value = "ratio/filter")
+	@ResponseStatus(HttpStatus.OK)
+	public Double getRatioDeathsByFilterController(
+			@RequestParam Map<String,String> requestParams){
+		FilterSearchRequest filterDeathRequest = new FilterSearchRequest();
+		filterDeathRequest.setParams(requestParams);
+		log.info("FilterDeathRequest: " + filterDeathRequest.getParams());
+		Set<DeathFilterOption> deathFilterOptions =
+				this.mapperService.convertFilterSearchRequestToDeathFilterOptions(filterDeathRequest);
+		log.info("deathFitlterOptions: " + deathFilterOptions );
+		List<Predicate<DeathDTO>> deathFilterPredicates =
+				deathFilterOptions.stream().map(DeathFilterOption::getPredicate).collect(Collectors.toList());
+		return deathFilterService.getRatioDeathsByFilter(deathFilterPredicates);
+	}
 }
