@@ -150,6 +150,15 @@ public class DeathFilterServiceTest {
 		);
 	}
 
+	@Test
+	public void deathRatioWithNoDeathsInDb() {
+		when(deathService.countAllDeaths()).thenReturn(0);
+		Double deathRatioBySingleReason = this.deathFilterService.getRatioDeathsByFilter(
+				Stream.of(listReasonsWithId().get(0).getPredicate()).collect(Collectors.toList())
+		);
+		assertTrue(compareDouble(deathRatioBySingleReason, 0.00));
+	}
+
 	private Boolean compareDouble(Double d1, Double d2) {
 		return Math.abs(d1 - d2) < Constants.THRESHOLD;
 	}
