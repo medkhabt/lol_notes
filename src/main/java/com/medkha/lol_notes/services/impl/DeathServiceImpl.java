@@ -77,6 +77,13 @@ public class DeathServiceImpl implements DeathService{
 	}
 
 	@Override
+	public Integer countAllDeaths() {
+		int result = this.deathRepository.countAllDeaths();
+		log.info("countAllDeaths: {} deaths were found successfully");
+		return result;
+	}
+
+	@Override
 	public DeathDTO findById(Long id) {
 		try {
 			Death foundDeath = deathRepository.findById(id).orElseThrow();

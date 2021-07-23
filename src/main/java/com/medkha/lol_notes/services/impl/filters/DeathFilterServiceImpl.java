@@ -32,4 +32,17 @@ public class DeathFilterServiceImpl implements DeathFilterService{
 		return deaths;
 	}
 
+	@Override
+	public Double getRatioDeathsByFilter(List<Predicate<DeathDTO>> collect) {
+		int deathCount = deathService.countAllDeaths();
+		if(deathCount == 0) {
+			log.info("getRatioDeathsByFilter: No deaths found in the database, the ratio is 0");
+			return (double) 0;
+		}
+		long deathAfterFilterCount = getDeathsByFilter(collect).count();
+		Double result = ( (double)deathAfterFilterCount/ (double)deathCount ) ;
+		log.info("getRatioDeathsByFilter: {} ratio found successfully for the specified filters");
+		return result;
+	}
+
 }

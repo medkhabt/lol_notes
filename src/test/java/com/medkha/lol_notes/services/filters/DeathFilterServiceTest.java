@@ -1,5 +1,6 @@
 package com.medkha.lol_notes.services.filters;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
@@ -33,7 +34,7 @@ import com.medkha.lol_notes.services.impl.filters.DeathFilterServiceImpl;
 @ExtendWith(MockitoExtension.class)
 public class DeathFilterServiceTest {
 
-	private DeathFilterServiceImpl deathFilterService;
+	private DeathFilterService deathFilterService;
 	private DeathService deathService;
 
 	@BeforeEach
@@ -100,6 +101,66 @@ public class DeathFilterServiceTest {
 								Stream.of(mapOfLanesDto().get("BOTTOM").getPredicate()).collect(Collectors.toList())
 						).count())
 		);
+	}
+
+	@Test
+	public void validDeathRatioPerSingleDeathOption() {
+		when(deathService.countAllDeaths()).thenReturn(listOfDeaths().size());
+		when(deathService.findAllDeaths()).thenReturn(listOfDeaths());
+		// when
+		Double deathRatioBySingleReason = this.deathFilterService.getRatioDeathsByFilter(
+				Stream.of(listReasonsWithId().get(0).getPredicate()).collect(Collectors.toList())
+		);
+		Double deathRatioBySingleGame = this.deathFilterService.getRatioDeathsByFilter(
+				Stream.of(listGamesWithId().get(0).getPredicate()).collect(Collectors.toList())
+		);
+		Double deathRatioBySingleChampion = this.deathFilterService.getRatioDeathsByFilter(
+				Stream.of(mapOfChampionEssentielsDto().get(10).getPredicate()).collect(Collectors.toList())
+		);
+		Double deathRatioBySingleLane = this.deathFilterService.getRatioDeathsByFilter(
+				Stream.of(mapOfLanesDto().get("BOTTOM").getPredicate()).collect(Collectors.toList())
+		);
+		Double deathRatioBySingleRole = this.deathFilterService.getRatioDeathsByFilter(
+				Stream.of(mapOfRolesDto().get("SOLO").getPredicate()).collect(Collectors.toList())
+		);
+
+		// then
+		assertAll(
+				() -> assertTrue(compareDouble(deathRatioBySingleReason, 0.5)),
+				() -> assertTrue(compareDouble(deathRatioBySingleGame, 0.5)),
+				() -> assertTrue(compareDouble(deathRatioBySingleChampion, 0.5)),
+				() -> assertTrue(compareDouble(deathRatioBySingleLane, 0.5)),
+				() -> assertTrue(compareDouble(deathRatioBySingleRole, 0.5))
+		);
+	}
+
+	@Test
+	public void validDeathRatioPerMultipleDeathOptions() {
+		when(deathService.countAllDeaths()).thenReturn(listOfDeaths().size());
+		when(deathService.findAllDeaths()).thenReturn(listOfDeaths());
+		Double deathRatioByMultipleDeathOptions =
+				this.deathFilterService.getRatioDeathsByFilter(
+						Stream.of(
+								listReasonsWithId().get(0).getPredicate(),
+								listGamesWithId().get(0).getPredicate()
+						).collect(Collectors.toList())
+				);
+		assertTrue(
+				compareDouble(deathRatioByMultipleDeathOptions, 0.25 )
+		);
+	}
+
+	@Test
+	public void deathRatioWithNoDeathsInDb() {
+		when(deathService.countAllDeaths()).thenReturn(0);
+		Double deathRatioBySingleReason = this.deathFilterService.getRatioDeathsByFilter(
+				Stream.of(listReasonsWithId().get(0).getPredicate()).collect(Collectors.toList())
+		);
+		assertTrue(compareDouble(deathRatioBySingleReason, 0.00));
+	}
+
+	private Boolean compareDouble(Double d1, Double d2) {
+		return Math.abs(d1 - d2) < FilterServicesConstants.THRESHOLD;
 	}
 
 	private Set<DeathDTO> listOfDeaths(){
