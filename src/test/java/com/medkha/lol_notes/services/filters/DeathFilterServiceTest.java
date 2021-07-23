@@ -105,6 +105,7 @@ public class DeathFilterServiceTest {
 
 	@Test
 	public void validDeathRatioPerSingleDeathOption() {
+		when(deathService.countAllDeaths()).thenReturn(listOfDeaths().size());
 		when(deathService.findAllDeaths()).thenReturn(listOfDeaths());
 		// when
 		Double deathRatioBySingleReason = this.deathFilterService.getRatioDeathsByFilter(
@@ -135,6 +136,7 @@ public class DeathFilterServiceTest {
 
 	@Test
 	public void validDeathRatioPerMultipleDeathOptions() {
+		when(deathService.countAllDeaths()).thenReturn(listOfDeaths().size());
 		when(deathService.findAllDeaths()).thenReturn(listOfDeaths());
 		Double deathRatioByMultipleDeathOptions =
 				this.deathFilterService.getRatioDeathsByFilter(

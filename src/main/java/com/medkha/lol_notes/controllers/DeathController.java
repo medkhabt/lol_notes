@@ -32,6 +32,12 @@ public class DeathController {
 		return this.deathService.findAllDeaths();
 	}
 
+	@GetMapping(value = "/count" , produces="application/json")
+	@ResponseStatus(HttpStatus.OK)
+	public Integer getAllDeathsCount(){
+		return this.deathService.countAllDeaths();
+	}
+
 	@GetMapping(value="/{deathId}", produces="application/json")
 	@ResponseStatus(HttpStatus.OK)
 	public DeathDTO getDeathById(

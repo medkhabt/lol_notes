@@ -35,8 +35,9 @@ public class DeathFilterServiceImpl implements DeathFilterService{
 	@Override
 	public Double getRatioDeathsByFilter(List<Predicate<DeathDTO>> collect) {
 		// TODO: replace this by a sql request 'repository'
-		int deathCount = deathService.findAllDeaths().size();
-		Double result = ((double)getDeathsByFilter(collect).count() / (double)deathCount ) ;
+		int deathCount = deathService.countAllDeaths();
+		long deathAfterFilterCount = getDeathsByFilter(collect).count();
+		Double result = ( (double)deathAfterFilterCount/ (double)deathCount ) ;
 		return result;
 	}
 

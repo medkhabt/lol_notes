@@ -9,6 +9,7 @@ public interface DeathService {
 	public DeathDTO updateDeath(DeathDTO death);
 	public void deleteDeathById(Long id); 
 	public Set<DeathDTO> findAllDeaths();
+	public Integer countAllDeaths();
 	public DeathDTO findById(Long id);
 
 }
