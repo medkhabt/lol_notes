@@ -160,7 +160,7 @@ public class DeathFilterServiceTest {
 	}
 
 	private Boolean compareDouble(Double d1, Double d2) {
-		return Math.abs(d1 - d2) < Constants.THRESHOLD;
+		return Math.abs(d1 - d2) < FilterServicesConstants.THRESHOLD;
 	}
 
 	private Set<DeathDTO> listOfDeaths(){
