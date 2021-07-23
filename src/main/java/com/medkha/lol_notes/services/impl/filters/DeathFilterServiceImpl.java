@@ -32,4 +32,9 @@ public class DeathFilterServiceImpl implements DeathFilterService{
 		return deaths;
 	}
 
+	@Override
+	public Double getRatioDeathsByFilter(List<Predicate<DeathDTO>> collect) {
+		return null;
+	}
+
 }
