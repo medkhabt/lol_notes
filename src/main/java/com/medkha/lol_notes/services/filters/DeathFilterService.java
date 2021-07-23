@@ -8,5 +8,5 @@ import com.medkha.lol_notes.dto.DeathDTO;
 
 public interface DeathFilterService {
 	public Stream<DeathDTO> getDeathsByFilter(List<Predicate<DeathDTO>> listDeathPredicate);
-	public Double getRatioDeathsByFilter(List<Predicate<DeathDTO>> collect);
+	public Double getRatioDeathsByFilter(List<Predicate<DeathDTO>> listDeathPredicate);
 }
