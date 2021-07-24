@@ -9,6 +9,7 @@ public class ChampionEssentielsDto implements DeathFilterOption {
     private static Logger log = LoggerFactory.getLogger(ChampionEssentielsDto.class);
     private int id;
     private String name;
+    private String imageUrl;
 
     public ChampionEssentielsDto() {
     }
@@ -17,9 +18,10 @@ public class ChampionEssentielsDto implements DeathFilterOption {
         this.id = Integer.parseInt(paramId);
     }
 
-    public ChampionEssentielsDto(int id, String name) {
+    public ChampionEssentielsDto(int id, String name, String imageUrl) {
         this.id = id;
         this.name = name;
+        this.imageUrl = imageUrl;
     }
 
     public static ChampionEssentielsDto proxy(int id) {
@@ -42,6 +44,14 @@ public class ChampionEssentielsDto implements DeathFilterOption {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 
     @Override
