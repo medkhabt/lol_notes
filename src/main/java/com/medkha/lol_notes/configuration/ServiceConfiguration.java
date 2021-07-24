@@ -13,6 +13,7 @@ import com.medkha.lol_notes.services.DeathService;
 import com.medkha.lol_notes.services.GameService;
 import com.medkha.lol_notes.services.ReasonService;
 import com.medkha.lol_notes.services.RoleAndLaneService;
+import com.medkha.lol_notes.services.filters.DeathFilterService;
 import com.medkha.lol_notes.services.impl.ChampionServiceImpl;
 import com.medkha.lol_notes.services.impl.DeathServiceImpl;
 import com.medkha.lol_notes.services.impl.GameServiceImpl;
@@ -27,8 +28,8 @@ public class ServiceConfiguration {
     }
 
     @Bean
-    public ReasonService reasonService(ReasonRepository reasonRepository, MapperService mapperService) {
-        return new ReasonServiceImpl(reasonRepository, mapperService);
+    public ReasonService reasonService(ReasonRepository reasonRepository, DeathService deathService, DeathFilterService deathFilterService, MapperService mapperService) {
+        return new ReasonServiceImpl(reasonRepository, deathService, deathFilterService, mapperService);
     }
 
     @Bean

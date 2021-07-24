@@ -1,5 +1,6 @@
 package com.medkha.lol_notes.services.impl;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.NoSuchElementException;
 import java.util.Set;
@@ -14,7 +15,9 @@ import com.medkha.lol_notes.entities.Reason;
 import com.medkha.lol_notes.exceptions.NoElementFoundException;
 import com.medkha.lol_notes.mapper.MapperService;
 import com.medkha.lol_notes.repositories.ReasonRepository;
+import com.medkha.lol_notes.services.DeathService;
 import com.medkha.lol_notes.services.ReasonService;
+import com.medkha.lol_notes.services.filters.DeathFilterService;
 
 @Service
 public class ReasonServiceImpl implements ReasonService{
@@ -23,10 +26,14 @@ public class ReasonServiceImpl implements ReasonService{
 			LoggerFactory.getLogger(ReasonServiceImpl.class); 
 	
 	private final ReasonRepository reasonRepository;
+	private final DeathService deathService;
+	private final DeathFilterService deathFilterService;
 	private final MapperService mapperService;
 
-	public ReasonServiceImpl(ReasonRepository reasonRepository, MapperService mapperService) {
+	public ReasonServiceImpl(ReasonRepository reasonRepository, DeathService deathService, DeathFilterService deathFilterService, MapperService mapperService) {
 		this.reasonRepository = reasonRepository;
+		this.deathService = deathService;
+		this.deathFilterService = deathFilterService;
 		this.mapperService = mapperService;
 	}
 
@@ -58,7 +65,8 @@ public class ReasonServiceImpl implements ReasonService{
 
 	@Override
 	public void deleteReason(Long id) {
-		findById(id);
+		ReasonDTO reasonFound = findById(id);
+		deleteAssociatedDeaths(reasonFound);
 		try {
 			this.reasonRepository.deleteById(id);
 			log.info("deleteReason: Reason with id: " + id + " was deleted successfully.");
@@ -66,6 +74,16 @@ public class ReasonServiceImpl implements ReasonService{
 			log.error("deleteReason: Reason id is null, so can't proceed.");
 			throw new IllegalArgumentException("Reason id is null, so can't proceed.", err); 
 		}
+	}
+
+	private void deleteAssociatedDeaths(ReasonDTO reason) {
+		log.info("deleteAssociatedDeaths: start deleting associated deaths of reason with id: {}.", reason.getId());
+		this.deathFilterService.getDeathsByFilter(Collections.singletonList(reason.getPredicate())).forEach(
+				(d) -> {
+					this.deathService.deleteDeathById(d.getId());
+					log.info("deleteAssociatedDeaths: Delete death with id: {} successfully.", d.getId());
+				}
+		);
 	}
 
 	@Override
