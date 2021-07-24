@@ -21,6 +21,10 @@ public class GameDTO implements DeathFilterOption {
     public GameDTO(String idParam) {
         this.id = Long.parseLong(idParam);
     }
+
+    public GameDTO(Long id) {
+        this.id = id;
+    }
     
     public static GameDTO copy(GameDTO gameToCopy) {
         GameDTO game = new GameDTO();
