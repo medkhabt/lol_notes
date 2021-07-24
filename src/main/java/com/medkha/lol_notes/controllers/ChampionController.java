@@ -33,7 +33,7 @@ public class ChampionController {
         return this.championService.getChampionByName(name);
     }
 
-    @GetMapping(value="/id/{id}", produces="application/json")
+    @GetMapping(value="/{id}", produces="application/json")
     @ResponseStatus(HttpStatus.OK)
     public ChampionEssentielsDto getChampionsByIdController(@PathVariable("id") Integer id){
         return this.championService.getChampionById(id);
