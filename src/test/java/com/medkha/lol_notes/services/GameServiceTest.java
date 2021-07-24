@@ -80,7 +80,7 @@ public class GameServiceTest {
 	}
 
 	private ChampionEssentielsDto sampleChampionEssentiels() {
-		return new ChampionEssentielsDto(10, "testChamp");
+		return new ChampionEssentielsDto(10, "testChamp", "url image");
 	}
 	@Test
 	public void shouldCreateGame() {
