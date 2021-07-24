@@ -22,6 +22,7 @@ import com.medkha.lol_notes.entities.Game;
 import com.medkha.lol_notes.exceptions.NoElementFoundException;
 import com.medkha.lol_notes.mapper.MapperService;
 import com.medkha.lol_notes.repositories.GameRepository;
+import com.medkha.lol_notes.services.filters.DeathFilterService;
 import com.medkha.lol_notes.services.impl.GameServiceImpl;
 
 @ExtendWith(SpringExtension.class)
@@ -31,6 +32,8 @@ public class GameServiceTest {
 	private ChampionService championServiceMock;
 	private RoleAndLaneService roleAndLaneServiceMock;
 	private GameRepository gameRepositoryMock;
+	private DeathService deathServiceMock;
+	private DeathFilterService deathFilterService;
 	private MapperService mapperServiceMock;
 
 	@BeforeEach
@@ -39,7 +42,7 @@ public class GameServiceTest {
 		championServiceMock = mock(ChampionService.class);
 		roleAndLaneServiceMock = mock(RoleAndLaneService.class);
 		mapperServiceMock = mock(MapperService.class);
-		gameService = new GameServiceImpl(gameRepositoryMock, championServiceMock, roleAndLaneServiceMock, mapperServiceMock);
+		gameService = new GameServiceImpl(gameRepositoryMock, championServiceMock, roleAndLaneServiceMock, deathServiceMock, deathFilterService, mapperServiceMock);
 	}
 
 	private GameDTO sampleGameDTOWithoutId(){

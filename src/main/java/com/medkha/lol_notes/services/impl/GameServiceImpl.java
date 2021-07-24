@@ -1,5 +1,6 @@
 package com.medkha.lol_notes.services.impl;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.NoSuchElementException;
 import java.util.Set;
@@ -16,8 +17,10 @@ import com.medkha.lol_notes.exceptions.NoElementFoundException;
 import com.medkha.lol_notes.mapper.MapperService;
 import com.medkha.lol_notes.repositories.GameRepository;
 import com.medkha.lol_notes.services.ChampionService;
+import com.medkha.lol_notes.services.DeathService;
 import com.medkha.lol_notes.services.GameService;
 import com.medkha.lol_notes.services.RoleAndLaneService;
+import com.medkha.lol_notes.services.filters.DeathFilterService;
 
 @Service
 public class GameServiceImpl implements GameService{
@@ -28,11 +31,21 @@ public class GameServiceImpl implements GameService{
 	private final ChampionService championService;
 	private final GameRepository gameRepository;
 	private final RoleAndLaneService roleAndLaneService;
+	private final DeathService deathService;
+	private final DeathFilterService deathFilterService;
 	private final MapperService mapperService;
-	public GameServiceImpl(GameRepository gameRepository, ChampionService championService, RoleAndLaneService roleAndLaneService, MapperService mapperService) {
+	public GameServiceImpl(
+			GameRepository gameRepository,
+			ChampionService championService,
+			RoleAndLaneService roleAndLaneService,
+			DeathService deathService,
+			DeathFilterService deathFilterService,
+			MapperService mapperService) {
 		this.gameRepository = gameRepository;
 		this.championService = championService;
 		this.roleAndLaneService = roleAndLaneService;
+		this.deathService = deathService;
+		this.deathFilterService = deathFilterService;
 		this.mapperService = mapperService;
 	}
 
@@ -96,8 +109,9 @@ public class GameServiceImpl implements GameService{
 
 	@Override
 	public void deleteGame(Long id) {
-		findById(id); 
-		// this try catch is just a safe net, if findById doesn't include null id traitement. 
+		GameDTO foundGame = findById(id);
+		deleteAssociatedDeaths(foundGame);
+		// this try catch is just a safe net, if findById doesn't include null id traitement.
 		try {			
 			this.gameRepository.deleteById(id);
 			log.info("deleteGame: game with id: " + id + " was deleted successfully.");
@@ -105,6 +119,16 @@ public class GameServiceImpl implements GameService{
 			log.error("deleteGame: game id is null, so can't proceed.");
 			throw new IllegalArgumentException("game id is null, so can't proceed.", err); 
 		}
+	}
+
+	private void deleteAssociatedDeaths(GameDTO game) {
+		log.info("deleteAssociatedDeaths: start deleting associated deaths of game with id: {}.", game.getId());
+		this.deathFilterService.getDeathsByFilter(Collections.singletonList(game.getPredicate())).forEach(
+				(d) -> {
+					this.deathService.deleteDeathById(d.getId());
+					log.info("deleteAssociatedDeaths: Delete death with id: {} successfully.", d.getId());
+				}
+		);
 	}
 
 	@Override

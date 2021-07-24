@@ -20,6 +20,7 @@ import com.medkha.lol_notes.entities.Reason;
 import com.medkha.lol_notes.exceptions.NoElementFoundException;
 import com.medkha.lol_notes.mapper.MapperService;
 import com.medkha.lol_notes.repositories.ReasonRepository;
+import com.medkha.lol_notes.services.filters.DeathFilterService;
 import com.medkha.lol_notes.services.impl.ReasonServiceImpl;
 
 @ExtendWith(SpringExtension.class)
@@ -27,6 +28,8 @@ import com.medkha.lol_notes.services.impl.ReasonServiceImpl;
 public class ReasonServiceTest {
 
 	private ReasonRepository reasonRepositoryMock;
+	private DeathService deathServiceMock;
+	private DeathFilterService deathFilterServiceMock;
 	private MapperService mapperServiceMock;
 	private ReasonService reasonService;
 
@@ -57,7 +60,9 @@ public class ReasonServiceTest {
 	public void setupMock() {
 		reasonRepositoryMock = mock(ReasonRepository.class);
 		mapperServiceMock = mock(MapperService.class);
-		reasonService = new ReasonServiceImpl(reasonRepositoryMock, mapperServiceMock);
+		deathServiceMock = mock(DeathService.class);
+		deathFilterServiceMock = mock(DeathFilterService.class);
+		reasonService = new ReasonServiceImpl(reasonRepositoryMock, deathServiceMock, deathFilterServiceMock, mapperServiceMock);
 	}
 
 	@Test
