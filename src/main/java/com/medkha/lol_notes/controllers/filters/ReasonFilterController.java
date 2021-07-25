@@ -32,7 +32,7 @@ public class ReasonFilterController {
     @ResponseStatus(HttpStatus.OK)
     public ReasonDTO getTopReasonByGameController(
             @PathVariable("gameId") Long gameId){
-        ReasonDTO reason = reasonFilterService.getTopReasonByGame(new GameDTO(gameId));
+        ReasonDTO reason = reasonFilterService.getDeathsByGameAndCalculateTopReasonByGame(new GameDTO(gameId));
         log.info("getTopReasonByGameController: get top reason which is with id {} successfully", reason.getId());
         return reasonService.findById(reason.getId());
     }

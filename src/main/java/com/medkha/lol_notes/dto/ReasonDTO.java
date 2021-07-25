@@ -18,6 +18,10 @@ public class ReasonDTO implements DeathFilterOption {
         this.id = Long.parseLong(paramId);
     }
 
+    public ReasonDTO(Long id) {
+        this.id = id;
+    }
+
     public static ReasonDTO copy(ReasonDTO reasonToCopy){
         ReasonDTO newReason = new ReasonDTO();
         newReason.setId(reasonToCopy.getId());

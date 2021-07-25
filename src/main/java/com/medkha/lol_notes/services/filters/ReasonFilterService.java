@@ -4,5 +4,5 @@ import com.medkha.lol_notes.dto.GameDTO;
 import com.medkha.lol_notes.dto.ReasonDTO;
 
 public interface ReasonFilterService {
-    public ReasonDTO getTopReasonByGame(GameDTO game);
+    public ReasonDTO getDeathsByGameAndCalculateTopReasonByGame(GameDTO game);
 }
