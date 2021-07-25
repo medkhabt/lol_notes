@@ -3,6 +3,7 @@ package com.medkha.lol_notes.controllers;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -11,8 +12,10 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+import com.medkha.lol_notes.exceptions.IncorrectReturnSizeException;
 import com.medkha.lol_notes.exceptions.NoElementFoundException;
 import com.medkha.lol_notes.util.ErrorMessage;
+import com.medkha.lol_notes.util.ErrorMessageWithParams;
 import com.medkha.lol_notes.util.FieldErrorMessage;
 
 @ControllerAdvice
@@ -46,4 +49,16 @@ public class ExceptionHandlerController {
 	ErrorMessage illegaleArgumenetExceptionExceptionHandler(IllegalArgumentException err) { 
 		return new ErrorMessage("400", err.getMessage());
 	}
+
+	@ResponseBody
+	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+	@ExceptionHandler(IncorrectReturnSizeException.class)
+	ErrorMessageWithParams incorrectReturnSizeExceptionHandler(IncorrectReturnSizeException err) {
+		ErrorMessageWithParams errorMessageWithParams = new ErrorMessageWithParams("500", err.getMessage());
+		errorMessageWithParams.addParam("expectedSize", String.valueOf(err.getExpectedSize()));
+		errorMessageWithParams.addParam("actualSize", String.valueOf(err.getActualSize()));
+		return errorMessageWithParams;
+	}
+
+
 }

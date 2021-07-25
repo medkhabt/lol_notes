@@ -1,6 +1,7 @@
 package com.medkha.lol_notes.services.filters;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -23,6 +24,7 @@ import com.medkha.lol_notes.dto.GameDTO;
 import com.medkha.lol_notes.dto.LaneDTO;
 import com.medkha.lol_notes.dto.ReasonDTO;
 import com.medkha.lol_notes.dto.RoleDTO;
+import com.medkha.lol_notes.exceptions.IncorrectReturnSizeException;
 import com.medkha.lol_notes.services.impl.filters.ReasonFilterServiceImpl;
 
 @ExtendWith(SpringExtension.class)
@@ -42,12 +44,24 @@ class ReasonFilterServiceTest {
         GameDTO gameToFilterBy = new GameDTO((long)1);
         ReasonDTO correctResult = new ReasonDTO((long)2);
         when(deathFilterServiceMock.getDeathsByFilter(anyList()))
-                .thenReturn(listOfDeaths());
+                .thenReturn(listOfDeaths().filter(d -> d.getGame().getId().equals((long)1)));
         // when
         ReasonDTO result = this.reasonFilterService.getDeathsByGameAndCalculateTopReasonByGame(gameToFilterBy);
 
         // then
         assertEquals(correctResult, result);
+    }
+
+    @Test
+    void shouldThrowExceptionWhenThereAreMoreThanOneTopGame() {
+        GameDTO gameToFilterBy = new GameDTO((long)2);
+        when(deathFilterServiceMock.getDeathsByFilter(anyList()))
+                .thenReturn(listOfDeaths().filter(d -> d.getGame().getId().equals((long)2)));
+        assertThrows(
+                IncorrectReturnSizeException.class,
+                () -> this.reasonFilterService.getDeathsByGameAndCalculateTopReasonByGame(gameToFilterBy)
+        );
+
     }
 
     private Stream<DeathDTO> listOfDeaths(){
@@ -75,8 +89,20 @@ class ReasonFilterServiceTest {
         death4.setGame(GameDTO.copy(listGamesWithId().get(0)));
         death4.setReason(ReasonDTO.copy(listReasonsWithId().get(0)));
 
+        DeathDTO death5 = new DeathDTO();
+        death5.setId((long)5);
+        death5.setMinute(5);
+        death5.setGame(GameDTO.copy(listGamesWithId().get(1)));
+        death5.setReason(ReasonDTO.copy(listReasonsWithId().get(0)));
 
-        return Stream.of(death1, death2, death3, death4);
+        DeathDTO death6 = new DeathDTO();
+        death6.setId((long)6);
+        death6.setMinute(6);
+        death6.setGame(GameDTO.copy(listGamesWithId().get(1)));
+        death6.setReason(ReasonDTO.copy(listReasonsWithId().get(1)));
+
+
+        return Stream.of(death1, death2, death3, death4, death5, death6);
     }
 
     private List<GameDTO> listGamesWithId(){
@@ -86,7 +112,13 @@ class ReasonFilterServiceTest {
         game1.setLaneName("MIDDLE");
         game1.setId((long) 1);
 
-        List<GameDTO> listGamesWithId = Stream.of(game1).collect(Collectors.toList());
+        GameDTO game2 = new GameDTO();
+        game2.setChampionId(13);
+        game2.setRoleName("SOLO");
+        game2.setLaneName("MIDDLE");
+        game2.setId((long) 2);
+
+        List<GameDTO> listGamesWithId = Stream.of(game1, game2).collect(Collectors.toList());
         return new ArrayList<>(listGamesWithId);
     }
 

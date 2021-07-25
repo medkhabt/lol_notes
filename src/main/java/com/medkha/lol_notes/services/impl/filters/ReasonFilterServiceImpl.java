@@ -5,11 +5,13 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.stereotype.Service;
 
 import com.medkha.lol_notes.dto.DeathDTO;
 import com.medkha.lol_notes.dto.GameDTO;
 import com.medkha.lol_notes.dto.ReasonDTO;
+import com.medkha.lol_notes.exceptions.IncorrectReturnSizeException;
 import com.medkha.lol_notes.services.filters.DeathFilterService;
 import com.medkha.lol_notes.services.filters.ReasonFilterService;
 
@@ -34,10 +36,20 @@ public class ReasonFilterServiceImpl implements ReasonFilterService {
 
     private Long getTopIdReasonFromMapOfIdReasonsAndTheirNumberOfOccurence(Map<Long, Long> mapOfReasonRepetitions) {
         Map.Entry<Long, Long> maxEntry = Map.entry((long)0, (long)0);
+        int topReasonsCount = 0;
         for(Map.Entry<Long,Long> entry : mapOfReasonRepetitions.entrySet()) {
-            if(maxEntry.getValue() < entry.getValue()) {
+            if(maxEntry.getValue() <= entry.getValue()) {
+                if(maxEntry.getValue().equals(entry.getValue())) {
+                    topReasonsCount++;
+                }
+                else {
+                    topReasonsCount = 1;
+                }
                 maxEntry = entry;
             }
+        }
+        if(topReasonsCount > 1) {
+            throw new IncorrectReturnSizeException("There are many reasons with the same death.",1 , topReasonsCount);
         }
         return maxEntry.getKey();
     }

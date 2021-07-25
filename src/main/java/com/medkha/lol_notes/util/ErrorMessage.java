@@ -1,8 +1,8 @@
 package com.medkha.lol_notes.util;
 
 public class ErrorMessage {
-	private String status; 
-	private String message; 
+	protected String status;
+	protected String message;
 	
 	public ErrorMessage(String status, String message) {
 		this.status = status; 
