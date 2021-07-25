@@ -7,9 +7,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -18,12 +16,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import com.medkha.lol_notes.dto.ChampionEssentielsDto;
 import com.medkha.lol_notes.dto.DeathDTO;
 import com.medkha.lol_notes.dto.GameDTO;
-import com.medkha.lol_notes.dto.LaneDTO;
 import com.medkha.lol_notes.dto.ReasonDTO;
-import com.medkha.lol_notes.dto.RoleDTO;
 import com.medkha.lol_notes.exceptions.IncorrectReturnSizeException;
 import com.medkha.lol_notes.services.impl.filters.ReasonFilterServiceImpl;
 
@@ -135,37 +130,4 @@ class ReasonFilterServiceTest {
         return new ArrayList<>(listReasonsWithId);
     }
 
-    private Map<Integer, ChampionEssentielsDto> mapOfChampionEssentielsDto() {
-        Map<Integer, ChampionEssentielsDto> result = new HashMap<>();
-
-        ChampionEssentielsDto champion1 = new ChampionEssentielsDto();
-        champion1.setId(10);
-        champion1.setName("Champion 1");
-        result.put(champion1.getId(), champion1);
-
-        ChampionEssentielsDto champion2 = new ChampionEssentielsDto();
-        champion2.setId(11);
-        champion2.setName("Champion 2");
-        result.put(champion2.getId(), champion2);
-
-        return new HashMap<>(result);
-    }
-
-    private Map<String, RoleDTO> mapOfRolesDto() {
-        Map<String, RoleDTO> result = new HashMap<>();
-        RoleDTO role1 = new RoleDTO("SOLO");
-        result.put("SOLO", role1);
-        RoleDTO role2 = new RoleDTO("DUO");
-        result.put("DUO", role2);
-        return new HashMap<>(result);
-    }
-
-    private Map<String, LaneDTO> mapOfLanesDto() {
-        Map<String, LaneDTO> result = new HashMap<>();
-        LaneDTO lane1 = new LaneDTO("MIDDLE");
-        result.put("MIDDLE", lane1);
-        LaneDTO lane2 = new LaneDTO("BOTTOM");
-        result.put("BOTTOM", lane2);
-        return new HashMap<>(result);
-    }
 }

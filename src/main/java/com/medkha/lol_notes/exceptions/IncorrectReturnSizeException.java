@@ -1,8 +1,8 @@
 package com.medkha.lol_notes.exceptions;
 
 public class IncorrectReturnSizeException extends RuntimeException{
-    private int expectedSize;
-    private int actualSize;
+    private final int expectedSize;
+    private final int actualSize;
     public IncorrectReturnSizeException(String errorMessage, int expectedSize) {
         super(errorMessage);
         this.expectedSize = expectedSize;

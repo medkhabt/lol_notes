@@ -3,7 +3,6 @@ package com.medkha.lol_notes.controllers;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -27,13 +26,11 @@ public class ExceptionHandlerController {
 	@ExceptionHandler(MethodArgumentNotValidException.class)
 	List<FieldErrorMessage> methodArgumentNotValidExceptionHandler(MethodArgumentNotValidException e) { 
 		List<FieldError> fieldErrors = e.getBindingResult().getFieldErrors();
-		List<FieldErrorMessage> fieldErrorMessages = 
-				fieldErrors.stream()
-					.map(fieldError ->  
+		return fieldErrors.stream()
+				.map(fieldError ->
 						new FieldErrorMessage(fieldError.getField(), fieldError.getDefaultMessage())
-					)
-					.collect(Collectors.toList()); 
-		return fieldErrorMessages; 
+				)
+				.collect(Collectors.toList());
 	}
 	
 	@ResponseBody 
