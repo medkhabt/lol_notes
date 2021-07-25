@@ -1,11 +1,7 @@
 package com.medkha.lol_notes.services.impl.filters;
 
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
@@ -31,16 +27,13 @@ public class ReasonFilterServiceImpl implements ReasonFilterService {
                 .collect(
                         Collectors.groupingBy(ReasonDTO::getId, Collectors.counting())
                 );
-        Long max = (long)0;
-        Long keyOfMax = (long)0;
-        for(Long key : mapOfReasonRepetitions.keySet()) {
-            Long value = mapOfReasonRepetitions.get(key);
-            if(max < value) {
-                max = value;
-                keyOfMax = key;
+        Map.Entry<Long, Long> maxEntry = Map.entry((long)0, (long)0);
+        for(Map.Entry<Long,Long> entry : mapOfReasonRepetitions.entrySet()) {
+            if(maxEntry.getValue() < entry.getValue()) {
+                maxEntry = entry;
             }
         }
 
-        return new ReasonDTO(String.valueOf(keyOfMax));
+        return new ReasonDTO(String.valueOf(maxEntry.getKey()));
     }
 }
