@@ -11,8 +11,10 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+import com.medkha.lol_notes.exceptions.IncorrectReturnSizeException;
 import com.medkha.lol_notes.exceptions.NoElementFoundException;
 import com.medkha.lol_notes.util.ErrorMessage;
+import com.medkha.lol_notes.util.ErrorMessageWithParams;
 import com.medkha.lol_notes.util.FieldErrorMessage;
 
 @ControllerAdvice
@@ -24,13 +26,11 @@ public class ExceptionHandlerController {
 	@ExceptionHandler(MethodArgumentNotValidException.class)
 	List<FieldErrorMessage> methodArgumentNotValidExceptionHandler(MethodArgumentNotValidException e) { 
 		List<FieldError> fieldErrors = e.getBindingResult().getFieldErrors();
-		List<FieldErrorMessage> fieldErrorMessages = 
-				fieldErrors.stream()
-					.map(fieldError ->  
+		return fieldErrors.stream()
+				.map(fieldError ->
 						new FieldErrorMessage(fieldError.getField(), fieldError.getDefaultMessage())
-					)
-					.collect(Collectors.toList()); 
-		return fieldErrorMessages; 
+				)
+				.collect(Collectors.toList());
 	}
 	
 	@ResponseBody 
@@ -46,4 +46,16 @@ public class ExceptionHandlerController {
 	ErrorMessage illegaleArgumenetExceptionExceptionHandler(IllegalArgumentException err) { 
 		return new ErrorMessage("400", err.getMessage());
 	}
+
+	@ResponseBody
+	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+	@ExceptionHandler(IncorrectReturnSizeException.class)
+	ErrorMessageWithParams incorrectReturnSizeExceptionHandler(IncorrectReturnSizeException err) {
+		ErrorMessageWithParams errorMessageWithParams = new ErrorMessageWithParams("500", err.getMessage());
+		errorMessageWithParams.addParam("expectedSize", String.valueOf(err.getExpectedSize()));
+		errorMessageWithParams.addParam("actualSize", String.valueOf(err.getActualSize()));
+		return errorMessageWithParams;
+	}
+
+
 }
