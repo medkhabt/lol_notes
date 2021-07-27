@@ -5,9 +5,10 @@ import java.util.NoSuchElementException;
 import java.util.Set;
 
 
+import javax.transaction.Transactional;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.stereotype.Service;
 
@@ -43,13 +44,14 @@ public class DeathServiceImpl implements DeathService{
 	}
 
 	@Override
+	@Transactional
 	public DeathDTO updateDeath(DeathDTO death){
 		try {
 			findById(death.getId());
-			Death updatedDeath = deathRepository.save(mapperService.convert(death, Death.class));
-			DeathDTO convertedUpdatedDeath = mapperService.convert(updatedDeath, DeathDTO.class);
+			Death updatedDeath = mapperService.convert(death, Death.class);
+			deathRepository.updateDeathSave(updatedDeath.getId(), updatedDeath.getMinute(), updatedDeath.getReason().getId());
 			log.info("updateDeath: Death with id: {} updated successfully.", updatedDeath.getId());
-			return convertedUpdatedDeath;
+			return death;
 		} catch (InvalidDataAccessApiUsageException | NullPointerException err ) {
 			log.error("updateDeath: Death Object is null and cannot be proceed");
 			throw new IllegalArgumentException("Death Object is null and cannot be processed", err);
@@ -61,7 +63,8 @@ public class DeathServiceImpl implements DeathService{
 		findById(id);
 		try {
 			deathRepository.deleteById(id);
-			log.info("deleteDeathById: death with id: " + id + " was deleted successfully.");
+			String messageSuccess= String.format("deleteDeathById: death with id: %i was deleted successfully.", id);
+			log.info(messageSuccess);
 		}catch(IllegalArgumentException err) {
 			log.error("deleteDeathById: death id is null, so can't proceed.");
 			throw new IllegalArgumentException("death id is null, so can't proceed.");
@@ -79,7 +82,7 @@ public class DeathServiceImpl implements DeathService{
 	@Override
 	public Integer countAllDeaths() {
 		int result = this.deathRepository.countAllDeaths();
-		log.info("countAllDeaths: {} deaths were found successfully");
+		log.info("countAllDeaths: {} deaths were found successfully", result);
 		return result;
 	}
 
@@ -88,7 +91,8 @@ public class DeathServiceImpl implements DeathService{
 		try {
 			Death foundDeath = deathRepository.findById(id).orElseThrow();
 			DeathDTO convertedFoundDeath = mapperService.convert(foundDeath, DeathDTO.class);
-			log.info("findById: Death with id: " + id + " was found successfully.");
+			String messgeSuccess = String.format("findById: Death with id: %d was found successfully.", id);
+			log.info(messgeSuccess);
 			return convertedFoundDeath;
 		} catch (InvalidDataAccessApiUsageException | NullPointerException err ) {
 			log.error("findById: Death Object has null id, and cannot be processed");
