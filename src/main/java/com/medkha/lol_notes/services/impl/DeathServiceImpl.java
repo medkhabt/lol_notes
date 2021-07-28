@@ -48,10 +48,10 @@ public class DeathServiceImpl implements DeathService{
 	public DeathDTO updateDeath(DeathDTO death){
 		try {
 			findById(death.getId());
-			Death updatedDeath = mapperService.convert(death, Death.class);
-			deathRepository.updateDeathSave(updatedDeath.getId(), updatedDeath.getMinute(), updatedDeath.getReason().getId());
-			log.info("updateDeath: Death with id: {} updated successfully.", updatedDeath.getId());
-			return death;
+			Death updatedDeath = deathRepository.save(mapperService.convert(death, Death.class));
+			DeathDTO updatedDeathDTO = this.mapperService.convert(updatedDeath, DeathDTO.class);
+			log.info("updateDeath: Death with id: {} updated successfully.", updatedDeathDTO.getId());
+			return updatedDeathDTO;
 		} catch (InvalidDataAccessApiUsageException | NullPointerException err ) {
 			log.error("updateDeath: Death Object is null and cannot be proceed");
 			throw new IllegalArgumentException("Death Object is null and cannot be processed", err);
