@@ -18,6 +18,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import com.medkha.lol_notes.dto.ChampionEssentielsDto;
 import com.medkha.lol_notes.dto.GameDTO;
+import com.medkha.lol_notes.dto.QueueDTO;
 import com.medkha.lol_notes.entities.Game;
 import com.medkha.lol_notes.exceptions.NoElementFoundException;
 import com.medkha.lol_notes.mapper.MapperService;
@@ -31,6 +32,7 @@ public class GameServiceTest {
 	private GameService gameService;
 	private ChampionService championServiceMock;
 	private RoleAndLaneService roleAndLaneServiceMock;
+	private QueueService queueServiceMock;
 	private GameRepository gameRepositoryMock;
 	private DeathService deathServiceMock;
 	private DeathFilterService deathFilterService;
@@ -42,7 +44,7 @@ public class GameServiceTest {
 		championServiceMock = mock(ChampionService.class);
 		roleAndLaneServiceMock = mock(RoleAndLaneService.class);
 		mapperServiceMock = mock(MapperService.class);
-		gameService = new GameServiceImpl(gameRepositoryMock, championServiceMock, roleAndLaneServiceMock, deathServiceMock, deathFilterService, mapperServiceMock);
+		gameService = new GameServiceImpl(gameRepositoryMock, championServiceMock, roleAndLaneServiceMock, queueServiceMock, deathServiceMock, deathFilterService, mapperServiceMock);
 	}
 
 	private GameDTO sampleGameDTOWithoutId(){
@@ -50,6 +52,7 @@ public class GameServiceTest {
 		game.setChampionId(10);
 		game.setRoleName("SOLO");
 		game.setLaneName("MIDLANE");
+		game.setQueueId(11);
 		return game;
 	}
 
@@ -58,6 +61,7 @@ public class GameServiceTest {
 		game.setChampionId(10);
 		game.setRoleName("SOLO");
 		game.setLaneName("MIDLANE");
+		game.setQueueId(11);
 		game.setId((long) 1);
 		return game;
 	}
@@ -82,12 +86,17 @@ public class GameServiceTest {
 	private ChampionEssentielsDto sampleChampionEssentiels() {
 		return new ChampionEssentielsDto(10, "testChamp", "url image");
 	}
+
+	private QueueDTO sampleQueueDto() {
+		return new QueueDTO(11, "sample queue");
+	}
 	@Test
 	public void shouldCreateGame() {
 		// given
 		GameDTO expectedResult = GameDTO.copy(sampleGameDTOWithoutId());
 		expectedResult.setId((long) 1);
 
+//		when(this.queueServiceMock.getQueueById(sampleGameDTOWithId().getQueueId())).thenReturn(Optional.of(sampleQueueDto()));
 		when(this.championServiceMock.getChampionById(10)).thenReturn(sampleChampionEssentiels());
 		when(this.mapperServiceMock.convert(sampleGameDTOWithoutId(), Game.class)).thenReturn(sampleGameWithoutId());
 		when(this.gameRepositoryMock.save(this.mapperServiceMock.convert(sampleGameDTOWithoutId(), Game.class))).thenReturn(sampleGameWithId());
@@ -128,6 +137,26 @@ public class GameServiceTest {
 		assertAll(
 				() -> assertThrows(IllegalArgumentException.class, () -> this.gameService.createGame(gameWithoutRoleId)),
 				() -> assertThrows(IllegalArgumentException.class, () -> this.gameService.createGame(gameWithoutLaneId))
+		);
+	}
+
+	@Test
+	void shouldThrowIllegalArgumentException_When_QueueIdIsNullOrDoesntExist_createGame() {
+		GameDTO gameWithoutQueueId = sampleGameDTOWithoutId();
+		gameWithoutQueueId.setQueueId(null);
+
+		GameDTO gameWithQueueIdDoesntExist = sampleGameDTOWithId();
+		gameWithQueueIdDoesntExist.setQueueId(1);
+
+//		when(this.roleAndLaneServiceMock.get)
+
+		assertAll(
+				() -> assertThrows(IllegalArgumentException.class, () -> {
+					this.gameService.createGame(gameWithoutQueueId);
+				}),
+				() -> assertThrows(IllegalArgumentException.class, () -> {
+					this.gameService.createGame(gameWithQueueIdDoesntExist);
+				})
 		);
 	}
 

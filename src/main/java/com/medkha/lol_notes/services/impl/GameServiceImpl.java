@@ -19,6 +19,7 @@ import com.medkha.lol_notes.repositories.GameRepository;
 import com.medkha.lol_notes.services.ChampionService;
 import com.medkha.lol_notes.services.DeathService;
 import com.medkha.lol_notes.services.GameService;
+import com.medkha.lol_notes.services.QueueService;
 import com.medkha.lol_notes.services.RoleAndLaneService;
 import com.medkha.lol_notes.services.filters.DeathFilterService;
 
@@ -31,6 +32,7 @@ public class GameServiceImpl implements GameService{
 	private final ChampionService championService;
 	private final GameRepository gameRepository;
 	private final RoleAndLaneService roleAndLaneService;
+	private final QueueService queueService;
 	private final DeathService deathService;
 	private final DeathFilterService deathFilterService;
 	private final MapperService mapperService;
@@ -38,12 +40,14 @@ public class GameServiceImpl implements GameService{
 			GameRepository gameRepository,
 			ChampionService championService,
 			RoleAndLaneService roleAndLaneService,
+			QueueService queueService,
 			DeathService deathService,
 			DeathFilterService deathFilterService,
 			MapperService mapperService) {
 		this.gameRepository = gameRepository;
 		this.championService = championService;
 		this.roleAndLaneService = roleAndLaneService;
+		this.queueService = queueService;
 		this.deathService = deathService;
 		this.deathFilterService = deathFilterService;
 		this.mapperService = mapperService;
