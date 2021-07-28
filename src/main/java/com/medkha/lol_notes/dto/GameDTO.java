@@ -15,6 +15,7 @@ public class GameDTO implements DeathFilterOption {
     private String roleName;
     private String laneName;
     private Integer championId;
+    private Integer queueId;
 
     public GameDTO() { }
 
@@ -33,6 +34,7 @@ public class GameDTO implements DeathFilterOption {
         game.setRoleName(gameToCopy.getRoleName());
         game.setChampionId(gameToCopy.getChampionId());
         game.setCreatedOn(gameToCopy.getCreatedOn());
+        game.setQueueId(game.getQueueId());
         return game;
     }
 
@@ -40,6 +42,14 @@ public class GameDTO implements DeathFilterOption {
         GameDTO game = new GameDTO();
         game.setId(id);
         return game;
+    }
+
+    public Integer getQueueId() {
+        return queueId;
+    }
+
+    public void setQueueId(Integer queueId) {
+        this.queueId = queueId;
     }
 
     public Long getId() {
