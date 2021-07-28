@@ -24,7 +24,7 @@ public class Death {
 	private int minute; 
 	
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "REASON_ID", nullable = false, updatable = false)
+	@JoinColumn(name = "REASON_ID", nullable = false, updatable = true)
 	@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 	private Reason reason ;
 	
