@@ -31,26 +31,36 @@ public class Game {
 	
 	@NotNull
 	private Integer championId;
-	
+
+	@NotNull
+	private Integer queueId;
 	
 	public Game() { 
 		
 	}
-	public Game(Integer championId, String roleName, String laneName) {
+	public Game(Integer championId, String roleName, String laneName, Integer queueId) {
 		this.roleName = roleName;
 		this.laneName = laneName;
 		this.championId = championId;
+		this.queueId = queueId;
 	}
 	
-	public static Game copy(Game game) { 
-		
+	public static Game copy(Game game) {
 		Game copy = new Game(); 
 		copy.setId(game.getId());
 		copy.setChampionId(game.getChampionId());
 		copy.setRoleName(game.getRoleName());
 		copy.setLaneName(game.getLaneName());
-		
+		copy.setQueueId(game.getQueueId());
 		return copy; 
+	}
+
+	public Integer getQueueId() {
+		return queueId;
+	}
+
+	public void setQueueId(Integer queueId) {
+		this.queueId = queueId;
 	}
 
 	public String getRoleName() {
