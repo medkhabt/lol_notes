@@ -61,14 +61,9 @@ public class DeathServiceImpl implements DeathService{
 	@Override
 	public void deleteDeathById(Long id){
 		findById(id);
-		try {
 			deathRepository.deleteById(id);
-			String messageSuccess= String.format("deleteDeathById: death with id: %i was deleted successfully.", id);
+			String messageSuccess= String.format("deleteDeathById: death with id: %d was deleted successfully.", id);
 			log.info(messageSuccess);
-		}catch(IllegalArgumentException err) {
-			log.error("deleteDeathById: death id is null, so can't proceed.");
-			throw new IllegalArgumentException("death id is null, so can't proceed.");
-		}
 	}
 
 	@Override
