@@ -44,6 +44,7 @@ public class GameServiceTest {
 		championServiceMock = mock(ChampionService.class);
 		roleAndLaneServiceMock = mock(RoleAndLaneService.class);
 		mapperServiceMock = mock(MapperService.class);
+		queueServiceMock = mock(QueueService.class);
 		gameService = new GameServiceImpl(gameRepositoryMock, championServiceMock, roleAndLaneServiceMock, queueServiceMock, deathServiceMock, deathFilterService, mapperServiceMock);
 	}
 
@@ -96,7 +97,7 @@ public class GameServiceTest {
 		GameDTO expectedResult = GameDTO.copy(sampleGameDTOWithoutId());
 		expectedResult.setId((long) 1);
 
-//		when(this.queueServiceMock.getQueueById(sampleGameDTOWithId().getQueueId())).thenReturn(Optional.of(sampleQueueDto()));
+		when(this.queueServiceMock.getQueueById(sampleGameDTOWithoutId().getQueueId())).thenReturn(Optional.of(sampleQueueDto()));
 		when(this.championServiceMock.getChampionById(10)).thenReturn(sampleChampionEssentiels());
 		when(this.mapperServiceMock.convert(sampleGameDTOWithoutId(), Game.class)).thenReturn(sampleGameWithoutId());
 		when(this.gameRepositoryMock.save(this.mapperServiceMock.convert(sampleGameDTOWithoutId(), Game.class))).thenReturn(sampleGameWithId());
@@ -145,10 +146,13 @@ public class GameServiceTest {
 		GameDTO gameWithoutQueueId = sampleGameDTOWithoutId();
 		gameWithoutQueueId.setQueueId(null);
 
-		GameDTO gameWithQueueIdDoesntExist = sampleGameDTOWithId();
+		GameDTO gameWithQueueIdDoesntExist = sampleGameDTOWithoutId();
 		gameWithQueueIdDoesntExist.setQueueId(1);
 
-//		when(this.roleAndLaneServiceMock.get)
+		when(this.roleAndLaneServiceMock.isLane(sampleGameDTOWithoutId().getLaneName())).thenReturn(true);
+		when(this.roleAndLaneServiceMock.isRole(sampleGameDTOWithoutId().getRoleName())).thenReturn(true);
+		when(this.queueServiceMock.getQueueById(null)).thenThrow(IllegalArgumentException.class);
+		when(this.queueServiceMock.getQueueById(gameWithQueueIdDoesntExist.getQueueId())).thenReturn(Optional.empty());
 
 		assertAll(
 				() -> assertThrows(IllegalArgumentException.class, () -> {
@@ -196,6 +200,7 @@ public class GameServiceTest {
 		when(mapperServiceMock.convert(updatedGameDTO, Game.class)).thenReturn(updatedGame);
 		when(this.gameRepositoryMock.findById(updatedGameDTO.getId())).thenReturn(Optional.of(sampleGameWithId()));
 		when(this.championServiceMock.getChampionById(any())).thenReturn(sampleChampionEssentiels());
+		when(this.queueServiceMock.getQueueById(any())).thenReturn(Optional.of(sampleQueueDto()));
 		when(this.roleAndLaneServiceMock.isLane(updatedGameDTO.getLaneName())).thenReturn(true);
 		when(this.roleAndLaneServiceMock.isRole(updatedGameDTO.getRoleName())).thenReturn(true);
 		when(this.gameRepositoryMock.save(mapperServiceMock.convert(updatedGameDTO, Game.class))).thenReturn(updatedGame);
@@ -246,6 +251,30 @@ public class GameServiceTest {
 		assertAll(
 				() -> assertThrows(IllegalArgumentException.class, () -> this.gameService.createGame(gameWithoutRoleId)),
 				() -> assertThrows(IllegalArgumentException.class, () -> this.gameService.createGame(gameWithoutLaneId))
+		);
+	}
+
+	@Test
+	void shouldThrowIllegalArgumentException_When_QueueIdIsNullOrDoesntExist_updateGame() {
+		GameDTO gameWithoutQueueId = sampleGameDTOWithId();
+		gameWithoutQueueId.setQueueId(null);
+
+		GameDTO gameWithQueueIdDoesntExist = sampleGameDTOWithId();
+		gameWithQueueIdDoesntExist.setQueueId(1);
+
+		when(this.gameRepositoryMock.findById(any())).thenReturn(Optional.of(new Game()));
+		when(this.roleAndLaneServiceMock.isLane(sampleGameDTOWithId().getLaneName())).thenReturn(true);
+		when(this.roleAndLaneServiceMock.isRole(sampleGameDTOWithId().getRoleName())).thenReturn(true);
+		when(this.queueServiceMock.getQueueById(null)).thenThrow(IllegalArgumentException.class);
+		when(this.queueServiceMock.getQueueById(gameWithQueueIdDoesntExist.getQueueId())).thenReturn(Optional.empty());
+
+		assertAll(
+				() -> assertThrows(IllegalArgumentException.class, () -> {
+					this.gameService.updateGame(gameWithoutQueueId);
+				}),
+				() -> assertThrows(IllegalArgumentException.class, () -> {
+					this.gameService.updateGame(gameWithQueueIdDoesntExist);
+				})
 		);
 	}
 
