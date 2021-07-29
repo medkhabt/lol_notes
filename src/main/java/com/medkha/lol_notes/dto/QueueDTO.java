@@ -1,8 +1,8 @@
 package com.medkha.lol_notes.dto;
 
 public class QueueDTO {
-    Integer id;
-    String queueName;
+    private Integer id;
+    private String queueName;
 
     public QueueDTO(){}
 
