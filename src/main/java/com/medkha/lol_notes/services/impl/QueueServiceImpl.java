@@ -35,6 +35,13 @@ public class QueueServiceImpl implements QueueService {
     }
 
     @Override
+    public Set<QueueDTO> getAllQueuesWithoutDeprecate() {
+        return getAllQueues().stream().filter(
+                queueDTO -> !queueDTO.getQueueName().toLowerCase().contains("deprecated")
+        ).collect(Collectors.toSet());
+    }
+
+    @Override
     public Optional<QueueDTO> getQueueById(Integer id) {
         return getAllQueues().stream().filter(queue -> queue.getId().equals(id)).findAny();
     }

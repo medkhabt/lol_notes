@@ -7,5 +7,6 @@ import com.medkha.lol_notes.dto.QueueDTO;
 
 public interface QueueService {
     Set<QueueDTO> getAllQueues();
+    Set<QueueDTO> getAllQueuesWithoutDeprecate();
     Optional<QueueDTO> getQueueById(Integer id);
 }
