@@ -13,17 +13,31 @@ public class Reason {
 	@Id
 	@GeneratedValue(generator = Constants.ID_GENERATOR)
 	private Long id; 
-	
-//	@NotNull
+
 	@NotBlank
-	@Column(nullable = false)
-	private String description; 
-	
+	@Column
+	private String title;
+
+	private String description;
+
 	
 	protected Reason() {}
-	
-	public Reason(String description) {
+
+	public Reason(String title) {
+		this.title = title;
+	}
+
+	public Reason(String title, String description) {
+		this.title = title;
 		this.description = description; 
+	}
+
+	public String getTitle() {
+		return title;
+	}
+
+	public void setTitle(String title) {
+		this.title = title;
 	}
 
 	public String getDescription() {
