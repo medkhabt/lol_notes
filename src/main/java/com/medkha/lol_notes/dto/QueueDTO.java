@@ -1,6 +1,8 @@
 package com.medkha.lol_notes.dto;
 
-public class QueueDTO {
+import java.util.function.Predicate;
+
+public class QueueDTO implements DeathFilterOption{
     private Integer id;
     private String queueName;
 
@@ -9,6 +11,10 @@ public class QueueDTO {
     public QueueDTO(Integer id, String queueName) {
         this.id = id;
         this.queueName = queueName;
+    }
+
+    public QueueDTO(String paramId) {
+        this.id = Integer.parseInt(paramId);
     }
 
     public String getQueueName() {
@@ -25,5 +31,10 @@ public class QueueDTO {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    @Override
+    public Predicate<DeathDTO> getPredicate() {
+        return (d) -> d.getGame().getQueueId().equals(this.id);
     }
 }
