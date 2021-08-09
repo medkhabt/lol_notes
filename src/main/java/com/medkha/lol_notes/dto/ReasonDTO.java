@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 public class ReasonDTO implements DeathFilterOption {
     private static Logger log = LoggerFactory.getLogger(ReasonDTO.class);
     private Long id;
+    private String title;
     private String description;
 
     public ReasonDTO(){}
@@ -41,6 +42,14 @@ public class ReasonDTO implements DeathFilterOption {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public String getDescription() {
