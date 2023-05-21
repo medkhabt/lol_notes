@@ -6,11 +6,6 @@ public class PlayerDTO {
     public String championName;
 
 
-//    public String getChampionName() {
-//        return championName;
-//    }
-
-
     @Override
     public String toString() {
         return "PlayerDTO{" +

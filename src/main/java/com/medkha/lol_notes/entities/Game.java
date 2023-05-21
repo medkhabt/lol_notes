@@ -19,14 +19,11 @@ public class Game {
 	private Long id; 
 	
 	@Temporal(TemporalType.TIMESTAMP)
-	@org.hibernate.annotations.CreationTimestamp
 	@Column(updatable = false)
 	private Date createdOn; 
 	
-	@NotNull
 	private String roleName;
 
-	@NotNull
 	private String laneName;
 	
 	@NotNull
@@ -85,6 +82,10 @@ public class Game {
 	}
 	public Date getCreatedOn() {
 		return createdOn;
+	}
+
+	public void setCreatedOn(Date createdOn) {
+		this.createdOn = createdOn;
 	}
 
 	public String getLaneName() {

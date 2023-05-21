@@ -59,14 +59,15 @@ public class GameServiceImpl implements GameService{
 	public GameDTO createGame(GameDTO gameDTO){
 		try {
 			championService.getChampionById(gameDTO.getChampionId());
-			isLaneExceptionHandler(gameDTO);
-			isRoleExceptionHandler(gameDTO);
+//			TODO: see the impact of removing the lane and role exception handler.
+//			isLaneExceptionHandler(gameDTO);
+//			isRoleExceptionHandler(gameDTO);
 			isQueueExceptionHandler(gameDTO);
 			Game createdGame = this.gameRepository.save(mapperService.convert(gameDTO, Game.class));
 			log.info("createGame: Game with id: " + createdGame.getId() + " created successfully.");
 			return mapperService.convert(createdGame, GameDTO.class);
 		} catch (InvalidDataAccessApiUsageException | NullPointerException err) {
-			log.error("createGame: Game Object is null and cannot be proceed");
+			log.error("createGame: Game Object is null and cannot be proceed, stack error: " + err);
 			throw new IllegalArgumentException("Game Object is null and cannot be proceed", err);
 		}
 	}
