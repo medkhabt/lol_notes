@@ -4,12 +4,12 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -72,6 +72,7 @@ public class GameServiceTest {
 		game.setChampionId(10);
 		game.setRoleName("SOLO");
 		game.setLaneName("MIDLANE");
+		game.setQueueId(11);
 		game.setId((long) 1);
 		return game;
 	}
@@ -81,6 +82,7 @@ public class GameServiceTest {
 		game.setChampionId(10);
 		game.setRoleName("SOLO");
 		game.setLaneName("MIDLANE");
+		game.setQueueId(11);
 		return game;
 	}
 
@@ -99,12 +101,9 @@ public class GameServiceTest {
 
 		when(this.queueServiceMock.getQueueById(sampleGameDTOWithoutId().getQueueId())).thenReturn(Optional.of(sampleQueueDto()));
 		when(this.championServiceMock.getChampionById(10)).thenReturn(sampleChampionEssentiels());
-		when(this.mapperServiceMock.convert(sampleGameDTOWithoutId(), Game.class)).thenReturn(sampleGameWithoutId());
-		when(this.gameRepositoryMock.save(this.mapperServiceMock.convert(sampleGameDTOWithoutId(), Game.class))).thenReturn(sampleGameWithId());
 		when(this.mapperServiceMock.convert(sampleGameWithId(), GameDTO.class)).thenReturn(sampleGameDTOWithId());
-		when(this.roleAndLaneServiceMock.isLane(sampleGameDTOWithoutId().getLaneName())).thenReturn(true);
-		when(this.roleAndLaneServiceMock.isRole(sampleGameDTOWithoutId().getRoleName())).thenReturn(true);
-
+		when(this.gameRepositoryMock.save(sampleGameWithoutId())).thenReturn(sampleGameWithId());
+		when(this.mapperServiceMock.convert(sampleGameDTOWithoutId(), Game.class)).thenReturn(sampleGameWithoutId());
 		// when
 		GameDTO createdGame = this.gameService.createGame(sampleGameDTOWithoutId());
 
@@ -128,6 +127,7 @@ public class GameServiceTest {
 	}
 
 	@Test
+	@Disabled("We no longer obligate to have a role or lane, so aram could be also taken in count. ")
 	void shouldThrowIllegalArgumentException_When_RoleOrLaneIsNull_createGame(){
 		GameDTO gameWithoutRoleId = sampleGameDTOWithoutId();
 		gameWithoutRoleId.setRoleName(null);
@@ -149,8 +149,6 @@ public class GameServiceTest {
 		GameDTO gameWithQueueIdDoesntExist = sampleGameDTOWithoutId();
 		gameWithQueueIdDoesntExist.setQueueId(1);
 
-		when(this.roleAndLaneServiceMock.isLane(sampleGameDTOWithoutId().getLaneName())).thenReturn(true);
-		when(this.roleAndLaneServiceMock.isRole(sampleGameDTOWithoutId().getRoleName())).thenReturn(true);
 		when(this.queueServiceMock.getQueueById(null)).thenThrow(IllegalArgumentException.class);
 		when(this.queueServiceMock.getQueueById(gameWithQueueIdDoesntExist.getQueueId())).thenReturn(Optional.empty());
 
@@ -241,6 +239,7 @@ public class GameServiceTest {
 		assertThrows(IllegalArgumentException.class, () -> this.gameService.createGame(gameWithChampionId));
 	}
 	@Test
+	@Disabled("No need for role or lane for this current version.")
 	void shouldThrowIllegalArgumentException_When_RoleOrLaneIsNull_updateGame(){
 		GameDTO gameWithoutRoleId = sampleGameDTOWithId();
 		gameWithoutRoleId.setRoleName(null);

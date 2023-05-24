@@ -6,6 +6,10 @@ import java.time.Instant;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 import javax.validation.Valid;
 
@@ -31,6 +35,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.medkha.lol_notes.services.GameService;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 
@@ -52,15 +57,28 @@ public class GameController {
 
 	@GetMapping(value = "live-game", produces = "application/json")
 	@ResponseStatus(HttpStatus.OK)
-	public GameDTO trackLiveGame() {
+	public GameDTO trackLiveGame() throws InterruptedException {
+
+		LiveGameDTO liveGameStats = null;
+		boolean inGame = false;
+		// TODO: make it asynch or use server sent event / streaming fecth.
+		while(!inGame) {
+			try {
+				TimeUnit.SECONDS.sleep(10);
+				liveGameStats = restTemplate.getForObject("https://localhost:2999/liveclientdata/gamestats", LiveGameDTO.class);
+				inGame = true;
+			}catch (RestClientException e) {
+				log.info("[LIVE GAME TRACK] Waiting for a Game to start");
+				log.debug("Exception message is : " + e.getMessage());
+			}
+		}
 		ResponseEntity<List<PlayerDTO>> playerListResponse =
 				restTemplate.exchange("https://localhost:2999/liveclientdata/playerlist",
 						HttpMethod.GET, null, new ParameterizedTypeReference<List<PlayerDTO>>() {
 						});
 		List<PlayerDTO> players = playerListResponse.getBody();
-		LiveGameDTO liveGameStats = restTemplate.getForObject("https://localhost:2999/liveclientdata/gamestats", LiveGameDTO.class);
+
 		log.info("List of Player: ");
-//		liveclientdata/gamestats
 		PlayerDTO activePlayer = restTemplate.getForObject("https://localhost:2999/liveclientdata/activeplayer", PlayerDTO.class);
 
 		players.forEach( p ->{
@@ -74,18 +92,20 @@ public class GameController {
 		});
 		log.info("Active player info: " + activePlayer.toString());
 		// TODO put on the service side (there is no queue mode for practice tool. )
-
+//		TODO Clean this, and find a unique identifier for the online games, so i create just one game per livegame.
 		GameDTO game = new GameDTO();
 		ChampionEssentielsDto champion = championService.getChampionByName(activePlayer.championName);
 		game.setChampionId(champion.getId());
 		if(liveGameStats.gameMode.equals("PRACTICETOOL")) {
 			liveGameStats.gameMode = "CUSTOM";
 		}
+		LiveGameDTO finalLiveGameStats = liveGameStats;
 		QueueDTO queue = this.queueService.getAllQueuesWithoutDeprecate().stream().filter(
-				q -> q.getQueueName().equals(liveGameStats.gameMode)
-		).findFirst().orElseThrow(() -> new NoElementFoundException("Couldn't find queue of name " + liveGameStats.gameMode));
+				q -> q.getQueueName().equals(finalLiveGameStats.gameMode)
+		).findFirst().orElseThrow(() -> new NoElementFoundException("Couldn't find queue of name " + finalLiveGameStats.gameMode));
 		game.setQueueId(queue.getId());
 		long millis = (long) (Double.parseDouble(liveGameStats.gameTime) * 1000);
+		// TODO: Fix the the time diff with timezones.
 		log.info("Date time millis: " + millis );
 		Date createdOn = Date.from(Instant.now().minusMillis(millis));
 		log.info("created On : " + createdOn) ;

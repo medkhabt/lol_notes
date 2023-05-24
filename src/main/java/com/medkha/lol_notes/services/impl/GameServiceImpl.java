@@ -63,7 +63,8 @@ public class GameServiceImpl implements GameService{
 //			isLaneExceptionHandler(gameDTO);
 //			isRoleExceptionHandler(gameDTO);
 			isQueueExceptionHandler(gameDTO);
-			Game createdGame = this.gameRepository.save(mapperService.convert(gameDTO, Game.class));
+			final Game convertToGame = mapperService.convert(gameDTO, Game.class);
+			Game createdGame = this.gameRepository.save(convertToGame);
 			log.info("createGame: Game with id: " + createdGame.getId() + " created successfully.");
 			return mapperService.convert(createdGame, GameDTO.class);
 		} catch (InvalidDataAccessApiUsageException | NullPointerException err) {

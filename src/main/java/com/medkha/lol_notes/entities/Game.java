@@ -101,7 +101,16 @@ public class Game {
 		if (this == o) return true;
 		if (o == null || getClass() != o.getClass()) return false;
 		Game game = (Game) o;
-		return id.equals(game.id);
+		if(id != null ) {
+			if(game.id == null) return false;
+			return id.equals(game.id);
+
+		} else {
+			if(game.id != null) return false;
+			// game still not persisted.
+			return this.championId.equals(game.championId)
+					&& this.queueId.equals(game.queueId);
+		}
 	}
 
 	@Override
