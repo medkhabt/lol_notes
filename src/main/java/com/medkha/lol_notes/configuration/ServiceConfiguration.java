@@ -1,5 +1,7 @@
 package com.medkha.lol_notes.configuration;
 
+import com.medkha.lol_notes.services.*;
+import com.medkha.lol_notes.services.impl.*;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -8,19 +10,12 @@ import com.medkha.lol_notes.mapper.impl.MapperServiceImpl;
 import com.medkha.lol_notes.repositories.DeathRepository;
 import com.medkha.lol_notes.repositories.GameRepository;
 import com.medkha.lol_notes.repositories.ReasonRepository;
-import com.medkha.lol_notes.services.ChampionService;
-import com.medkha.lol_notes.services.DeathService;
-import com.medkha.lol_notes.services.GameService;
-import com.medkha.lol_notes.services.QueueService;
-import com.medkha.lol_notes.services.ReasonService;
-import com.medkha.lol_notes.services.RoleAndLaneService;
 import com.medkha.lol_notes.services.filters.DeathFilterService;
-import com.medkha.lol_notes.services.impl.ChampionServiceImpl;
-import com.medkha.lol_notes.services.impl.DeathServiceImpl;
-import com.medkha.lol_notes.services.impl.GameServiceImpl;
-import com.medkha.lol_notes.services.impl.ReasonServiceImpl;
+import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.web.client.RestTemplate;
 
 @Configuration
+@EnableAsync
 public class ServiceConfiguration {
 
     @Bean
@@ -58,5 +53,10 @@ public class ServiceConfiguration {
     @Bean
     public ChampionService championService(MapperService mapperService) {
         return new ChampionServiceImpl(mapperService);
+    }
+
+    @Bean
+    public RiotLookUpService riotLookUpService(RestTemplate restTemplate) {
+        return new RiotLookUpServiceImpl(restTemplate);
     }
 }
