@@ -1,6 +1,5 @@
 package com.medkha.lol_notes.services.impl;
 
-import com.medkha.lol_notes.controllers.GameController;
 import com.medkha.lol_notes.dto.LiveGameDTO;
 import com.medkha.lol_notes.dto.PlayerDTO;
 import com.medkha.lol_notes.services.RiotLookUpService;

@@ -11,6 +11,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.medkha.lol_notes.services.ChampionService;
 import com.medkha.lol_notes.services.QueueService;
+import com.medkha.lol_notes.services.RiotLookUpService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,6 +47,8 @@ public class GameControllerTest {
 	private QueueService queueService;
 	@MockBean
 	private RestTemplate restTemplate;
+	@MockBean
+	RiotLookUpService riotLookUpService;
 
 	@Test 
 	public void whenValidInput_ThenReturns201_CreateGame() throws Exception {

@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
 
 import javax.validation.Valid;
 
@@ -19,11 +18,7 @@ import com.medkha.lol_notes.services.QueueService;
 import com.medkha.lol_notes.services.RiotLookUpService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -35,7 +30,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.medkha.lol_notes.services.GameService;
-import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 
@@ -108,14 +102,11 @@ public class GameController {
 				this.gameService.createGame(game);
 
 			} catch (InterruptedException e) {
-				throw new RuntimeException(e);
+				log.error("A thread is interrupted, exception stack: " + e.getStackTrace() );
 			} catch (ExecutionException e) {
-				throw new RuntimeException(e);
+				log.error("Couldn't retrieve the result from the one of the futures, exception stack: " + e.getStackTrace());
 			}
 		});
-
-
-		return;
 	}
 
 	@GetMapping(produces = "application/json")
