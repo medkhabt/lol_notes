@@ -19,3 +19,11 @@ for this project available in the `resources/certificats` folder with
 the command `keytool -importcert -file path/to/certificat/rclient.cer -keystore path/to/keygencerts.jks -alias riot-client`
 and in the configuration file for the RestTemplate, It loads the load the trusted certificates from 
 the trust storestore (our keygen) using the configs in the `applications.properties`
+
+## Credentials 
+For now the dev-key provided from riot that is used in the calls to riot api
+is in the folder `/resources/credentials` that is not present in the repo for
+security matter, you should generate your own key and add it to the folder with 
+the name `dev_key.txt` or change the path in the `applications.properties`. 
+
+This stays like this until I look for a better way to store sensible data, Or to encrypt them.

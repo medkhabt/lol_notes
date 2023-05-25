@@ -1,6 +1,7 @@
 package com.medkha.lol_notes.dto;
 
 public class PlayerDTO {
+    public String id;
     public String summonerName;
     public String level;
     public String championName;

@@ -30,7 +30,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.medkha.lol_notes.services.GameService;
-import org.springframework.web.client.RestTemplate;
 
 
 @RestController
@@ -38,21 +37,18 @@ import org.springframework.web.client.RestTemplate;
 				produces="application/json")
 public class GameController {
 	private static final Logger log = LoggerFactory.getLogger(GameController.class);
-	private GameService gameService;
-	private ChampionService championService;
-	private QueueService queueService;
-	private RestTemplate restTemplate;
-	private RiotLookUpService riotLookUpService;
+	private final GameService gameService;
+	private final ChampionService championService;
+	private final QueueService queueService;
+	private final RiotLookUpService riotLookUpService;
 
 	public GameController(
 			GameService gameService,
 			ChampionService championService,
 			QueueService queueService,
-			RestTemplate restTemplate,
 			RiotLookUpService riotLookUpService) {
 		this.gameService = gameService;
 		this.championService = championService;
-		this.restTemplate = restTemplate;
 		this.queueService = queueService;
 		this.riotLookUpService = riotLookUpService;
 	}
@@ -61,7 +57,7 @@ public class GameController {
 	@ResponseStatus(HttpStatus.OK)
 	public void trackLiveGame() {
 		// TODO put on the service side (there is no queue mode for practice tool. )
-		// TODO Clean this, and find a unique identifier for the online games, so i create just one game per livegame.
+		// TODO Clean this, and find a unique identifier for the online games, so i create just one game per liveGame.
 		// TODO Call again this method after a game is finished.
 		CompletableFuture<LiveGameDTO> liveGameStatsFuture = riotLookUpService.getLiveGameAsync();
 		CompletableFuture<PlayerDTO> activePlayerFuture = riotLookUpService.getActivePlayerInLiveGameAsync();
@@ -71,42 +67,42 @@ public class GameController {
 				CompletableFuture.allOf(activePlayerFuture, allPlayersFuture);
 				PlayerDTO activePlayer= activePlayerFuture.get();
 				List<PlayerDTO> players = allPlayersFuture.get();
-				players.forEach( p ->{
-					if(p.summonerName.equals(activePlayer.summonerName)) {
-						activePlayer.championName = p.championName;
-					}
-					log.info( MessageFormat.format(
-							"- {0} {1}",
-							p.summonerName,
-							p.summonerName.equals(activePlayer.summonerName) ?  ": [activePlayer]" : ""));
-				});
-				log.info("Active player info: " + activePlayer.toString());
-
-				GameDTO game = new GameDTO();
-				ChampionEssentielsDto champion = championService.getChampionByName(activePlayer.championName);
-				game.setChampionId(champion.getId());
-				if(liveGameStats.gameMode.equals("PRACTICETOOL")) {
-					liveGameStats.gameMode = "CUSTOM";
-				}
-				LiveGameDTO finalLiveGameStats = liveGameStats;
-				QueueDTO queue = this.queueService.getAllQueuesWithoutDeprecate().stream().filter(
-						q -> q.getQueueName().equals(finalLiveGameStats.gameMode)
-				).findFirst().orElseThrow(() -> new NoElementFoundException("Couldn't find queue of name " + finalLiveGameStats.gameMode));
-				game.setQueueId(queue.getId());
-				long millis = (long) (Double.parseDouble(liveGameStats.gameTime) * 1000);
-				// TODO: Fix the the time diff with timezones.
-				log.info("Date time millis: " + millis );
-				Date createdOn = Date.from(Instant.now().minusMillis(millis));
-				log.info("created On : " + createdOn) ;
-				game.setCreatedOn(createdOn);
+				GameDTO game = fillGameDTO(activePlayer, players, liveGameStats);
+				log.info("Active player info: " + activePlayer);
 				this.gameService.createGame(game);
-
 			} catch (InterruptedException e) {
 				log.error("A thread is interrupted, exception stack: " + e.getStackTrace() );
 			} catch (ExecutionException e) {
 				log.error("Couldn't retrieve the result from the one of the futures, exception stack: " + e.getStackTrace());
 			}
 		});
+	}
+
+	private GameDTO fillGameDTO(PlayerDTO activePlayer, List<PlayerDTO> players, LiveGameDTO liveGameStats) {
+		GameDTO game = new GameDTO();
+		players.forEach( p ->{
+			if(p.summonerName.equals(activePlayer.summonerName)) {
+				activePlayer.championName = p.championName;
+			}
+			log.info( MessageFormat.format(
+					"- {0} {1}",
+					p.summonerName,
+					p.summonerName.equals(activePlayer.summonerName) ?  ": [activePlayer]" : ""));
+		});
+		ChampionEssentielsDto champion = championService.getChampionByName(activePlayer.championName);
+		game.setChampionId(champion.getId());
+		if(liveGameStats.gameMode.equals("PRACTICETOOL")) {
+			liveGameStats.gameMode = "CUSTOM";
+		}
+		QueueDTO queue = this.queueService.getAllQueuesWithoutDeprecate().stream().filter(
+				q -> q.getQueueName().equals(liveGameStats.gameMode)
+		).findFirst().orElseThrow(() -> new NoElementFoundException("Couldn't find queue of name " + liveGameStats.gameMode));
+		game.setQueueId(queue.getId());
+		// TODO: Fix the the time diff with timezones.
+		// TODO: Fix the gameStart getting from api , remove the 3 last digits.
+		if(!liveGameStats.gameMode.equals("CUSTOM"))
+			game.setCreatedOn(Date.from(Instant.now().minusSeconds(Long.parseLong(liveGameStats.gameLength))));
+		return game;
 	}
 
 	@GetMapping(produces = "application/json")
