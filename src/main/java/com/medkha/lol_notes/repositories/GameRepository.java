@@ -1,6 +1,5 @@
 package com.medkha.lol_notes.repositories;
 
-import com.medkha.lol_notes.dto.GameDTO;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
