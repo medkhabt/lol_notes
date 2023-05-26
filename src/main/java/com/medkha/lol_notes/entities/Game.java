@@ -17,7 +17,8 @@ public class Game {
 	@Id
 	@GeneratedValue(generator = Constants.ID_GENERATOR)
 	private Long id; 
-	
+
+	private String gameId;
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(updatable = false)
 	private Date createdOn; 
@@ -94,6 +95,14 @@ public class Game {
 
 	public void setLaneName(String laneName) {
 		this.laneName = laneName;
+	}
+
+	public String getGameId() {
+		return gameId;
+	}
+
+	public void setGameId(String gameId) {
+		this.gameId = gameId;
 	}
 
 	@Override

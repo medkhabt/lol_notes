@@ -113,9 +113,7 @@ public class GameServiceTest {
 	
 	@Test
 	public void shouldThrowIllegalArgumentException_when_GameIsNull() {
-		assertThrows(IllegalArgumentException.class, () -> { 
-			this.gameService.createGame(null); 
-		}); 
+		assertThrows(IllegalArgumentException.class, () -> this.gameService.createGame(null));
 	}
 
 	@Test
@@ -199,8 +197,6 @@ public class GameServiceTest {
 		when(this.gameRepositoryMock.findById(updatedGameDTO.getId())).thenReturn(Optional.of(sampleGameWithId()));
 		when(this.championServiceMock.getChampionById(any())).thenReturn(sampleChampionEssentiels());
 		when(this.queueServiceMock.getQueueById(any())).thenReturn(Optional.of(sampleQueueDto()));
-		when(this.roleAndLaneServiceMock.isLane(updatedGameDTO.getLaneName())).thenReturn(true);
-		when(this.roleAndLaneServiceMock.isRole(updatedGameDTO.getRoleName())).thenReturn(true);
 		when(this.gameRepositoryMock.save(mapperServiceMock.convert(updatedGameDTO, Game.class))).thenReturn(updatedGame);
 		when(mapperServiceMock.convert(updatedGame, GameDTO.class)).thenReturn(updatedGameDTO);
 
@@ -262,8 +258,6 @@ public class GameServiceTest {
 		gameWithQueueIdDoesntExist.setQueueId(1);
 
 		when(this.gameRepositoryMock.findById(any())).thenReturn(Optional.of(new Game()));
-		when(this.roleAndLaneServiceMock.isLane(sampleGameDTOWithId().getLaneName())).thenReturn(true);
-		when(this.roleAndLaneServiceMock.isRole(sampleGameDTOWithId().getRoleName())).thenReturn(true);
 		when(this.queueServiceMock.getQueueById(null)).thenThrow(IllegalArgumentException.class);
 		when(this.queueServiceMock.getQueueById(gameWithQueueIdDoesntExist.getQueueId())).thenReturn(Optional.empty());
 

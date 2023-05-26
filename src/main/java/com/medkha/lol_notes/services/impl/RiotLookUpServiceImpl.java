@@ -71,7 +71,7 @@ public class RiotLookUpServiceImpl implements RiotLookUpService {
                 () -> {
                     ResponseEntity<List<PlayerDTO>> playerListResponse =
                             restTemplate.exchange("https://localhost:2999/liveclientdata/playerlist",
-                                    HttpMethod.GET, null, new ParameterizedTypeReference<>() {
+                                    HttpMethod.GET, null, new ParameterizedTypeReference<List<PlayerDTO>>() {
                                     });
                     return  playerListResponse.getBody();
                 }

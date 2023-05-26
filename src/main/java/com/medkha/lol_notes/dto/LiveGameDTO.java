@@ -6,6 +6,4 @@ public class LiveGameDTO {
     public String gameStartTime;
     public String gameLength;
     public String mapId;
-    public String mapNumber;
-    public String mapTerrain;
 }
