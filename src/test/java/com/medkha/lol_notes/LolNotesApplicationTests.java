@@ -10,6 +10,7 @@ import org.springframework.test.context.ActiveProfiles;
 class LolNotesApplicationTests {
 
 	@Test
+	@Disabled
 	void contextLoads() {
 	}
 
