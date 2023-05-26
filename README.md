@@ -1,8 +1,7 @@
 # lol_notes
 
 If anyone has any technical or feature like suggestion, please feel free to mention it, or also if you think something will lead to problems or it is a smelly code. Your help would be appreciated. 
-
-
+ 
 ## Complication with the riot client certification
 To make sure that the project trust the certification presented by the rclient
 that is required when we want to consume from the api `https://localhost:2999/liveclientdata`
@@ -27,3 +26,27 @@ security matter, you should generate your own key and add it to the folder with
 the name `dev_key.txt` or change the path in the `applications.properties`. 
 
 This stays like this until I look for a better way to store sensible data, Or to encrypt them.
+
+## IDE
+I am using Intellij IDE, I run through some configuration problems when a intellij solution suggestion
+that requires to upgrade java to 14. I downgraded after to solve the problem but it took more time that it
+is worth. I downgraded to 8 to be sure. but I was using some methods for `java.util.Optional` and `java.util.Map`
+It may seem not persuasive enough to upgrade, but java SE 11 was released in 2018, and it is stable with a Long
+time support. 
+
+So I won't spend much time on this issue in the future here is how to configure the version in intellij
+
+https://blog.csdn.net/windnolose/article/details/120842181
+
+On top of that check `pom.xml` change java version as it overrides the intellij module config, 
+and check for this plugin's configuration, it should be the same version as your projects version.
+```
+<plugin>
+    <groupId>org.apache.maven.plugins</groupId>
+    <artifactId>maven-compiler-plugin</artifactId>
+    <configuration>
+        <source>11</source>
+        <target>11</target>
+    </configuration>
+</plugin>
+```
