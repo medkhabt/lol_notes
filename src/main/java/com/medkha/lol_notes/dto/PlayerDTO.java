@@ -5,6 +5,11 @@ public class PlayerDTO {
     public String summonerName;
     public String level;
     public String championName;
+    public boolean inGame;
+
+    public PlayerDTO() {
+        inGame = false;
+    }
 
 
     @Override

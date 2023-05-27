@@ -1,7 +1,6 @@
 package com.medkha.lol_notes.services;
 
-import com.medkha.lol_notes.dto.LiveGameDTO;
-import com.medkha.lol_notes.dto.PlayerDTO;
+import com.medkha.lol_notes.dto.*;
 import org.springframework.scheduling.annotation.Async;
 
 import java.util.List;
@@ -14,4 +13,6 @@ public interface RiotLookUpService {
     CompletableFuture<List<PlayerDTO>> getAllPlayersInLiveGameAsync();
     @Async
     CompletableFuture<LiveGameDTO> getLiveGameAsync();
+    @Async
+    CompletableFuture<AllEventsDTO> getEventsAsync();
 }

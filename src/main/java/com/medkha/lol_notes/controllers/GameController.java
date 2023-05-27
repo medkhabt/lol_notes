@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 
 import javax.validation.Valid;
 
@@ -41,7 +42,6 @@ public class GameController {
 	private final ChampionService championService;
 	private final QueueService queueService;
 	private final RiotLookUpService riotLookUpService;
-
 	public GameController(
 			GameService gameService,
 			ChampionService championService,
@@ -70,6 +70,26 @@ public class GameController {
 				GameDTO game = fillGameDTO(activePlayer, players, liveGameStats);
 				log.info("Active player info: " + activePlayer);
 				this.gameService.createGame(game);
+				activePlayer.inGame = true;
+				while (activePlayer.inGame) {
+					CompletableFuture<AllEventsDTO> eventsFuture = this.riotLookUpService.getEventsAsync();
+					eventsFuture.thenAccept(
+							events -> {
+								log.info("****** LIST OF EVENTS THAT HAPPENED IN GAME*******");
+								EventInGameDTO endOfGame = new EventInGameDTO();
+								endOfGame.EventName = "GameEnd";
+								if(events.Events.contains(endOfGame)) {
+									activePlayer.inGame = false;
+									log.info("Game Ended");
+								}
+								events.Events.forEach(
+										e -> log.info("- " + e.EventName + ", id: " + e.EventId)
+								);
+							}
+					);
+					TimeUnit.SECONDS.sleep(3);
+				}
+
 			} catch (InterruptedException e) {
 				log.error("A thread is interrupted, exception stack: " + e.getStackTrace() );
 			} catch (ExecutionException e) {

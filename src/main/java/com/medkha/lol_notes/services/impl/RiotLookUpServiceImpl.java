@@ -1,8 +1,6 @@
 package com.medkha.lol_notes.services.impl;
 
-import com.medkha.lol_notes.dto.IdPlayerDTO;
-import com.medkha.lol_notes.dto.LiveGameDTO;
-import com.medkha.lol_notes.dto.PlayerDTO;
+import com.medkha.lol_notes.dto.*;
 import com.medkha.lol_notes.services.RiotLookUpService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -106,19 +104,44 @@ public class RiotLookUpServiceImpl implements RiotLookUpService {
 
     }
 
-    private <T> CompletableFuture<T> getCall(Supplier<T> supplier) {
+    @Override
+    public CompletableFuture<AllEventsDTO> getEventsAsync() {
+        CompletableFuture<AllEventsDTO> allEventsFuture = getCall( () ->
+                restTemplate.getForObject("https://127.0.0.1:2999/liveclientdata/eventdata", AllEventsDTO.class)
+        );
+//        if(isEndOfGame(allEventsFuture)) {
+//            throw new EndOfGameException("Game Ends.");
+//        }
+        return allEventsFuture;
+    }
+
+
+    private <T> CompletableFuture<T> getCall( Supplier<T> supplier) {
         boolean inGame = false;
         T result = null;
-        while(!inGame) {
+        while (!inGame) {
             try {
                 TimeUnit.SECONDS.sleep(__RETRY_PERIOD__);
                 result = supplier.get();
                 inGame = true;
-            }catch (RestClientException | InterruptedException e) {
-                log.debug("[LIVE GAME TRACK] Waiting for a Game to start");
-                log.debug("Exception message is : " + e.getMessage());
+            } catch (RestClientException | InterruptedException e) {
+                    log.debug("[LIVE GAME TRACK] Waiting for a Game to start");
+                    log.debug("Exception message is : " + e.getMessage());
             }
         }
         return CompletableFuture.completedFuture(result);
     }
+//    private boolean isEndOfGame(CompletableFuture<AllEventsDTO> eventsFuture) {
+//      try {
+//          CompletableFuture.allOf(eventsFuture);
+//          EventInGameDTO endOfGame = new EventInGameDTO();
+//          endOfGame.EventName = "GameEnd";
+//          return eventsFuture.get().Events.contains(endOfGame);
+//      } catch (ExecutionException | InterruptedException e) {
+//          log.error(e.getMessage() + ", stack:" + e.getStackTrace());
+//          // Should I return a runtime exception here?
+//          return false;
+//      }
+//
+//    }
 }
