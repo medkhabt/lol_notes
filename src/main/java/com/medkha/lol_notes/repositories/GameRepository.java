@@ -5,7 +5,9 @@ import org.springframework.stereotype.Repository;
 
 import com.medkha.lol_notes.entities.Game;
 
+import java.util.List;
+
 @Repository
 public interface GameRepository extends CrudRepository<Game, Long> {
-
+    public List<Game> findGamesByGameId(String gameId);
 }

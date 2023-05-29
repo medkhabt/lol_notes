@@ -17,16 +17,14 @@ public class Game {
 	@Id
 	@GeneratedValue(generator = Constants.ID_GENERATOR)
 	private Long id; 
-	
+
+	private String gameId;
 	@Temporal(TemporalType.TIMESTAMP)
-	@org.hibernate.annotations.CreationTimestamp
 	@Column(updatable = false)
 	private Date createdOn; 
 	
-	@NotNull
 	private String roleName;
 
-	@NotNull
 	private String laneName;
 	
 	@NotNull
@@ -87,6 +85,10 @@ public class Game {
 		return createdOn;
 	}
 
+	public void setCreatedOn(Date createdOn) {
+		this.createdOn = createdOn;
+	}
+
 	public String getLaneName() {
 		return laneName;
 	}
@@ -95,12 +97,29 @@ public class Game {
 		this.laneName = laneName;
 	}
 
+	public String getGameId() {
+		return gameId;
+	}
+
+	public void setGameId(String gameId) {
+		this.gameId = gameId;
+	}
+
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) return true;
 		if (o == null || getClass() != o.getClass()) return false;
 		Game game = (Game) o;
-		return id.equals(game.id);
+		if(id != null ) {
+			if(game.id == null) return false;
+			return id.equals(game.id);
+
+		} else {
+			if(game.id != null) return false;
+			// game still not persisted.
+			return this.championId.equals(game.championId)
+					&& this.queueId.equals(game.queueId);
+		}
 	}
 
 	@Override

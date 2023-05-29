@@ -1,9 +1,6 @@
 package com.medkha.lol_notes.services.impl;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.NoSuchElementException;
-import java.util.Set;
+import java.util.*;
 import javax.transaction.Transactional;
 
 import org.slf4j.Logger;
@@ -59,14 +56,18 @@ public class GameServiceImpl implements GameService{
 	public GameDTO createGame(GameDTO gameDTO){
 		try {
 			championService.getChampionById(gameDTO.getChampionId());
-			isLaneExceptionHandler(gameDTO);
-			isRoleExceptionHandler(gameDTO);
+//			TODO: see the impact of removing the lane and role exception handler.
 			isQueueExceptionHandler(gameDTO);
-			Game createdGame = this.gameRepository.save(mapperService.convert(gameDTO, Game.class));
+			if(gameDTO.getGameId() != null && !this.gameRepository.findGamesByGameId(gameDTO.getGameId()).isEmpty()){
+				throw new IllegalArgumentException("createGame: Game with game_id: " + gameDTO.getGameId() + "" +
+						" already exists.");
+			}
+			final Game convertToGame = mapperService.convert(gameDTO, Game.class);
+			Game createdGame = this.gameRepository.save(convertToGame);
 			log.info("createGame: Game with id: " + createdGame.getId() + " created successfully.");
 			return mapperService.convert(createdGame, GameDTO.class);
 		} catch (InvalidDataAccessApiUsageException | NullPointerException err) {
-			log.error("createGame: Game Object is null and cannot be proceed");
+			log.error("createGame: Game Object is null and cannot be proceed, stack error: " + err);
 			throw new IllegalArgumentException("Game Object is null and cannot be proceed", err);
 		}
 	}
@@ -76,38 +77,17 @@ public class GameServiceImpl implements GameService{
 					() -> new IllegalArgumentException("Game Object has an unknown queue so can't proceed")
 		);
 	}
-
-	private void isRoleExceptionHandler(GameDTO game) {
-		if(game.getRoleName().isEmpty() || game.getRoleName() == null) {
-			log.error("isRoleExceptionHandler: role of the game to create is empty or null, so can't proceed.");
-			throw new IllegalArgumentException("role of the game to create is empty or null, so can't proceed.");
-		}
-		if(!roleAndLaneService.isRole(game.getRoleName())) {
-			log.error("isRoleExceptionHandler: No Role with name {} was found.", game.getRoleName());
-			throw new NoElementFoundException("No Role with name " + game.getRoleName() + " was found.");
-		}
-	}
-
-	private void isLaneExceptionHandler(GameDTO game) {
-		if(game.getLaneName().isEmpty() || game.getLaneName() == null) {
-			log.error("isLaneExceptionHandler: lane of the game to create is empty or null, so can't proceed.");
-			throw new IllegalArgumentException("lane of the game to create is empty or null, so can't proceed.");
-		}
-		if(!roleAndLaneService.isLane(game.getLaneName())) {
-			log.error("isLaneExceptionHandler: No Lane with name {} was found.", game.getLaneName());
-			throw new NoElementFoundException("No Lane with name " + game.getLaneName() + " was found.");
-		}
-	}
-
 	@Override
 	@Transactional
 	public GameDTO updateGame(GameDTO gameDTO){
 		try {
 			findById(gameDTO.getId());
 			championService.getChampionById(gameDTO.getChampionId());
-			isRoleExceptionHandler(gameDTO);
-			isLaneExceptionHandler(gameDTO);
 			isQueueExceptionHandler(gameDTO);
+			if(gameDTO.getGameId() != null && this.gameRepository.findGamesByGameId(gameDTO.getGameId()).isEmpty()){
+				throw new IllegalArgumentException("updateGame: Game with game_id: " + gameDTO.getGameId() + "" +
+						" doesn't exist.");
+			}
 			Game updatedGame = this.gameRepository.save(mapperService.convert(gameDTO, Game.class));
 			log.info("updateGame: Game with id: " + updatedGame.getId() + " was updated successfully.");
 			return mapperService.convert(updatedGame, GameDTO.class);
@@ -155,18 +135,24 @@ public class GameServiceImpl implements GameService{
 	@Override
 	public GameDTO findById(Long id) {
 		try {
-			Game foundGame = this.gameRepository.findById(id).orElseThrow();
+			Game foundGame = this.gameRepository.findById(id).orElseThrow(() ->
+			{
+				log.error("No Element of type Game with id " + id + " was found in the database.");
+				throw new NoElementFoundException("No Element of type Game with id " + id + " was found in the database.");
+			});
 			log.info("findById: Game with id: " + id + " was found successfully.");
 			return this.mapperService.convert(foundGame, GameDTO.class);
 		} catch (InvalidDataAccessApiUsageException | NullPointerException err ) {
-			
 			log.error("findById: Game Object has null id, and cannot be processed");
 			throw new IllegalArgumentException("Game Object has null id, and cannot be processed", err); 
-		} catch (NoSuchElementException err) { 
-			
-			log.error("No Element of type Game with id " + id + " was found in the database.");
-			throw new NoElementFoundException("No Element of type Game with id " + id + " was found in the database.", err); 
 		}
+	}
+
+	@Override
+	public Optional<GameDTO> findByGameId(String gameId) {
+		Optional<Game> foundGame = gameRepository.findGamesByGameId(gameId)
+				.stream().findFirst();
+		return foundGame.map(game-> this.mapperService.convert(foundGame, GameDTO.class));
 	}
 
 }

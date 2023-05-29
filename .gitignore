@@ -35,3 +35,7 @@ build/
 
 ### Mac files ###
 .DS_Store
+
+### Project files ###
+**/trusted_certs/
+**/credentials/

@@ -9,6 +9,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.medkha.lol_notes.services.*;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,22 +22,31 @@ import org.springframework.test.web.servlet.MvcResult;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.medkha.lol_notes.dto.GameDTO;
 import com.medkha.lol_notes.exceptions.NoElementFoundException;
-import com.medkha.lol_notes.services.GameService;
+import org.springframework.web.client.RestTemplate;
 
 @ExtendWith(SpringExtension.class)
 @WebMvcTest(GameController.class)
 
 public class GameControllerTest {
 
-	@MockBean
-	private GameService gameService; 
-	
 	@Autowired 
-	private ObjectMapper objectMapper; 
-	
+	private ObjectMapper objectMapper;
 	@Autowired 
 	MockMvc mockMvc;
-	
+	@MockBean
+	private GameService gameService;
+	@MockBean
+	private ChampionService championService;
+	@MockBean
+	private QueueService queueService;
+	@MockBean
+	private RestTemplate restTemplate;
+	@MockBean
+	RiotLookUpService riotLookUpService;
+	@MockBean
+	private  LiveGameService liveGameService;
+
+
 	@Test 
 	public void whenValidInput_ThenReturns201_CreateGame() throws Exception {
 		mockMvc.perform(post("/games")

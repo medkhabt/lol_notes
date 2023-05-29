@@ -8,7 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class GameDTO implements DeathFilterOption {
-    private static Logger log = LoggerFactory.getLogger(GameDTO.class);
+    private static final Logger log = LoggerFactory.getLogger(GameDTO.class);
 
     private Long id;
     private Date createdOn;
@@ -16,6 +16,7 @@ public class GameDTO implements DeathFilterOption {
     private String laneName;
     private Integer championId;
     private Integer queueId;
+    private String gameId;
 
     public GameDTO() { }
 
@@ -90,6 +91,14 @@ public class GameDTO implements DeathFilterOption {
 
     public void setChampionId(Integer championId) {
         this.championId = championId;
+    }
+
+    public String getGameId() {
+        return gameId;
+    }
+
+    public void setGameId(String gameId) {
+        this.gameId = gameId;
     }
 
     @Override
