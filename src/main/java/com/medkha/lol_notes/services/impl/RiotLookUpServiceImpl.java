@@ -125,8 +125,11 @@ public class RiotLookUpServiceImpl implements RiotLookUpService {
                 result = supplier.get();
                 inGame = true;
             } catch (RestClientException | InterruptedException e) {
-                    log.debug("[LIVE GAME TRACK] Waiting for a Game to start");
-                    log.debug("Exception message is : " + e.getMessage());
+                    log.info("[LIVE GAME TRACK] Waiting for a Game to start");
+                    log.info("Exception message is : " + e.getMessage() + ", [stack] : " + e.getStackTrace().toString());
+                    for(StackTraceElement stackTraceElement: e.getStackTrace()){
+                        log.info("* " + stackTraceElement.getClassName() + "::" + stackTraceElement.getClassName() +" line: " + stackTraceElement.getLineNumber());
+                    }
             }
         }
         return CompletableFuture.completedFuture(result);

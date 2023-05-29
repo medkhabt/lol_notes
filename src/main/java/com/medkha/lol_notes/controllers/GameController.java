@@ -1,6 +1,7 @@
 package com.medkha.lol_notes.controllers;
 
 
+import java.io.IOException;
 import java.text.MessageFormat;
 import java.time.Instant;
 import java.util.Date;
@@ -20,6 +21,8 @@ import com.medkha.lol_notes.services.RiotLookUpService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -31,6 +34,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.medkha.lol_notes.services.GameService;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 
 @RestController
@@ -42,6 +46,8 @@ public class GameController {
 	private final ChampionService championService;
 	private final QueueService queueService;
 	private final RiotLookUpService riotLookUpService;
+	private SseEmitter sseEmitter;
+	private boolean isTrackingLiveGame = false;
 	public GameController(
 			GameService gameService,
 			ChampionService championService,
@@ -53,49 +59,65 @@ public class GameController {
 		this.riotLookUpService = riotLookUpService;
 	}
 
-	@GetMapping(value = "live-game", produces = "application/json")
+	@GetMapping(value = "live-game", consumes = MediaType.ALL_VALUE)
 	@ResponseStatus(HttpStatus.OK)
-	public void trackLiveGame() {
+	public SseEmitter trackLiveGame() throws IOException {
 		// TODO put on the service side (there is no queue mode for practice tool. )
 		// TODO Clean this, and find a unique identifier for the online games, so i create just one game per liveGame.
 		// TODO Call again this method after a game is finished.
-		CompletableFuture<LiveGameDTO> liveGameStatsFuture = riotLookUpService.getLiveGameAsync();
-		CompletableFuture<PlayerDTO> activePlayerFuture = riotLookUpService.getActivePlayerInLiveGameAsync();
-		CompletableFuture<List<PlayerDTO>> allPlayersFuture = riotLookUpService.getAllPlayersInLiveGameAsync();
-		liveGameStatsFuture.thenAccept(liveGameStats -> {
-			try {
-				CompletableFuture.allOf(activePlayerFuture, allPlayersFuture);
-				PlayerDTO activePlayer= activePlayerFuture.get();
-				List<PlayerDTO> players = allPlayersFuture.get();
-				GameDTO game = fillGameDTO(activePlayer, players, liveGameStats);
-				log.info("Active player info: " + activePlayer);
-				this.gameService.createGame(game);
-				activePlayer.inGame = true;
-				while (activePlayer.inGame) {
-					CompletableFuture<AllEventsDTO> eventsFuture = this.riotLookUpService.getEventsAsync();
-					eventsFuture.thenAccept(
-							events -> {
-								log.info("****** LIST OF EVENTS THAT HAPPENED IN GAME*******");
-								EventInGameDTO endOfGame = new EventInGameDTO();
-								endOfGame.EventName = "GameEnd";
-								if(events.Events.contains(endOfGame)) {
-									activePlayer.inGame = false;
-									log.info("Game Ended");
+		this.sseEmitter = new SseEmitter();
+		sseEmitter.send(SseEmitter.event().name("INIT").data("Connected"));
+		findLiveGame(sseEmitter);
+		return sseEmitter;
+	}
+	@Async
+	 void findLiveGame(SseEmitter sseEmitter) {
+		this.isTrackingLiveGame = true;
+//		while(this.isTrackingLiveGame){
+			CompletableFuture<LiveGameDTO> liveGameStatsFuture = riotLookUpService.getLiveGameAsync();
+			CompletableFuture<PlayerDTO> activePlayerFuture = riotLookUpService.getActivePlayerInLiveGameAsync();
+			CompletableFuture<List<PlayerDTO>> allPlayersFuture = riotLookUpService.getAllPlayersInLiveGameAsync();
+			liveGameStatsFuture.thenAccept(liveGameStats -> {
+				try {
+					CompletableFuture.allOf(activePlayerFuture, allPlayersFuture);
+					PlayerDTO activePlayer= activePlayerFuture.get();
+					List<PlayerDTO> players = allPlayersFuture.get();
+					GameDTO game = fillGameDTO(activePlayer, players, liveGameStats);
+					log.info("Active player info: " + activePlayer);
+					this.gameService.createGame(game);
+					activePlayer.inGame = true;
+					while (activePlayer.inGame) {
+						CompletableFuture<AllEventsDTO> eventsFuture = this.riotLookUpService.getEventsAsync();
+						eventsFuture.thenAccept(
+								events -> {
+									log.info("****** LIST OF EVENTS THAT HAPPENED IN GAME*******");
+									EventInGameDTO endOfGame = new EventInGameDTO();
+									endOfGame.EventName = "GameEnd";
+									if(events.Events.contains(endOfGame)) {
+										activePlayer.inGame = false;
+										log.info("Game Ended");
+									}
+									events.Events.forEach(
+											e -> log.info("- " + e.EventName + ", id: " + e.EventId)
+									);
+									try {
+										sseEmitter.send(sseEmitter.event().name("LiveGameEvents").data(events.Events));
+									} catch (IOException e) {
+										log.info("SSe Emitter removed. exception message: " + e.getMessage());
+									}
 								}
-								events.Events.forEach(
-										e -> log.info("- " + e.EventName + ", id: " + e.EventId)
-								);
-							}
-					);
-					TimeUnit.SECONDS.sleep(3);
-				}
+						);
+						TimeUnit.SECONDS.sleep(3);
+					}
 
-			} catch (InterruptedException e) {
-				log.error("A thread is interrupted, exception stack: " + e.getStackTrace() );
-			} catch (ExecutionException e) {
-				log.error("Couldn't retrieve the result from the one of the futures, exception stack: " + e.getStackTrace());
-			}
-		});
+				} catch (InterruptedException e) {
+					log.error("A thread is interrupted, exception stack: " + e.getStackTrace() );
+				} catch (ExecutionException e) {
+					log.error("Couldn't retrieve the result from the one of the futures, exception stack: " + e.getStackTrace());
+				}
+			});
+//		}
+
 	}
 
 	private GameDTO fillGameDTO(PlayerDTO activePlayer, List<PlayerDTO> players, LiveGameDTO liveGameStats) {
@@ -123,6 +145,11 @@ public class GameController {
 		if(!liveGameStats.gameMode.equals("CUSTOM"))
 			game.setCreatedOn(Date.from(Instant.now().minusSeconds(Long.parseLong(liveGameStats.gameLength))));
 		return game;
+	}
+	@GetMapping("/stop-track-live-games")
+	@ResponseStatus(HttpStatus.OK)
+	public void disableTracking() {
+		this.isTrackingLiveGame = false;
 	}
 
 	@GetMapping(produces = "application/json")
