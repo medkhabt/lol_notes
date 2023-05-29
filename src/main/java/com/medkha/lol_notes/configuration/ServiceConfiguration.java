@@ -6,11 +6,11 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import com.medkha.lol_notes.mapper.MapperService;
-import com.medkha.lol_notes.mapper.impl.MapperServiceImpl;
 import com.medkha.lol_notes.repositories.DeathRepository;
 import com.medkha.lol_notes.repositories.GameRepository;
 import com.medkha.lol_notes.repositories.ReasonRepository;
 import com.medkha.lol_notes.services.filters.DeathFilterService;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.web.client.RestTemplate;
 
@@ -56,7 +56,19 @@ public class ServiceConfiguration {
     }
 
     @Bean
-    public RiotLookUpService riotLookUpService(RestTemplate restTemplate) {
-        return new RiotLookUpServiceImpl(restTemplate);
+    public RiotLookUpService riotLookUpService(RestTemplate restTemplate, @Lazy LiveGameService liveGameService) {
+        return new RiotLookUpServiceImpl(restTemplate, liveGameService);
+    }
+    @Bean
+    public LiveGameService liveGameService(
+            RiotLookUpService riotLookUpService,
+            GameService gameService,
+            ChampionService championService,
+            QueueService queueService
+    ) {
+        return new LiveGameServiceImpl( riotLookUpService,
+                 gameService,
+                 championService,
+                 queueService);
     }
 }

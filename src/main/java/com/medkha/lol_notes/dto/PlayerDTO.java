@@ -1,14 +1,16 @@
 package com.medkha.lol_notes.dto;
 
+import com.medkha.lol_notes.dto.enums.PlayerGameStatus;
+
 public class PlayerDTO {
     public String id;
     public String summonerName;
     public String level;
     public String championName;
-    public boolean inGame;
+    public PlayerGameStatus playerGameStatus;
 
     public PlayerDTO() {
-        inGame = false;
+        playerGameStatus = PlayerGameStatus.IDLE;
     }
 
 

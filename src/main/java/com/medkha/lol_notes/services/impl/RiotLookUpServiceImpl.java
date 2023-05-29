@@ -1,10 +1,13 @@
 package com.medkha.lol_notes.services.impl;
 
 import com.medkha.lol_notes.dto.*;
+import com.medkha.lol_notes.dto.enums.GameTrackingStatus;
+import com.medkha.lol_notes.services.LiveGameService;
 import com.medkha.lol_notes.services.RiotLookUpService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpMethod;
@@ -29,13 +32,15 @@ public class RiotLookUpServiceImpl implements RiotLookUpService {
 
     private static final Logger log = LoggerFactory.getLogger(RiotLookUpServiceImpl.class);
     private static final long  __RETRY_PERIOD__ = 4;
+    private LiveGameService liveGameService;
 
     @Value("${lol_notes.dev-key}")
     private Resource devKeyResource;
     private String devKey;
     private final RestTemplate restTemplate;
-    public RiotLookUpServiceImpl(RestTemplate restTemplate) {
+    public RiotLookUpServiceImpl(RestTemplate restTemplate, @Lazy LiveGameService liveGameService) {
         this.restTemplate = restTemplate;
+        this.liveGameService = liveGameService;
     }
 
     @PostConstruct
@@ -119,7 +124,7 @@ public class RiotLookUpServiceImpl implements RiotLookUpService {
     private <T> CompletableFuture<T> getCall( Supplier<T> supplier) {
         boolean inGame = false;
         T result = null;
-        while (!inGame) {
+        while (!inGame && this.liveGameService.getGameTrackingStatus().equals(GameTrackingStatus.ENABLED)) {
             try {
                 TimeUnit.SECONDS.sleep(__RETRY_PERIOD__);
                 result = supplier.get();
@@ -132,6 +137,7 @@ public class RiotLookUpServiceImpl implements RiotLookUpService {
                     }
             }
         }
+//        if(this.liveGameService.getGameTrackingStatus().equals(GameTrackingStatus.DISABLED))
         return CompletableFuture.completedFuture(result);
     }
 //    private boolean isEndOfGame(CompletableFuture<AllEventsDTO> eventsFuture) {
