@@ -4,6 +4,7 @@ import com.medkha.lol_notes.dto.*;
 import org.springframework.scheduling.annotation.Async;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
 public interface RiotLookUpService {
@@ -15,4 +16,7 @@ public interface RiotLookUpService {
     CompletableFuture<LiveGameDTO> getLiveGameAsync();
     @Async
     CompletableFuture<AllEventsDTO> getEventsAsync();
+
+    @Async
+    CompletableFuture<List<GameFinishedDTO>> getMatchHistory(String userName, Optional<Integer> size);
 }

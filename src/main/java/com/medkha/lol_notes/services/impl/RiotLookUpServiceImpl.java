@@ -22,10 +22,12 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 @Service
 public class RiotLookUpServiceImpl implements RiotLookUpService {
@@ -120,6 +122,21 @@ public class RiotLookUpServiceImpl implements RiotLookUpService {
         return allEventsFuture;
     }
 
+    @Override
+    public CompletableFuture<List<GameFinishedDTO>> getMatchHistory(String userName, Optional<Integer> size) {
+        //TODO: take in consideration the amount of data to get.
+        String puuid = restTemplate.getForObject("https://euw1.api.riotgames.com/lol/summoner/v4/summoners/by-name/" + userName + "?api_key=" + devKey, IdPlayerDTO.class).puuid;
+        ResponseEntity<List<String>> matchIdList =
+                restTemplate.exchange("https://europe.api.riotgames.com/lol/match/v5/matches/by-puuid/" + puuid + "/ids?start=0&count=20&api_key="+ devKey,
+                        HttpMethod.GET, null, new ParameterizedTypeReference<List<String>>() {
+                        });
+        List<GameFinishedDTO> matchHistory =
+                matchIdList.getBody().parallelStream().map(
+                (matchId) -> restTemplate.getForObject("https://europe.api.riotgames.com/lol/match/v5/matches/"+ matchId+"?api_key="+devKey, GameFinishedDTO.class)
+        ).collect(Collectors.toList());
+        return CompletableFuture.completedFuture(matchHistory);
+    }
+
 
     private <T> CompletableFuture<T> getCall( Supplier<T> supplier) {
         boolean inGame = false;
@@ -137,20 +154,7 @@ public class RiotLookUpServiceImpl implements RiotLookUpService {
                     }
             }
         }
-//        if(this.liveGameService.getGameTrackingStatus().equals(GameTrackingStatus.DISABLED))
         return CompletableFuture.completedFuture(result);
     }
-//    private boolean isEndOfGame(CompletableFuture<AllEventsDTO> eventsFuture) {
-//      try {
-//          CompletableFuture.allOf(eventsFuture);
-//          EventInGameDTO endOfGame = new EventInGameDTO();
-//          endOfGame.EventName = "GameEnd";
-//          return eventsFuture.get().Events.contains(endOfGame);
-//      } catch (ExecutionException | InterruptedException e) {
-//          log.error(e.getMessage() + ", stack:" + e.getStackTrace());
-//          // Should I return a runtime exception here?
-//          return false;
-//      }
-//
-//    }
+
 }
