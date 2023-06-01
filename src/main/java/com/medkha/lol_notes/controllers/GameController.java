@@ -93,8 +93,8 @@ public class GameController {
 
 	@GetMapping("/export-match-history")
 	@ResponseStatus(HttpStatus.OK)
-	public void exportMatchHistory(@RequestParam int count){
-		this.riotLookUpService.getMatchHistory("atay ch3ra", Optional.of(count)).thenAccept(matchHistoryRepository::exportMatchHistory);
+	public void exportMatchHistory(@RequestParam String summonerName, @RequestParam int queueId, @RequestParam int count){
+		this.riotLookUpService.getMatchHistory(summonerName, Optional.of(queueId), Optional.of(count)).thenAccept(matchHistoryRepository::exportMatchHistory);
 	}
 	@GetMapping(produces = "application/json")
 	public Set<GameDTO> allGames(){

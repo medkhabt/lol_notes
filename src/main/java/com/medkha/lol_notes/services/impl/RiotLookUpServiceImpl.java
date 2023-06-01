@@ -131,7 +131,7 @@ public class RiotLookUpServiceImpl implements RiotLookUpService {
      * @return
      */
     @Override
-    public CompletableFuture<Set<GameFinishedDTO>> getMatchHistory( String userName,  Optional<Integer> sizeOptional) {
+    public CompletableFuture<Set<GameFinishedDTO>> getMatchHistory( String userName, Optional<Integer> queueId,  Optional<Integer> sizeOptional) {
         //TODO: take in consideration the amount of data to get.
         //20 requests every 1 seconds(s)
         //100 requests every 2 minutes(s)
@@ -139,11 +139,11 @@ public class RiotLookUpServiceImpl implements RiotLookUpService {
         final int __TIME_LIMIT__ = (size<100)? 80: 1300;
 
         Set<GameFinishedDTO> matchHistory = new HashSet<>(size,1);
-        String puuid = restTemplate.getForObject("https://euw1.api.riotgames.com/lol/summoner/v4/summoners/by-name/" + userName + "?api_key=" + devKey, IdPlayerDTO.class).puuid;
+        String puuid = restTemplate.getForObject("https://euw1.api.riotgames.com/lol/summoner/v4/summoners/by-name/" + userName + "?api_key=" + devKey , IdPlayerDTO.class).puuid;
         do{
             try{
                 ResponseEntity<Set<String>> matchIdList =
-                        restTemplate.exchange("https://europe.api.riotgames.com/lol/match/v5/matches/by-puuid/" + puuid + "/ids?start=" + (sizeOptional.orElse(20) - size) + "&count=" + ((size>=100)?100:size) + "&api_key="+ devKey,
+                        restTemplate.exchange("https://europe.api.riotgames.com/lol/match/v5/matches/by-puuid/" + puuid + "/ids?start=" + (sizeOptional.orElse(20) - size) + "&count=" + ((size>=100)?100:size) + queueId.map(id->"&queue=" + id).orElse("") + "&api_key="+ devKey,
                                 HttpMethod.GET, null, new ParameterizedTypeReference<Set<String>>() {
                                 });
                 // stream optimization ruins the call limit rate. Opted for 'for_loop'.

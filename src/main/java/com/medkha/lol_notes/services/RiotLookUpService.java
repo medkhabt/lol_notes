@@ -19,5 +19,5 @@ public interface RiotLookUpService {
     CompletableFuture<AllEventsDTO> getEventsAsync();
 
     @Async
-    CompletableFuture<Set<GameFinishedDTO>> getMatchHistory(String userName, Optional<Integer> size);
+    CompletableFuture<Set<GameFinishedDTO>> getMatchHistory( String userName, Optional<Integer> queueId,  Optional<Integer> sizeOptional);
 }
