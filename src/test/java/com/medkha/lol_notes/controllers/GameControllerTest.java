@@ -9,6 +9,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.medkha.lol_notes.repositories.MatchHistoryRepository;
 import com.medkha.lol_notes.services.*;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -45,6 +46,9 @@ public class GameControllerTest {
 	RiotLookUpService riotLookUpService;
 	@MockBean
 	private  LiveGameService liveGameService;
+	@MockBean
+	private MatchHistoryRepository matchHistoryRepository;
+
 
 
 	@Test 
