@@ -2,6 +2,7 @@ package com.medkha.lol_notes.controllers;
 
 
 import java.io.IOException;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
@@ -11,20 +12,13 @@ import javax.validation.Valid;
 import com.medkha.lol_notes.dto.*;
 import com.medkha.lol_notes.dto.enums.GameTrackingStatus;
 import com.medkha.lol_notes.dto.enums.PlayerGameStatus;
+import com.medkha.lol_notes.repositories.MatchHistoryRepository;
 import com.medkha.lol_notes.services.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
@@ -39,18 +33,21 @@ public class GameController {
 	private final ChampionService championService;
 	private final QueueService queueService;
 	private final RiotLookUpService riotLookUpService;
+	private final MatchHistoryRepository matchHistoryRepository;
 	private SseEmitter sseEmitter;
 	public GameController(
 			GameService gameService,
 			LiveGameService liveGameService,
 			ChampionService championService,
 			QueueService queueService,
-			RiotLookUpService riotLookUpService) {
+			RiotLookUpService riotLookUpService,
+			MatchHistoryRepository matchHistoryRepository) {
 		this.gameService = gameService;
 		this.liveGameService = liveGameService;
 		this.championService = championService;
 		this.queueService = queueService;
 		this.riotLookUpService = riotLookUpService;
+		this.matchHistoryRepository = matchHistoryRepository;
 	}
 
 	@GetMapping(value = "live-game", consumes = MediaType.ALL_VALUE)
@@ -94,6 +91,11 @@ public class GameController {
 		this.liveGameService.setGameTrackingStatus(GameTrackingStatus.DISABLED);
 	}
 
+	@GetMapping("/export-match-history")
+	@ResponseStatus(HttpStatus.OK)
+	public void exportMatchHistory(@RequestParam String summonerName, @RequestParam int queueId, @RequestParam int count){
+		this.riotLookUpService.getMatchHistory(summonerName, Optional.of(queueId), Optional.of(count)).thenAccept(matchHistoryRepository::exportMatchHistory);
+	}
 	@GetMapping(produces = "application/json")
 	public Set<GameDTO> allGames(){
 		return this.gameService.findAllGames(); 

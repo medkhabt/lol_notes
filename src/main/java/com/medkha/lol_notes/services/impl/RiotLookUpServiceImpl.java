@@ -14,6 +14,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
@@ -21,7 +22,10 @@ import javax.annotation.PostConstruct;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -120,6 +124,47 @@ public class RiotLookUpServiceImpl implements RiotLookUpService {
         return allEventsFuture;
     }
 
+    /**
+     *
+     * @param userName
+     * @param sizeOptional (default is 20, max is 100 if it exceeds the max, it is considered 20.) TODO: MAKE it possible to exceeds 1000
+     * @return
+     */
+    @Override
+    public CompletableFuture<Set<GameFinishedDTO>> getMatchHistory( String userName, Optional<Integer> queueId,  Optional<Integer> sizeOptional) {
+        //TODO: take in consideration the amount of data to get.
+        //20 requests every 1 seconds(s)
+        //100 requests every 2 minutes(s)
+        int size = sizeOptional.orElse(20);
+        final int __TIME_LIMIT__ = (size<100)? 80: 1300;
+
+        Set<GameFinishedDTO> matchHistory = new HashSet<>(size,1);
+        String puuid = restTemplate.getForObject("https://euw1.api.riotgames.com/lol/summoner/v4/summoners/by-name/" + userName + "?api_key=" + devKey , IdPlayerDTO.class).puuid;
+        do{
+            try{
+                ResponseEntity<Set<String>> matchIdList =
+                        restTemplate.exchange("https://europe.api.riotgames.com/lol/match/v5/matches/by-puuid/" + puuid + "/ids?start=" + (sizeOptional.orElse(20) - size) + "&count=" + ((size>=100)?100:size) + queueId.map(id->"&queue=" + id).orElse("") + "&api_key="+ devKey,
+                                HttpMethod.GET, null, new ParameterizedTypeReference<Set<String>>() {
+                                });
+                // stream optimization ruins the call limit rate. Opted for 'for_loop'.
+                for(String matchId : matchIdList.getBody()){
+                    matchHistory.add(restTemplate.getForObject("https://europe.api.riotgames.com/lol/match/v5/matches/"+ matchId+"?api_key="+devKey, GameFinishedDTO.class));
+                    TimeUnit.MILLISECONDS.sleep(__TIME_LIMIT__);
+                }
+                if(matchIdList.getBody().size()<100 && matchIdList.getBody().size()< sizeOptional.orElse(20)){
+                    log.info("RiotLookUpServiceImpl::getMatchHistory : final match history request, there are no more games.");
+                    break;
+                }
+            }catch (HttpClientErrorException.TooManyRequests e) {
+                log.error("RiotLookUpServiceImpl::getMatchHistory : failed in getting all match history: [message: " + e.getMessage() + "]");
+            }catch(InterruptedException e){
+                log.error("RiotLookUpServiceImpl::getMatchHistory : interrupted sleep.");
+            }
+        }while((size-=100) > 0);
+        log.info("The size of the get MatchHistory list is : " + matchHistory.size());
+        return CompletableFuture.completedFuture(matchHistory);
+    }
+
 
     private <T> CompletableFuture<T> getCall( Supplier<T> supplier) {
         boolean inGame = false;
@@ -137,20 +182,7 @@ public class RiotLookUpServiceImpl implements RiotLookUpService {
                     }
             }
         }
-//        if(this.liveGameService.getGameTrackingStatus().equals(GameTrackingStatus.DISABLED))
         return CompletableFuture.completedFuture(result);
     }
-//    private boolean isEndOfGame(CompletableFuture<AllEventsDTO> eventsFuture) {
-//      try {
-//          CompletableFuture.allOf(eventsFuture);
-//          EventInGameDTO endOfGame = new EventInGameDTO();
-//          endOfGame.EventName = "GameEnd";
-//          return eventsFuture.get().Events.contains(endOfGame);
-//      } catch (ExecutionException | InterruptedException e) {
-//          log.error(e.getMessage() + ", stack:" + e.getStackTrace());
-//          // Should I return a runtime exception here?
-//          return false;
-//      }
-//
-//    }
+
 }

@@ -39,3 +39,4 @@ build/
 ### Project files ###
 **/trusted_certs/
 **/credentials/
+*.csv
