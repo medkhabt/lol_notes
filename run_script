@@ -1,6 +1,0 @@
-#! /bin/bash 
-
-## RUN BACKEND
-mvn -f backend/tracking/ spring-boot:run
-## RUN FRONTEND
-go run main.go
