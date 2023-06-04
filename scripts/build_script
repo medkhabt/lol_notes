@@ -1,4 +1,4 @@
 #! /bin/bash
 
 ## BACKEND 
-mvn -f ../backend/tracking clean package > ../logs/build_tracking.log 2>&1 &
+nohup mvn -f ../backend/tracking clean package > ../logs/build_tracking.log 2>&1 &
