@@ -1,0 +1,6 @@
+#! /bin/bash 
+
+## RUN BACKEND
+nohup java -jar ../backend/tracking/target/tracking-0.0.1-SNAPSHOT.jar > ../logs/run_tracking.log 2>&1 & 
+## RUN FRONTEND
+nohup go run ../frontend/cli/main.go > ../logs/run_cli.log 2>&1 &

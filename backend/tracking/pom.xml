@@ -9,10 +9,10 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.medkha</groupId>
-	<artifactId>lol_notes</artifactId>
+	<artifactId>tracking</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>lol_notes</name>
-	<description>taking notes while playing league of legends to get gud :) </description>
+	<name>tracking-module</name>
+	<description>Tracking player's game module</description>
 	<properties>
    	 	<java.version>11</java.version>
 	</properties>
