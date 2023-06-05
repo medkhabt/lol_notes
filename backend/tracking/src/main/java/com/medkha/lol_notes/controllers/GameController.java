@@ -14,6 +14,7 @@ import com.medkha.lol_notes.dto.enums.GameTrackingStatus;
 import com.medkha.lol_notes.dto.enums.PlayerGameStatus;
 import com.medkha.lol_notes.repositories.MatchHistoryRepository;
 import com.medkha.lol_notes.services.*;
+import com.medkha.lol_notes.util.ServerSentEventSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -53,38 +54,44 @@ public class GameController {
 	@GetMapping(value = "live-game", consumes = MediaType.ALL_VALUE)
 	@ResponseStatus(HttpStatus.OK)
 	public SseEmitter trackLiveGame() throws IOException {
-		// TODO put on the service side (there is no queue mode for practice tool. )
-		// TODO Clean this, and find a unique identifier for the online games, so i create just one game per liveGame.
-		// TODO Call again this method after a game is finished.
 		this.sseEmitter = new SseEmitter(Long.MAX_VALUE);
-		sseEmitter.send(SseEmitter.event().name("INIT").data("Connected"));
-		Consumer<AllEventsDTO> logEventsWhileInGame =
-				(events) -> {
-					log.info("****** LIST OF EVENTS THAT HAPPENED IN GAME*******");
-					EventInGameDTO endOfGame = new EventInGameDTO();
-					endOfGame.EventName = "GameEnd";
-					if(events.Events.contains(endOfGame)) {
-						this.liveGameService.setPlayerGameStatus(PlayerGameStatus.IDLE);
-						log.info("Game Ended");
-					}
-					events.Events.forEach(
-							e -> log.info("- " + e.EventName + ", id: " + e.EventId)
-					);
-					try {
-						sseEmitter.send(sseEmitter.event().name("LiveGameEvents").data(events.Events));
-					} catch (IOException e) {
-						log.info("SSe Emitter removed. exception message: " + e.getMessage());
-					}
-				};
+		ServerSentEventSession sses = new ServerSentEventSession(sseEmitter);
+		sses.sseEmitter.send(SseEmitter.event().name("INIT").data("Connected"));
 		this.liveGameService.findLiveGame(
 				() -> {
 					CompletableFuture<AllEventsDTO> eventsFuture = this.riotLookUpService.getEventsAsync();
-					eventsFuture.thenAccept(logEventsWhileInGame);
+					eventsFuture.thenAccept((events)->{
+						try {
+							EventInGameDTO endOfGame = new EventInGameDTO();
+							endOfGame.eventName = "GameEnd";
+							if(events.Events.contains(endOfGame)) {
+								this.liveGameService.setPlayerGameStatus(PlayerGameStatus.IDLE);
+								log.info("Game Ended");
+							}
+							getDeathEvent(sses, events);
+						} catch (IOException e) {
+							log.info("SSe Emitter removed. exception message: " + e.getMessage());
+						}
+					});
 				}
 		);
 		return sseEmitter;
 	}
+    private void getDeathEvent(ServerSentEventSession sses, AllEventsDTO events) throws IOException {
+		EventInGameDTO deathEvent = new EventInGameDTO();
+		deathEvent.eventName = "ChampionKill";
+		EventInGameDTO temp;
+		for(int i = sses.lastCheckedIndex + 1; i < events.Events.size(); i++) {
+			temp = events.Events.get(i);
+			if(temp.eventName.equals("ChampionKill")){
+				sses.sseEmitter.send(sseEmitter.event().name("New DeathEvent").data(events.Events.get(i)));
+			}
+			sses.lastCheckedIndex = events.Events.size() - 1;
+		}
+		events.Events.stream().filter(e -> e.eventName.equals("ChampionKill")).count();
 
+
+	}
 	@GetMapping("/stop-track-live-games")
 	@ResponseStatus(HttpStatus.OK)
 	public void disableTracking() {
