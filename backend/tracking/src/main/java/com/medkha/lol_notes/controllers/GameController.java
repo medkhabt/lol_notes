@@ -87,8 +87,8 @@ public class GameController {
 			){
 				sses.sseEmitter.send(sseEmitter.event().name("New DeathEvent").data(events.Events.get(i)));
 			}
-			sses.lastCheckedIndex = events.Events.size() - 1;
 		}
+		sses.lastCheckedIndex = events.Events.size() - 1;
 		events.Events.stream().filter(e -> e.eventName.equals("ChampionKill")).count();
 	}
 	@GetMapping("/stop-track-live-games")
