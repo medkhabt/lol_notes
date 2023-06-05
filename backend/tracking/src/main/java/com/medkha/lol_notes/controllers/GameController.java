@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
-import java.util.function.Consumer;
 
 import javax.validation.Valid;
 
@@ -68,7 +67,7 @@ public class GameController {
 								this.liveGameService.setPlayerGameStatus(PlayerGameStatus.IDLE);
 								log.info("Game Ended");
 							}
-							getDeathEvent(sses, events);
+							getDeathEvent(sses, events, this.liveGameService.getActivePlayer().map(p-> p.summonerName));
 						} catch (IOException e) {
 							log.info("SSe Emitter removed. exception message: " + e.getMessage());
 						}
@@ -77,20 +76,20 @@ public class GameController {
 		);
 		return sseEmitter;
 	}
-    private void getDeathEvent(ServerSentEventSession sses, AllEventsDTO events) throws IOException {
-		EventInGameDTO deathEvent = new EventInGameDTO();
-		deathEvent.eventName = "ChampionKill";
+    private void getDeathEvent(ServerSentEventSession sses, AllEventsDTO events, Optional<String> playerName) throws IOException {
 		EventInGameDTO temp;
 		for(int i = sses.lastCheckedIndex + 1; i < events.Events.size(); i++) {
 			temp = events.Events.get(i);
-			if(temp.eventName.equals("ChampionKill")){
+			if(temp.eventName.equals("ChampionKill") &&
+					(playerName.isEmpty()  // Get all championKill events.
+						|| (playerName.isPresent() && playerName.equals(events.Events.get(i).victimName))
+					)
+			){
 				sses.sseEmitter.send(sseEmitter.event().name("New DeathEvent").data(events.Events.get(i)));
 			}
 			sses.lastCheckedIndex = events.Events.size() - 1;
 		}
 		events.Events.stream().filter(e -> e.eventName.equals("ChampionKill")).count();
-
-
 	}
 	@GetMapping("/stop-track-live-games")
 	@ResponseStatus(HttpStatus.OK)
