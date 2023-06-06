@@ -33,6 +33,24 @@ And also for the simple reason that I want to work with a language I never used.
 
 
 ## How To Use 
+
+Create a `dev_key.txt` file in `backend/tracking/src/main/resources/credentials`. You may not find `credentials` folder, that's because it is ignored by the repo (Look at the `.ignorefile`). In that case, create the folder and put `dev_key.txt` in it. 
+
+*Tree Directory from backend/tracking/src/main*
+```
+.
+├── java
+│   └── com
+│       └── medkha
+└── resources
+    ├── certificats
+    │   └── trusted_certs
+    └── credentials
+```                                  
+Put your dev-key than you can get from Dev portal of Riot games ([More info](https://developer.riotgames.com/)) in the `dev_key.txt`
+
+`❗By default the dev_key.txt will always be ignored by the repo in your commits. But be careful, and double-check in case you commited it by mistake.`
+
 In the `script/` folder, you will find multiple bash scripts to run:
 ```
 .
@@ -40,8 +58,17 @@ In the `script/` folder, you will find multiple bash scripts to run:
 ├── run_script    # For running all the modules
 └── stop_script  # For stopping all the running modules. 
 ```
+An example would be 
+```
+./build_script # wait for the build to finish 
+./run_script
+```
+And then check the doc of the available api for tracking module in http://localhost:8999/swagger-ui.html. 
 - You will find logs of your builds and runs in the generated log folder.
 - Don't forget to check if you can run the scripts `ls -l` , in case you cannot -> `chmod +x [file_name]`
+
+
+
 
 
 

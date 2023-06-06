@@ -13,6 +13,7 @@ import java.text.MessageFormat;
 import java.time.Instant;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -29,6 +30,7 @@ public class LiveGameServiceImpl implements LiveGameService {
     // , further modules could be deployed in a server.
     private PlayerGameStatus playerGameStatus;
     private GameTrackingStatus gameTrackingStatus;
+    private PlayerDTO activePlayer;
 
     public LiveGameServiceImpl(
             RiotLookUpService riotLookUpService,
@@ -55,7 +57,7 @@ public class LiveGameServiceImpl implements LiveGameService {
             try {
                 CompletableFuture.allOf(liveGameStatsFuture, activePlayerFuture, allPlayersFuture);
                 LiveGameDTO liveGameStats = liveGameStatsFuture.get();
-                PlayerDTO activePlayer= activePlayerFuture.get();
+                this.activePlayer= activePlayerFuture.get();
                 List<PlayerDTO> players = allPlayersFuture.get();
 
                 // Tracking is canceled.
@@ -71,6 +73,7 @@ public class LiveGameServiceImpl implements LiveGameService {
                     runnablePlayerInGame.run();
                     TimeUnit.SECONDS.sleep(3);
                 }
+                this.activePlayer = null ;
             } catch (InterruptedException e) {
                 log.error("A thread is interrupted, exception stack: " + e.getStackTrace() );
             } catch (ExecutionException e) {
@@ -94,6 +97,11 @@ public class LiveGameServiceImpl implements LiveGameService {
     @Override
     public GameTrackingStatus getGameTrackingStatus() {
         return this.gameTrackingStatus;
+    }
+
+    @Override
+    public Optional<PlayerDTO> getActivePlayer() {
+        return Optional.ofNullable(this.activePlayer);
     }
 
     private GameDTO fillGameDTO(PlayerDTO activePlayer, List<PlayerDTO> players, LiveGameDTO liveGameStats) {
