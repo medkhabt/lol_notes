@@ -21,7 +21,7 @@ THE SOFTWARE.
 */
 package main
 
-import "github.com/medkhabt/lol_notes/cmd"
+import "com.medkha/lono/cmd"
 
 func main() {
 	cmd.Execute()
