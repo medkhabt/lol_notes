@@ -50,3 +50,4 @@ and check for this plugin's configuration, it should be the same version as your
     </configuration>
 </plugin>
 ```
+*🔄 LastUpdate: Unknown*

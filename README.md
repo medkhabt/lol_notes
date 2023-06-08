@@ -63,6 +63,8 @@ An example would be
 ./build_script # wait for the build to finish 
 ./run_script
 ```
+After running the scripts, you can run the command `lono` equivalent to `lono -h` 
+
 And then check the doc of the available api for tracking module in http://localhost:8999/swagger-ui.html. 
 - You will find logs of your builds and runs in the generated log folder.
 - Don't forget to check if you can run the scripts `ls -l` , in case you cannot -> `chmod +x [file_name]`
@@ -75,5 +77,5 @@ And then check the doc of the available api for tracking module in http://localh
 
 
 
-*🔄 LastUpdate: 04/06/2023* 
+*🔄 LastUpdate: 08/06/2023* 
 
