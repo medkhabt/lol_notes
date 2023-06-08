@@ -16,3 +16,5 @@ I wasn't sure if I should push the `go.sum` file in my repo, but after some rese
 *source*: [Github page](https://github.com/golang/go/wiki/Modules#should-i-commit-my-gosum-file-as-well-as-my-gomod-file)
 
 - Info about checksum : [Wikipedia link](https://en.wikipedia.org/wiki/Checksum)
+
+*🔄 LastUpdate: 08/06/2023*
