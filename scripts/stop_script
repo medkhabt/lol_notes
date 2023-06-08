@@ -1,3 +1,8 @@
 #! /bin/bash
 ## Kill process(es) for the model tracking running as a spring-boot app 
 for id in $(ps -ef | egrep  " *[t]racking.*.jar"| awk -F" " '{print $2}'); do kill -9 $id ;done
+
+## FRONTEND 
+### CLI : i just clean the project, as I don't run the project but I do install the go project and use the command from the terminal.
+## Maybe it would be better if i actually build and run the project instead of installing it but it is more convinient for the user to just use the command "lono" instead of running a script. 
+nohup go clean -i -x -C ../frontend/cli > ../logs/stop_cli_lono 2>&1 &

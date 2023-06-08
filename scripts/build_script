@@ -2,3 +2,7 @@
 
 ## BACKEND 
 nohup mvn -f ../backend/tracking clean package > ../logs/build_tracking.log 2>&1 &
+
+## FRONTEND
+### CLI
+nohup sh -c "go clean -x -i -C ../frontend/cli  && go install -x -C  ../frontend/cli" > ../logs/build_cli_lono.log 2>&1 &
